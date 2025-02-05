@@ -1,51 +1,57 @@
 package szlicht.daniel.calendar.meeting;
 
-import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.model.CalendarList;
-import com.google.api.services.calendar.model.CalendarListEntry;
-import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.GoogleCalendarClient;
 import com.google.api.services.calendar.Calendar;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
-import java.util.List;
+
+import static szlicht.daniel.calendar.common.GoogleCalendarClient.toDateTime;
 
 @Service
 public class CalendarService {
 
-    @PostConstruct
-    public void printUpcomingEvents() throws GeneralSecurityException, IOException {
-        Calendar calendar = GoogleCalendarClient.getCalendarService();
-        DateTime now = new DateTime(System.currentTimeMillis());
-        Calendar.CalendarList.List request = calendar.calendarList().list();
-        CalendarList calendarList = request.execute();
-        for (CalendarListEntry entry : calendarList.getItems()) {
-            System.out.printf("Kalendarz: %s, ID: %s\n", entry.getSummary(), entry.getId());
-        }
-        Events events = calendar.events().list("8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com")
-                .setMaxResults(10)
-                .setTimeMin(now)
-                .setOrderBy("startTime")
-                .setSingleEvents(true)
-                .execute();
+    private static final String CALENDAR_OTHER_ID = "primary";
+    private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
 
-        List<Event> items = events.getItems();
-        if (items.isEmpty()) {
-            System.out.println("Brak zbliżających się wydarzeń.");
-        }
-        System.out.println("Nadchodzące wydarzenia:");
-        for (Event event : items) {
+
+    private final Calendar calendar;
+
+    public CalendarService(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
+    @PostConstruct
+    public void printUpcomingEvents() throws IOException {
+        MeetingsPlanner meetings = new MeetingsPlanner();
+        meetings.addTimedEvents(getEvents(CALENDAR_MEETINGS_ID));
+        meetings.addTimedEvents(getEvents(CALENDAR_OTHER_ID));
+
+        meetings.print();
+       /* for (Event event : events.getItems()) {
             DateTime start = event.getStart().getDateTime();
             if (start == null) {
                 start = event.getStart().getDate();
             }
             System.out.printf("%s (%s)\n", event.getSummary(), start);
-        }
-
+        }*/
     }
+
+    private Events getEvents(String calendarId) throws IOException {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime monthEnd = now.plusMonths(1);
+        return calendar.events().list(calendarId)
+                .setMaxResults(100)
+                .setTimeMin(toDateTime(now))
+                .setTimeMax(toDateTime(monthEnd))
+                .setOrderBy("startTime")
+                .setSingleEvents(true)
+                .execute();
+    }
+
+
+
+
 }
