@@ -1,57 +1,38 @@
 package szlicht.daniel.calendar.meeting;
 
-import com.google.api.services.calendar.model.Events;
-import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
-import com.google.api.services.calendar.Calendar;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
-
-import static szlicht.daniel.calendar.common.GoogleCalendarClient.toDateTime;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Map;
 
 @Service
 public class CalendarService {
 
-    private static final String CALENDAR_OTHER_ID = "primary";
-    private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
+    private static final int DEFAULT_MEETING_LENGTH_MINUTES = 90;
+    private static final double[] ACCEPTABLE_LENGTH_HOURS = {1, 1.5, 2, 2.5, 3};
 
+    private MeetingsPlanner meetingsPlanner;
 
-    private final Calendar calendar;
-
-    public CalendarService(Calendar calendar) {
-        this.calendar = calendar;
+    public CalendarService(MeetingsPlanner meetingsPlanner) {
+        this.meetingsPlanner = meetingsPlanner;
     }
 
-    @PostConstruct
-    public void printUpcomingEvents() throws IOException {
-        MeetingsPlanner meetings = new MeetingsPlanner();
-        meetings.addTimedEvents(getEvents(CALENDAR_MEETINGS_ID));
-        meetings.addTimedEvents(getEvents(CALENDAR_OTHER_ID));
-
-        meetings.print();
-       /* for (Event event : events.getItems()) {
-            DateTime start = event.getStart().getDateTime();
-            if (start == null) {
-                start = event.getStart().getDate();
-            }
-            System.out.printf("%s (%s)\n", event.getSummary(), start);
-        }*/
+    public Map<LocalDate, Meeting> getMeetingPropositions(Integer minutesLength) {
+        if (minutesLength == null) {
+            minutesLength = DEFAULT_MEETING_LENGTH_MINUTES;
+        }
+        if (notAcceptableLength(minutesLength)) {
+            throw new IllegalArgumentException(
+                    String.format("Only length of %s hours is acceptable for automatic meeting with me.",
+                            Arrays.toString(ACCEPTABLE_LENGTH_HOURS))
+            );
+        }
+        return meetingsPlanner.getMeetingSuggestions(minutesLength);
     }
 
-    private Events getEvents(String calendarId) throws IOException {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime monthEnd = now.plusMonths(1);
-        return calendar.events().list(calendarId)
-                .setMaxResults(100)
-                .setTimeMin(toDateTime(now))
-                .setTimeMax(toDateTime(monthEnd))
-                .setOrderBy("startTime")
-                .setSingleEvents(true)
-                .execute();
+    private boolean notAcceptableLength(int minutes) {
+        return Arrays.stream(ACCEPTABLE_LENGTH_HOURS)
+                .mapToInt(hour -> (int) (hour * 60))
+                .noneMatch(minutesAccepted -> minutesAccepted == minutes);
     }
-
-
-
-
 }
