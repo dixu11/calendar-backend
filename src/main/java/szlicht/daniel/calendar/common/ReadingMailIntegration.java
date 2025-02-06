@@ -1,39 +1,57 @@
 package szlicht.daniel.calendar.common;
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
+import org.eclipse.angus.mail.imap.IMAPMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.integration.mail.ImapIdleChannelAdapter;
+import org.springframework.integration.mail.ImapMailReceiver;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 @Configuration
 @EnableIntegration
 public class ReadingMailIntegration {
+
+    @Value("${spring.mail.username}")
+    private String username;
+    @Value("${spring.mail.password}")
+    private String password;
+
     @Bean
-    public Session mailSession(){
+    public ImapMailReceiver imapMailReceiver() {
+        String encodedUser = URLEncoder.encode(username, StandardCharsets.UTF_8);
+        String encodedPass = URLEncoder.encode(password, StandardCharsets.UTF_8);
+        String storeUri = String.format("imaps://%s:%s@imap.gmail.com/INBOX", encodedUser, encodedPass);
+        ImapMailReceiver receiver = new ImapMailReceiver(storeUri);
+        receiver.setShouldMarkMessagesAsRead(false);
+        receiver.setShouldDeleteMessages(false);
+        receiver.setAutoCloseFolder(false);
         Properties props = new Properties();
         props.setProperty("mail.store.protocol", "imaps");
-        return Session.getInstance(props);
+//        props.setProperty("mail.debug", "true");
+        props.setProperty("mail.imaps.ssl.trust", "*");
+        receiver.setJavaMailProperties(props);
+        return receiver;
     }
 
-
-   /* @Bean
-    public IMAPIdleChannelAdapter mailAdapter(Session session) {
-        IMAPIdleChannelAdapter adapter = new IMAPIdleChannelAdapter();
-        adapter.setStoreUri("imaps://<username>:<app_password>@imap.gmail.com/INBOX");
-        adapter.setShouldMarkMessagesAsRead(false);
-        adapter.setShouldDeleteMessages(false);
-        adapter.setAutoCloseFolder(false);
-        // Domyślnie adapter sprawdza folder w trybie IDLE,
-        // więc "w locie" wykrywa nowe wiadomości.
+    @Bean
+    public ImapIdleChannelAdapter mailAdapter(ImapMailReceiver imapMailReceiver) {
+        ImapIdleChannelAdapter adapter = new ImapIdleChannelAdapter(imapMailReceiver);
+        adapter.setAutoStartup(true);
         adapter.setOutputChannel(mailChannel());
         return adapter;
-    }*/
+    }
 
     @Bean
     public MessageChannel mailChannel() {
@@ -44,9 +62,17 @@ public class ReadingMailIntegration {
     @ServiceActivator(inputChannel = "mailChannel")
     public MessageHandler mailHandler() {
         return message -> {
-            // Tu odbierasz wiadomości; "payload" to np. MimeMessage
-            Object payload = message.getPayload();
-            System.out.println("New mail received! " + payload);
+            IMAPMessage payload = (IMAPMessage) message.getPayload();
+            try {
+                System.out.println("New mail received! "
+                        + payload.getSubject() + " from: "
+                        + payload.getSender() +
+                        " content: " + payload.getContent());
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         };
     }
 }
