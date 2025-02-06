@@ -2,9 +2,6 @@ package szlicht.daniel.calendar.meeting;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.util.Map;
 import java.util.Scanner;
 
 @Component

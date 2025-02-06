@@ -3,12 +3,9 @@ package szlicht.daniel.calendar.meeting;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.EmailService;
 
-import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static szlicht.daniel.calendar.common.LocalDateUtils.*;
 
@@ -39,20 +36,23 @@ public class MeetingsSender {
         return result;
     }
 
-    private String formatPropositions(List<Meeting> meetings){
+    private String formatPropositions(List<Meeting> meetings) {
         StringBuilder propositions = new StringBuilder();
         propositions.append("<pre>");
         for (Meeting meeting : meetings) {
+            StringBuilder line = new StringBuilder();
             String weekDay = meeting.getStart()
                     .getDayOfWeek()
                     .getDisplayName(TextStyle.SHORT, Locale.forLanguageTag("pl-PL"));
-            propositions.append(String.format("%-5s", weekDay));
-            propositions.append(simpleDate(meeting.getStart()));
-            propositions.append("  ");
-            propositions.append(simpleTime(meeting.getStart()));
-            propositions.append(" - ");
-            propositions.append(simpleTime(meeting.getEnd()));
-            propositions.append("\n");
+            line.append(String.format("%-5s", weekDay))
+                    .append(simpleDate(meeting.getStart()))
+                    .append("  ")
+                    .append(simpleTime(meeting.getStart()))
+                    .append(" - ")
+                    .append(simpleTime(meeting.getEnd()))
+                    .append("\n");
+            propositions.append(line);
+            System.out.print(line);
         }
         propositions.append("</pre>");
         return propositions.toString();

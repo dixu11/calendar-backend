@@ -19,13 +19,9 @@ import static szlicht.daniel.calendar.common.GoogleCalendarClient.toLocalDateTim
 public class MeetingsPlanner {
     private static final String CALENDAR_OTHER_ID = "primary";
     private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
-
     private static final LocalTime WORK_START = LocalTime.of(11, 30);
     private static final LocalTime WORK_END = LocalTime.of(16, 0);
-
-
     private final Calendar calendar;
-
     private Set<Event> events =
             new TreeSet<>(Comparator.comparingLong(event -> event.getStart().getDateTime().getValue()));
 

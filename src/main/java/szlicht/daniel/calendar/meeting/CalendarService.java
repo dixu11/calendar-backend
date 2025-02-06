@@ -1,6 +1,7 @@
 package szlicht.daniel.calendar.meeting;
 
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.Map;
 public class CalendarService {
 
     private static final int DEFAULT_MEETING_LENGTH_MINUTES = 90;
-    private static final double[] ACCEPTABLE_LENGTH_HOURS = {1, 1.5, 2, 2.5, 3};
+    private static final double[] ACCEPTABLE_LENGTH_HOURS = {1, 1.25, 1.5, 2, 2.5, 3};
 
     private MeetingsPlanner meetingsPlanner;
 

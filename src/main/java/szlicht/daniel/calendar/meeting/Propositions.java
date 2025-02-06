@@ -1,7 +1,5 @@
 package szlicht.daniel.calendar.meeting;
 
-import org.springframework.cglib.core.Local;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
