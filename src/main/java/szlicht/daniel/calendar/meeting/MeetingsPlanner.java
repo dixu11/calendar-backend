@@ -34,7 +34,7 @@ public class MeetingsPlanner {
         this.calendar = calendar;
     }
 
-    //generating suggestions
+    //generating suggestions ------------------------------
 
     public Map<LocalDate, Meeting> getMeetingSuggestions(int timeMinutes) {
         update();
@@ -43,7 +43,6 @@ public class MeetingsPlanner {
         for (LocalDate date : allEvents.keySet()) {
             Optional<Meeting> meeting = getMeetingPropositionsFor(allEvents.get(date), timeMinutes, date);
             meeting.ifPresent(value -> result.put(date, value));
-            System.out.printf("for date %s meeting: %s\n", date, meeting);
         }
         return result;
     }
@@ -61,9 +60,6 @@ public class MeetingsPlanner {
     }
 
     private Optional<Meeting> getMeetingPropositionsFor(List<Event> events, int minutes,LocalDate date) {
-        if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            return Optional.empty();
-        }
         Meeting proposition = createMeetingAt(date.atTime(WORK_END).minusMinutes(minutes),minutes);
         for (Event event : events) {
             Meeting otherMeeting = new Meeting(event);
@@ -82,7 +78,7 @@ public class MeetingsPlanner {
         return new Meeting(time, time.plusMinutes(minutes));
     }
 
-    //collecting events
+    //collecting events ----------------------------
 
     private void update() {
         events.clear();
