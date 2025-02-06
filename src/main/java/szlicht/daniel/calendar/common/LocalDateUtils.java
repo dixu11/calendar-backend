@@ -1,6 +1,10 @@
 package szlicht.daniel.calendar.common;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,5 +19,21 @@ public class LocalDateUtils {
         }
         dates.add(nextDate);
         return dates;
+    }
+
+    public static String simpleTime(LocalDateTime dateTime) {
+        return dateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
+
+    public static String simpleDate(LocalDateTime dateTime) {
+        return dateTime.format(DateTimeFormatter.ofPattern("dd.MM"));
+    }
+
+    public static LocalDate nextMonday(LocalDate localDate) {
+        LocalDate next = localDate.plusDays(1);
+        while (next.getDayOfWeek() != DayOfWeek.MONDAY) {
+            next = next.plusDays(1);
+        }
+        return next;
     }
 }
