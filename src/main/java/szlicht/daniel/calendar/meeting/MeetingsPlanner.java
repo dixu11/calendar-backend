@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.LocalDateUtils;
 
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,7 +22,7 @@ public class MeetingsPlanner {
 
     private static final LocalTime WORK_START = LocalTime.of(11, 30);
     private static final LocalTime WORK_END = LocalTime.of(16, 0);
-    private static final int BUFFER = 15;
+
 
     private final Calendar calendar;
 
@@ -60,22 +59,18 @@ public class MeetingsPlanner {
     }
 
     private Optional<Meeting> getMeetingPropositionsFor(List<Event> events, int minutes,LocalDate date) {
-        Meeting proposition = createMeetingAt(date.atTime(WORK_END).minusMinutes(minutes),minutes);
+        Meeting proposition = new Meeting(date.atTime(WORK_END).minusMinutes(minutes),date.atTime(WORK_END));
         for (Event event : events) {
             Meeting otherMeeting = new Meeting(event);
-            if (!proposition.collideWith(otherMeeting,15)) { //todo margins!
+            if (!proposition.collideWith(otherMeeting)) {
                 return Optional.of(proposition);
             }
-            proposition = createMeetingAt(otherMeeting.getStart().minusMinutes(minutes + BUFFER), minutes);
+            proposition = Meeting.createBefore(otherMeeting,minutes);
             if (proposition.getStart().toLocalTime().isBefore(WORK_START)) {
                 return Optional.empty();
             }
         }
         return Optional.of(proposition);
-    }
-
-    private Meeting createMeetingAt(LocalDateTime time, int minutes) {
-        return new Meeting(time, time.plusMinutes(minutes));
     }
 
     //collecting events ----------------------------
