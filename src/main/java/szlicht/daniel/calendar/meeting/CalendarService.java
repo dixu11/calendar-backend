@@ -17,7 +17,7 @@ public class CalendarService {
         this.meetingsPlanner = meetingsPlanner;
     }
 
-    public Map<LocalDate, Meeting> getMeetingPropositions(Integer minutesLength) {
+    public Propositions getMeetingPropositions(Integer minutesLength) {
         if (minutesLength == null) {
             minutesLength = DEFAULT_MEETING_LENGTH_MINUTES;
         }

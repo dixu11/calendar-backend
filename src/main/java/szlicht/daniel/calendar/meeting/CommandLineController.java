@@ -26,7 +26,7 @@ public class CommandLineController implements CommandLineRunner {
             String[] input = scanner.nextLine().split(" ");
             String mail = input[0];
             int minutes = (int) (Double.parseDouble(input[1]) * 60);
-            Map<LocalDate, Meeting> meetingPropositions = calendarService.getMeetingPropositions(minutes);
+            Propositions meetingPropositions = calendarService.getMeetingPropositions(minutes);
             meetingsSender.sendPropositions(meetingPropositions, mail);
             System.out.println("Wysłano!");
         }

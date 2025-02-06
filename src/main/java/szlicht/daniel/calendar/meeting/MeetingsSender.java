@@ -5,6 +5,7 @@ import szlicht.daniel.calendar.common.EmailService;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,41 +20,32 @@ public class MeetingsSender {
         this.emailService = emailService;
     }
 
-    public void sendPropositions(Map<LocalDate, Meeting> meetings, String to) {
-        String body = formatBody(meetings);
+    public void sendPropositions(Propositions propositions, String to) {
+        String body = formatBody(propositions);
         emailService.sendHtmlEmail(to, "Mentoring z Daniel Szlicht - proponowane terminy", body);
     }
 
-    private String formatBody(Map<LocalDate, Meeting> meetings) {
+    private String formatBody(Propositions propositions) {
         String result = "Wybierz dogodny termin: <br><br>";
-        result += "Ten tydzień:\n";
-        Map<LocalDate, Meeting> firstWeekMeetings = getBefore(meetings, nextMonday(LocalDate.now()));
+        result += "Ten tydzień:";
+        List<Meeting> firstWeekMeetings = propositions.getFirstWeek();
         result += formatPropositions(firstWeekMeetings);
-        result += "\n";
-        result += "Kolejne tygodnie:\n";
-        Map<LocalDate, Meeting> followingWeeksMeetings = getMinimum(meetings, nextMonday(LocalDate.now()));
-        result += formatPropositions(followingWeeksMeetings);
+        result += "Za tydzień:";
+        List<Meeting> nextWeek = propositions.getNextWeek();
+        result += formatPropositions(nextWeek);
+        result += "Kolejne tygodnie:";
+        List<Meeting> followingWeeks = propositions.getAfterNextWeek();
+        result += formatPropositions(followingWeeks);
         return result;
     }
 
-    private Map<LocalDate, Meeting> getBefore(Map<LocalDate, Meeting> meetings, LocalDate beforeDate) {
-      return   meetings.entrySet().stream()
-                .filter(entry -> entry.getKey().isBefore(beforeDate))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    private Map<LocalDate,Meeting> getMinimum(Map<LocalDate, Meeting> meetings, LocalDate minimumDate){
-       return meetings.entrySet().stream()
-                .filter(entry -> entry.getKey().isAfter(minimumDate)|| entry.getKey().isEqual(minimumDate))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    private String formatPropositions(Map<LocalDate, Meeting> meetings){
+    private String formatPropositions(List<Meeting> meetings){
         StringBuilder propositions = new StringBuilder();
         propositions.append("<pre>");
-        for (LocalDate date : meetings.keySet()) {
-            Meeting meeting = meetings.get(date);
-            String weekDay = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.forLanguageTag("pl-PL"));
+        for (Meeting meeting : meetings) {
+            String weekDay = meeting.getStart()
+                    .getDayOfWeek()
+                    .getDisplayName(TextStyle.SHORT, Locale.forLanguageTag("pl-PL"));
             propositions.append(String.format("%-5s", weekDay));
             propositions.append(simpleDate(meeting.getStart()));
             propositions.append("  ");
@@ -65,6 +57,4 @@ public class MeetingsSender {
         propositions.append("</pre>");
         return propositions.toString();
     }
-
-
 }

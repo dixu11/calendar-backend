@@ -35,7 +35,7 @@ public class MeetingsPlanner {
 
     //generating suggestions ------------------------------
 
-    public Map<LocalDate, Meeting> getMeetingSuggestions(int timeMinutes) {
+    public Propositions getMeetingSuggestions(int timeMinutes) {
         update();
         Map<LocalDate, List<Event>> allEvents = sortEventsByDays();
         Map<LocalDate, Meeting> result = new TreeMap<>(LocalDate::compareTo);
@@ -43,7 +43,7 @@ public class MeetingsPlanner {
             Optional<Meeting> meeting = getMeetingPropositionsFor(allEvents.get(date), timeMinutes, date);
             meeting.ifPresent(value -> result.put(date, value));
         }
-        return result;
+        return new Propositions(new ArrayList<>(result.values()));
     }
 
     private Map<LocalDate, List<Event>> sortEventsByDays() {
