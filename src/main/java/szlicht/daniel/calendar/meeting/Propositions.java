@@ -1,5 +1,7 @@
 package szlicht.daniel.calendar.meeting;
 
+import org.springframework.cglib.core.Local;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,7 @@ public class Propositions {
     }
 
     public List<Meeting> getNextWeek() {
-        return getBetweenExclude(LocalDate.now().minusDays(1).plusWeeks(1),
+        return getBetweenExclude(nextMonday(LocalDate.now()).minusDays(1),
                 nextMonday(nextMonday(LocalDate.now())));
     }
 
