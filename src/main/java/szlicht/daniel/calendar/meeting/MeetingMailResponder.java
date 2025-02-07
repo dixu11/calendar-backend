@@ -34,3 +34,5 @@ class MeetingMailResponder implements MailResponder {
         facade.sendPropositions(length, to);
     }
 }
+
+//działa!
