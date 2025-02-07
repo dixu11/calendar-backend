@@ -36,7 +36,15 @@ class MeetingsSender {
     }
 
     private String formatBody(Propositions propositions) {
-        String result = String.format("Wybierz dogodny termin na lekcję trwającą <b>%.1fh</b>", propositions.getHours());
+        String result = "";
+        result += "<center>";
+        result += String.format("<h2>Wybierz dogodny termin na lekcję trwającą <b>%.1fh</b></h2>", propositions.getHours());
+        if (propositions.getHours() == 1) {
+            result += "<h3>Uwaga!</h3>";
+            result += "Godzinne spotkania trwają dokładnie <b>55 minut</b> ponieważ po nich nie robię przerw.";
+            result += "<br>";
+            result += "Umów się na dłuże spotkanie jeśli chcesz odzyskać swoje 5 minut ;)";
+        }
         result += "<br>";
         result += "<br>";
         result += "Ten tydzień:";
@@ -48,19 +56,29 @@ class MeetingsSender {
         result += "Kolejne tygodnie:";
         List<Meeting> followingWeeks = propositions.getAfterNextWeek();
         result += formatPropositions(followingWeeks);
-        result += "Aby wybrać inną dłogość wybierz i wyślij mail:";
+        result += "<br>";
+        result += "Aby wybrać <b>inną długość</b> kliknij i wyślij mail:";
         result += "<br>";
         result += "Dostępne długości lekcji: " + formatMailtoHours();
         result += "<br>";
-        result += String.format("Jeśli żaden z terminów Ci nie podpasował a zależy Ci na spotkaniu " +
-                "napisz kiedy jesteś dostępny/a na: %s, poszukamy terminu indywidualnie :)", MY_MAIL);
+        result += String.format("Jeśli <b>żaden</b> z terminów Ci nie podpasował");
+                result +=  "a zależy Ci na spotkaniu <b>napisz</b> kiedy jesteś dostępny/a na:";
+        result += "<br>";
+        result += MY_MAIL;
+        result += "<br>";
+        result += "poszukamy terminu <b>indywidualnie</b> :)";
         result += "<br>";
         result += "<br>";
-        result += "UWAGA - AKTUALNA WERSJA APLIKACJI NIE ZOSTAŁA JESZCZE WDROŻONA.";
         result += "<br>";
-        result += "Nie działa stale online, a tylko gdy mam ją uruchomioną.";
+        result += "<b>AKTUALNA WERSJA APLIKACJI JEST BARDZO WCZESNA I NIE ZOSTAŁA JESZCZE WDROŻONA.</b>";
+        result += "<br>";
+        result += "Działa tylko gdy mam uruchomiony komputer.";
         result += "<br>";
         result += "Jeśli odpowiedź nie przyjdzie natychmiast skontaktuj się ze mną w inny sposób lub zaczekaj aż sprawdzę te maile ręcznie (zwykle raz dziennie)";
+        result += "<br>";
+        result += "<br>";
+        result += "Jeśli znajdziesz <b>błędy</b> lub masz jakieś <b>uwagi i pomysły</b> - koniecznie mi o tym powiedz!";
+        result += "</center>";
         return result;
     }
 
@@ -68,11 +86,11 @@ class MeetingsSender {
         StringBuilder mailto = new StringBuilder();
         for (Double meetingHour : MEETING_HOURS) {
             mailto.append(mailto(
-                    "terminy " + meetingHour + "h",
-                    String.format("Poproszę o proponowane terminy mentoringu o długości %.1fh",meetingHour),
-                    String.format("%.1fh",meetingHour),
-                    BOT_MAIL))
-                    .append(" ");
+                            "terminy " + meetingHour + "h",
+                            String.format("Poproszę o proponowane terminy mentoringu o długości %.1fh", meetingHour),
+                            String.format("%.1fh", meetingHour),
+                            BOT_MAIL))
+                    .append("  ");
         }
         return mailto.toString();
     }
@@ -107,9 +125,9 @@ class MeetingsSender {
         return mailto(
                 String.format("Chcę zaproponować spotkanie | meeting"),
                 String.format("start#%s\nlength#%d\n\n" +
-                        "Uwaga:\nNie modyfikuj powyższych kluczy aby aplikacja mogła je poprawnie zinterpretować.\n" +
+                                "Uwaga:\nNie modyfikuj powyższych kluczy aby aplikacja mogła je poprawnie zinterpretować.\n" +
                                 "Jeśli masz do mnie jakieś uwagi przed spotkaniem dopisz je poniżej:\n%s"
-                        ,meeting.getStart(),meeting.getLengthMinutes(),DESCRIPTION_PREFIX),
+                        , meeting.getStart(), meeting.getLengthMinutes(), DESCRIPTION_PREFIX),
                 String.format("umów się"),
                 BOT_MAIL
         );
@@ -133,7 +151,7 @@ class MeetingsSender {
                 "że jesteś już gotowy/a to zadzwonię od razu :)";
         body += "<br>";
         body += "Do tego czasu <b>naskrob trochę kodu</b> !";
-        emailService.sendHtmlEmail(meeting.getMail(),"Zaplanowano lekcję: "+ meeting.when(),
+        emailService.sendHtmlEmail(meeting.getMail(), "Zaplanowano lekcję: " + meeting.when(),
                 body);
     }
 }
