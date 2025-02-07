@@ -34,8 +34,9 @@ class MeetingMailResponder implements MailResponder {
         Integer minutes;
         try {
             String subject = message.getSubject();
+
             minutes = (int) (Double.parseDouble(subject.replace(",", ".")) * 60);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException|NullPointerException e) {
             minutes = null;
         }
         facade.sendPropositions(minutes, message.getSender().toString());

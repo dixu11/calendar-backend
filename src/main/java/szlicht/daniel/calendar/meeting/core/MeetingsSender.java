@@ -85,12 +85,22 @@ class MeetingsSender {
                     .append("  ")
                     .append(simpleTime(meeting.getStart()))
                     .append(" - ")
-                    .append(simpleTime(meeting.getEnd()))
-                    .append("\n");
-            propositions.append(line);
+                    .append(simpleTime(meeting.getEnd()));
+            propositions.append(line)
+                    .append(" ")
+                    .append(formatMailtoProposition(meeting));
             System.out.print(line);
         }
         propositions.append("</pre>");
         return propositions.toString();
+    }
+
+    private String formatMailtoProposition(Meeting meeting) {
+        return mailto(
+                String.format("Chcę zaproponować spotkanie | meeting"),
+                String.format("meeting\nstart:%s\nlength:%d",meeting.getStart(),meeting.getLengthMinutes()),
+                String.format("umów się"),
+                BOT_MAIL
+        );
     }
 }

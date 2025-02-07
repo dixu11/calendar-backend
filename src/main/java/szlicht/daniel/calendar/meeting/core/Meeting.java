@@ -64,7 +64,7 @@ class Meeting {
         return BUFFER;
     }
 
-    private int getLengthMinutes() {
+    public int getLengthMinutes() {
         return (int) start.until(end, ChronoUnit.MINUTES);
     }
 
