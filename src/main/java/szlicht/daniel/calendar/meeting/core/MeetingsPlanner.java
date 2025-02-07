@@ -21,8 +21,8 @@ import static szlicht.daniel.calendar.common.GoogleCalendarClient.*;
 class MeetingsPlanner {
     private static final String CALENDAR_OTHER_ID = "primary";
     private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
-    private static final LocalTime WORK_START = LocalTime.of(11, 30);
-    private static final LocalTime WORK_END = LocalTime.of(16, 0);
+    private static final LocalTime WORK_START = LocalTime.of(11, 15);
+    private static final LocalTime WORK_END = LocalTime.of(15, 45);
     private final Calendar calendar;
     private Set<Event> events =
             new TreeSet<>(Comparator.comparingLong(event -> event.getStart().getDateTime().getValue()));
@@ -46,7 +46,9 @@ class MeetingsPlanner {
 
     private Map<LocalDate, List<Event>> sortEventsByDays() {
         Map<LocalDate, List<Event>> result = new TreeMap<>(LocalDate::compareTo);
-        for (LocalDate date : LocalDateUtils.getDatesBetweenInclude(LocalDate.now(), LocalDate.now().plusMonths(1))) {
+        for (LocalDate date : LocalDateUtils.getDatesBetweenInclude(
+                firstDay().toLocalDate(),
+                lastDay().toLocalDate())) {
             List<Event> eventsForThisDay = events.stream()
                     .filter(event -> toLocalDateTime(event.getStart().getDateTime()).toLocalDate().equals(date))
                     .sorted(Comparator.comparingLong(event -> -event.getStart().getDateTime().getValue()))
@@ -72,14 +74,6 @@ class MeetingsPlanner {
     }
 
     //arrange new meetings -------------------------
-
-//    @PostConstruct
-    void testAddMeeting() {
-        LocalDateTime start = LocalDateTime.now().plusDays(1);
-        LocalDateTime end = start.plusMinutes(400);
-        Meeting meeting = new Meeting(start, end);
-        arrange(meeting);
-    }
 
     void arrange(Meeting meeting) {
         Event event = meeting.asEvent();
@@ -109,12 +103,12 @@ class MeetingsPlanner {
 
     private Events getEvents(String calendarId) {
         try {
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime monthEnd = now.plusMonths(1);
+            LocalDateTime timeMin = firstDay();
+            LocalDateTime timeMax = lastDay();
             return calendar.events().list(calendarId)
                     .setMaxResults(100)
-                    .setTimeMin(toDateTime(now))
-                    .setTimeMax(toDateTime(monthEnd))
+                    .setTimeMin(toDateTime(timeMin))
+                    .setTimeMax(toDateTime(timeMax))
                     .setOrderBy("startTime")
                     .setSingleEvents(true)
                     .execute();
@@ -122,6 +116,13 @@ class MeetingsPlanner {
             e.printStackTrace();
             throw new CalendarOfflineException(e.getMessage());
         }
+    }
 
+    private LocalDateTime firstDay() {
+        return LocalDateTime.now().plusDays(1).with(LocalTime.MIN);
+    }
+
+    private LocalDateTime lastDay() {
+        return LocalDateTime.now().plusMonths(1).with(LocalTime.MAX);
     }
 }
