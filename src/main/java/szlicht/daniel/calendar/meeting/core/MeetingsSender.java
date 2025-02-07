@@ -3,6 +3,7 @@ package szlicht.daniel.calendar.meeting.core;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.EmailService;
+import szlicht.daniel.calendar.common.LocalDateUtils;
 
 import java.time.format.TextStyle;
 import java.util.List;
@@ -21,6 +22,8 @@ class MeetingsSender {
     private List<Double> MEETING_HOURS;
     @Value("${meeting.keywords.prefix.description}")
     private String DESCRIPTION_PREFIX;
+    @Value("${meeting.mail.phone}")
+    private String PHONE_NUMBER;
     private EmailService emailService;
 
     MeetingsSender(EmailService emailService) {
@@ -83,7 +86,7 @@ class MeetingsSender {
             String weekDay = meeting.getStart()
                     .getDayOfWeek()
                     .getDisplayName(TextStyle.SHORT, Locale.forLanguageTag("pl-PL"));
-            line.append(String.format("%-5s", weekDay))
+            line.append(String.format("%-6s", weekDay))
                     .append(simpleDate(meeting.getStart()))
                     .append("  ")
                     .append(simpleTime(meeting.getStart()))
@@ -97,7 +100,7 @@ class MeetingsSender {
         return propositions.toString();
     }
 
-    private String formatMailtoProposition(Meeting meeting) { //todo spiąć to porządnie z czytaczem dodatkowego description
+    private String formatMailtoProposition(Meeting meeting) {
         return mailto(
                 String.format("Chcę zaproponować spotkanie | meeting"),
                 String.format("start#%s\nlength#%d\n\n" +
@@ -107,5 +110,27 @@ class MeetingsSender {
                 String.format("umów się"),
                 BOT_MAIL
         );
+    }
+
+    public void notifyArrangementComplete(Meeting meeting) {
+        String body = "<h2>Lekcja zaplanowana!</h2>";
+        body += "Spotkanie można bezpłatnie anulować na <b>dobę</b> przed. " +
+                "<br>W tym celu napisz mi SMS na numer: <b>"
+                + PHONE_NUMBER + "</b> lub powiadom na <b>Skype</b>.";
+        body += "<br>";
+        body += "Mój brak odpowiedzi potraktuj jako <b>akceptację spotkania.</b>";
+        body += "<br>";
+        body += "W szczególnej sytuacji mogę odrzucić zaproponowane spotkanie," +
+                " dostaniesz wtedy o tym informację mailową.";
+        body += "<br>";
+        body += "<br>";
+        body += "Do usłyszenia <b>" + meeting.when() + "</b> ! ";
+        body += "<br>";
+        body += "Tuż przed lekcją napisz mi, " +
+                "że jesteś już gotowy/a to zadzwonię od razu :)";
+        body += "<br>";
+        body += "Do tego czasu <b>naskrob trochę kodu</b> !";
+        emailService.sendHtmlEmail(meeting.getMail(),"Zaplanowano lekcję: "+ meeting.when(),
+                body);
     }
 }

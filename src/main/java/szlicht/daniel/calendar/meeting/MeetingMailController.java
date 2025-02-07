@@ -113,7 +113,8 @@ class MeetingMailController implements MailResponder {
             if (!startAdding || line.isBlank()) {
                 continue;
             }
-            result.append(line);
+            result.append(line)
+                    .append("\n");
         }
         return result.toString();
     }

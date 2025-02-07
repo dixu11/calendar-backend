@@ -28,6 +28,10 @@ public class LocalDateUtils {
         return dateTime.format(DateTimeFormatter.ofPattern("dd.MM"));
     }
 
+    public static String simpleDateTime(LocalDateTime localDateTime) {
+        return simpleDate(localDateTime) + " " + simpleTime(localDateTime);
+    }
+
     public static LocalDate nextMonday(LocalDate localDate) {
         LocalDate next = localDate.plusDays(1);
         while (next.getDayOfWeek() != DayOfWeek.MONDAY) {

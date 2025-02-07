@@ -26,5 +26,6 @@ public class CalendarFacade {
 
     public void arrangeMeeting(Meeting meeting) {
         calendarService.arrangeMeeting(meeting);
+        meetingsSender.notifyArrangementComplete(meeting);
     }
 }

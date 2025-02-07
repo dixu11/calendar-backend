@@ -4,6 +4,7 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import szlicht.daniel.calendar.common.GoogleCalendarClient;
 import szlicht.daniel.calendar.common.GoogleCalendarColor;
+import szlicht.daniel.calendar.common.LocalDateUtils;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -109,6 +110,15 @@ public class Meeting {
         }
         return event;
     }
+
+    public String getMail() {
+        return details.mail;
+    }
+
+    public String when() {
+        return LocalDateUtils.simpleDateTime(start) + "-" + LocalDateUtils.simpleTime(end);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
