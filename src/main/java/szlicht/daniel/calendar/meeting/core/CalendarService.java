@@ -29,6 +29,14 @@ class CalendarService {
         return meetingsPlanner.getMeetingSuggestions(minutesLength);
     }
 
+    void arrangeMeeting(Meeting meeting) {
+        Propositions propositions = getMeetingPropositions(meeting.getLengthMinutes());
+        if (propositions.isNotValid(meeting)) {
+            throw new IllegalArgumentException("(collision) Cannot arrange meeting: " + meeting);
+        }
+        meetingsPlanner.arrange(meeting);
+    }
+
     private boolean notAcceptableLength(int minutes) {
         return Arrays.stream(ACCEPTABLE_LENGTH_HOURS)
                 .mapToInt(hour -> (int) (hour * 60))

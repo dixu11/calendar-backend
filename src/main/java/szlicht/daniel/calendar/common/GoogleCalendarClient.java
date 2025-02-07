@@ -13,6 +13,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.services.calendar.model.EventDateTime;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -65,6 +66,12 @@ public class GoogleCalendarClient {
 
     public static DateTime toDateTime(LocalDateTime localDateTime) {
         return new DateTime(localDateTime.toEpochSecond(ZoneOffset.UTC)*1000);
+    }
+
+    public static EventDateTime toEventDateTime(LocalDateTime localDateTime) {
+        return new EventDateTime()
+                .setDateTime(toDateTime(localDateTime.minusHours(1)))
+                .setTimeZone("Europe/Warsaw");
     }
 
     public static LocalDateTime toLocalDateTime(DateTime dateTime) {

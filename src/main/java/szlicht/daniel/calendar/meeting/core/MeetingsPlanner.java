@@ -3,7 +3,9 @@ package szlicht.daniel.calendar.meeting.core;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
+import szlicht.daniel.calendar.common.GoogleCalendarColor;
 import szlicht.daniel.calendar.common.LocalDateUtils;
 
 import java.io.IOException;
@@ -12,8 +14,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-import static szlicht.daniel.calendar.common.GoogleCalendarClient.toDateTime;
-import static szlicht.daniel.calendar.common.GoogleCalendarClient.toLocalDateTime;
+import static szlicht.daniel.calendar.common.GoogleCalendarClient.*;
 
 @Service
 class MeetingsPlanner {
@@ -39,7 +40,7 @@ class MeetingsPlanner {
             Optional<Meeting> meeting = getMeetingPropositionsFor(allEvents.get(date), timeMinutes, date);
             meeting.ifPresent(value -> result.put(date, value));
         }
-        return new Propositions(new ArrayList<>(result.values()),timeMinutes/60.0);
+        return new Propositions(new ArrayList<>(result.values()), timeMinutes / 60.0);
     }
 
     private Map<LocalDate, List<Event>> sortEventsByDays() {
@@ -54,19 +55,45 @@ class MeetingsPlanner {
         return result;
     }
 
-    private Optional<Meeting> getMeetingPropositionsFor(List<Event> events, int minutes,LocalDate date) {
-        Meeting proposition = new Meeting(date.atTime(WORK_END).minusMinutes(minutes),date.atTime(WORK_END));
+    private Optional<Meeting> getMeetingPropositionsFor(List<Event> events, int minutes, LocalDate date) {
+        Meeting proposition = new Meeting(date.atTime(WORK_END).minusMinutes(minutes), date.atTime(WORK_END));
         for (Event event : events) {
             Meeting otherMeeting = new Meeting(event);
             if (!proposition.collideWith(otherMeeting)) {
                 return Optional.of(proposition);
             }
-            proposition = Meeting.createBefore(otherMeeting,minutes);
+            proposition = Meeting.createBefore(otherMeeting, minutes);
             if (proposition.getStart().toLocalTime().isBefore(WORK_START)) {
                 return Optional.empty();
             }
         }
         return Optional.of(proposition);
+    }
+
+    //arrange new meetings -------------------------
+
+//    @PostConstruct
+    void testAddMeeting() {
+        LocalDateTime start = LocalDateTime.now().plusDays(1);
+        LocalDateTime end = start.plusMinutes(400);
+        Meeting meeting = new Meeting(start, end);
+        arrange(meeting);
+    }
+
+    void arrange(Meeting meeting) {
+        Event event = new Event();
+        event.setSummary("Nowe spotkanie");
+        event.setDescription("Spotkanie umówione automatycznie");
+        event.setStart(toEventDateTime(meeting.getStart()));
+        event.setEnd(toEventDateTime(meeting.getEnd()));
+        event.setColorId(GoogleCalendarColor.YELLOW.getColorId());
+        try {
+            Event created = calendar.events().insert(CALENDAR_MEETINGS_ID, event).execute();
+            System.out.println("Utworzono zdarzenie: " + created.getHtmlLink());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new CalendarOfflineException("Nie udało się wstawić spotkania do kalendarza: " + e.getMessage());
+        }
     }
 
     //collecting events ----------------------------
@@ -84,8 +111,8 @@ class MeetingsPlanner {
         events.addAll(timedEvents);
     }
 
-    private Events getEvents(String calendarId)  {
-        try{
+    private Events getEvents(String calendarId) {
+        try {
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime monthEnd = now.plusMonths(1);
             return calendar.events().list(calendarId)
@@ -95,7 +122,7 @@ class MeetingsPlanner {
                     .setOrderBy("startTime")
                     .setSingleEvents(true)
                     .execute();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             throw new CalendarOfflineException(e.getMessage());
         }

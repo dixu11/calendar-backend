@@ -55,4 +55,8 @@ class Propositions {
     List<Meeting> getMeetings() {
         return meetings;
     }
+
+    public boolean isNotValid(Meeting meeting) {
+        return !meetings.contains(meeting);
+    }
 }

@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.meeting.core;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,5 +22,10 @@ public class CalendarFacade {
 
     public Propositions getMeetingPropositions(Integer minutes) {
         return calendarService.getMeetingPropositions(minutes);
+    }
+
+    public void arrangeMeeting(LocalDateTime start, int minutes) {
+        Meeting meeting = new Meeting(start, minutes);
+        calendarService.arrangeMeeting(meeting);
     }
 }

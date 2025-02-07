@@ -5,6 +5,7 @@ import szlicht.daniel.calendar.common.GoogleCalendarClient;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 class Meeting {
     private static final int BUFFER = 15;
@@ -13,9 +14,14 @@ class Meeting {
     private LocalDateTime start;
     private LocalDateTime end;
 
-    Meeting(LocalDateTime start, LocalDateTime end) {
+    public Meeting(LocalDateTime start, LocalDateTime end) {
         this.start = start;
         this.end = end;
+    }
+
+    Meeting(LocalDateTime start, int minutes) {
+        this.start = start;
+        this.end = start.plusMinutes(minutes);
     }
 
     Meeting(Meeting meetingAfter, int lengthMinutes) {
@@ -71,6 +77,19 @@ class Meeting {
     private void moveBy(int minutes) {
         start = start.plusMinutes(minutes);
         end = end.plusMinutes(minutes);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Meeting meeting = (Meeting) o;
+        return Objects.equals(start, meeting.start) && Objects.equals(end, meeting.end);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end);
     }
 
     @Override

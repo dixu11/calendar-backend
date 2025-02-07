@@ -76,6 +76,7 @@ class MeetingsSender {
         StringBuilder propositions = new StringBuilder();
         propositions.append("<pre>");
         for (Meeting meeting : meetings) {
+            System.out.println(meeting);
             StringBuilder line = new StringBuilder();
             String weekDay = meeting.getStart()
                     .getDayOfWeek()
@@ -89,7 +90,6 @@ class MeetingsSender {
             propositions.append(line)
                     .append(" ")
                     .append(formatMailtoProposition(meeting));
-            System.out.print(line);
         }
         propositions.append("</pre>");
         return propositions.toString();
