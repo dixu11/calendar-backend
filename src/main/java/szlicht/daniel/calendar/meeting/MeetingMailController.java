@@ -1,12 +1,12 @@
 package szlicht.daniel.calendar.meeting;
 
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMultipart;
 import org.eclipse.angus.mail.imap.IMAPMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.common.MailResponder;
 import szlicht.daniel.calendar.meeting.core.CalendarFacade;
+import szlicht.daniel.calendar.meeting.core.Meeting;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,6 +24,8 @@ class MeetingMailController implements MailResponder {
     private List<String> PROPOSITIONS_KEYWORDS;
     @Value("${meeting.keywords.arrange}")
     private List<String> ARRANGE_KEYWORDS;
+    @Value("${meeting.keywords.prefix.description}")
+    private String DESCRIPTION_PREFIX;
 
     private final CalendarFacade facade;
 
@@ -84,18 +86,36 @@ class MeetingMailController implements MailResponder {
             List<String> firstLines = Arrays.stream(content.split("\n"))
                     .map(String::trim)
                     .filter(line -> !line.isEmpty())
-                    .limit(2)
                     .toList();
 
-            System.out.println("First 3 lines from email body:");
+            System.out.println("lines from email body:");
             firstLines.forEach(System.out::println);
             LocalDateTime start = LocalDateTime.parse(firstLines.get(0).split("#")[1]);
             int minutes = Integer.parseInt(firstLines.get(1).split("#")[1]);
-            facade.arrangeMeeting(start, minutes);
+            Meeting meeting = new Meeting(start, minutes)
+                    .setDetails(new Meeting.Details(message.getSender().toString(),
+                            extractProvidedDescriptions(firstLines)));
+            facade.arrangeMeeting(meeting);
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
             System.err.println("Cannot process body");
         }
+    }
+
+    private String extractProvidedDescriptions(List<String> allLines) {
+        StringBuilder result = new StringBuilder();
+        boolean startAdding = false;
+        for (String line : allLines) {
+            if (line.startsWith(DESCRIPTION_PREFIX)) {
+                startAdding = true;
+                line = line.replace(DESCRIPTION_PREFIX, "");
+            }
+            if (!startAdding || line.isBlank()) {
+                continue;
+            }
+            result.append(line);
+        }
+        return result.toString();
     }
 
     private boolean containsAnyOf(String content, List<String> keywords) {

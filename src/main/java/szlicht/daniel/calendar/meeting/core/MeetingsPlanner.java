@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.meeting.core;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.Events;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
@@ -81,12 +82,7 @@ class MeetingsPlanner {
     }
 
     void arrange(Meeting meeting) {
-        Event event = new Event();
-        event.setSummary("Nowe spotkanie");
-        event.setDescription("Spotkanie umówione automatycznie");
-        event.setStart(toEventDateTime(meeting.getStart()));
-        event.setEnd(toEventDateTime(meeting.getEnd()));
-        event.setColorId(GoogleCalendarColor.YELLOW.getColorId());
+        Event event = meeting.asEvent();
         try {
             Event created = calendar.events().insert(CALENDAR_MEETINGS_ID, event).execute();
             System.out.println("Utworzono zdarzenie: " + created.getHtmlLink());

@@ -24,8 +24,7 @@ public class CalendarFacade {
         return calendarService.getMeetingPropositions(minutes);
     }
 
-    public void arrangeMeeting(LocalDateTime start, int minutes) {
-        Meeting meeting = new Meeting(start, minutes);
+    public void arrangeMeeting(Meeting meeting) {
         calendarService.arrangeMeeting(meeting);
     }
 }

@@ -55,6 +55,7 @@ public class ReadingMailIntegration {
         ImapIdleChannelAdapter adapter = new ImapIdleChannelAdapter(imapMailReceiver);
         adapter.setAutoStartup(true);
         adapter.setOutputChannel(mailChannel());
+        adapter.setReconnectDelay(10000L); //10 sec reconnect instead of 1 min for debug
         return adapter;
     }
 

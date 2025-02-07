@@ -19,6 +19,8 @@ class MeetingsSender {
     private String BOT_MAIL;
     @Value("${meeting.params.hours}")
     private List<Double> MEETING_HOURS;
+    @Value("${meeting.keywords.prefix.description}")
+    private String DESCRIPTION_PREFIX;
     private EmailService emailService;
 
     MeetingsSender(EmailService emailService) {
@@ -88,19 +90,20 @@ class MeetingsSender {
                     .append(" - ")
                     .append(simpleTime(meeting.getEnd()));
             propositions.append(line)
-                    .append(" ")
+                    .append("  ")
                     .append(formatMailtoProposition(meeting));
         }
         propositions.append("</pre>");
         return propositions.toString();
     }
 
-    private String formatMailtoProposition(Meeting meeting) {
+    private String formatMailtoProposition(Meeting meeting) { //todo spiąć to porządnie z czytaczem dodatkowego description
         return mailto(
                 String.format("Chcę zaproponować spotkanie | meeting"),
                 String.format("start#%s\nlength#%d\n\n" +
-                        "Uwaga: nie modyfikuj powyższych kluczy aby aplikacja mogła je poprawnie zinterpretować"
-                        ,meeting.getStart(),meeting.getLengthMinutes()),
+                        "Uwaga:\nNie modyfikuj powyższych kluczy aby aplikacja mogła je poprawnie zinterpretować.\n" +
+                                "Jeśli masz do mnie jakieś uwagi przed spotkaniem dopisz je poniżej:\n%s"
+                        ,meeting.getStart(),meeting.getLengthMinutes(),DESCRIPTION_PREFIX),
                 String.format("umów się"),
                 BOT_MAIL
         );

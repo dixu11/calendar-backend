@@ -3,6 +3,7 @@ package szlicht.daniel.calendar.meeting;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.meeting.core.CalendarFacade;
+import szlicht.daniel.calendar.meeting.core.Meeting;
 
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -36,7 +37,8 @@ class MeetingConsoleController implements CommandLineRunner {
     }
 
     private void arrangeMeeting(String[] input) {
-        facade.arrangeMeeting(LocalDateTime.parse(input[1]),Integer.parseInt(input[2]));
+        Meeting meeting = new Meeting(LocalDateTime.parse(input[1]), Integer.parseInt(input[2]));
+        facade.arrangeMeeting(meeting);
     }
 
     private void sendPropositions(String[] input) {
