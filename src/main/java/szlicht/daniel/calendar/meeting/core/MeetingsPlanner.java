@@ -61,7 +61,7 @@ class MeetingsPlanner {
         for (Event event : events) {
             Meeting otherMeeting = new Meeting(event);
             if (!proposition.collideWith(otherMeeting)) {
-                return Optional.of(proposition);
+                continue;
             }
             proposition = Meeting.createBefore(otherMeeting, minutes);
             if (proposition.getStart().toLocalTime().isBefore(WORK_START)) {
