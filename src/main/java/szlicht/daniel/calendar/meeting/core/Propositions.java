@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting;
+package szlicht.daniel.calendar.meeting.core;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,31 +7,31 @@ import java.util.stream.Collectors;
 
 import static szlicht.daniel.calendar.common.LocalDateUtils.nextMonday;
 
-public class Propositions {
+class Propositions {
     private List<Meeting> meetings;
 
-    public Propositions(List<Meeting> meetings) {
+    Propositions(List<Meeting> meetings) {
         this.meetings = meetings;
     }
 
-    public Propositions() {
+    Propositions() {
     }
 
-    public List<Meeting> getFirstWeek() {
+    List<Meeting> getFirstWeek() {
         return getBetweenExclude(LocalDate.now().minusDays(1), nextMonday(LocalDate.now()));
     }
 
-    public List<Meeting> getNextWeek() {
+    List<Meeting> getNextWeek() {
         return getBetweenExclude(nextMonday(LocalDate.now()).minusDays(1),
                 nextMonday(nextMonday(LocalDate.now())));
     }
 
-    public List<Meeting> getAfterNextWeek(){
+    List<Meeting> getAfterNextWeek(){
         return getBetweenExclude(nextMonday(nextMonday(LocalDate.now())).minusDays(1),
                 LocalDate.now().plusYears(100));
     }
 
-    public List<Meeting> getBetweenExclude(LocalDate start, LocalDate end) {
+    List<Meeting> getBetweenExclude(LocalDate start, LocalDate end) {
        return meetings.stream()
                 .filter(meeting -> meeting.getStart().toLocalDate().isAfter(start))
                 .filter(meeting -> meeting.getEnd().toLocalDate().isBefore(end))
@@ -46,9 +46,7 @@ public class Propositions {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public List<Meeting> getMeetings() {
+    List<Meeting> getMeetings() {
         return meetings;
     }
-
-
 }

@@ -4,14 +4,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import szlicht.daniel.calendar.meeting.core.CalendarFacade;
+import szlicht.daniel.calendar.meeting.core.CalendarOfflineException;
+
 
 @RestController
 @RequestMapping("/api/v0/meetings")
-public class MeetingController {
-    private CalendarService calendarService;
+class MeetingController {
+    private CalendarFacade facade;
 
-    public MeetingController(CalendarService calendarService) {
-        this.calendarService = calendarService;
+    MeetingController(CalendarFacade facade) {
+        this.facade = facade;
     }
 
     @GetMapping
@@ -20,7 +23,7 @@ public class MeetingController {
             minutes = (int) (hours * 60);
         }
         try {
-            return ResponseEntity.ok(calendarService.getMeetingPropositions(minutes));
+            return ResponseEntity.ok(facade.getMeetingPropositions(minutes));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());

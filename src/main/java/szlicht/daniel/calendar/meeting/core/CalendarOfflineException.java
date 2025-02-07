@@ -1,7 +1,7 @@
-package szlicht.daniel.calendar.meeting;
+package szlicht.daniel.calendar.meeting.core;
 
 public class CalendarOfflineException extends RuntimeException {
-    public CalendarOfflineException(String message) {
+    CalendarOfflineException(String message) {
         super(message);
     }
 }

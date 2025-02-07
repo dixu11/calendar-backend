@@ -31,6 +31,8 @@ public class GoogleCalendarClient {
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
+    //configuration -----
+
     private static Credential getCredentials(NetHttpTransport httpTransport) throws IOException {
         InputStream in = GoogleCalendarClient.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null){
@@ -58,6 +60,8 @@ public class GoogleCalendarClient {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     }
+
+    //some utility methods  --------
 
     public static DateTime toDateTime(LocalDateTime localDateTime) {
         return new DateTime(localDateTime.toEpochSecond(ZoneOffset.UTC)*1000);

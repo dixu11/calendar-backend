@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting;
+package szlicht.daniel.calendar.meeting.core;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.EmailService;
@@ -10,14 +10,14 @@ import java.util.Locale;
 import static szlicht.daniel.calendar.common.LocalDateUtils.*;
 
 @Service
-public class MeetingsSender {
+class MeetingsSender {
     private EmailService emailService;
 
-    public MeetingsSender(EmailService emailService) {
+    MeetingsSender(EmailService emailService) {
         this.emailService = emailService;
     }
 
-    public void sendPropositions(Propositions propositions, String to) {
+    void sendPropositions(Propositions propositions, String to) {
         String body = formatBody(propositions);
         emailService.sendHtmlEmail(to, "Mentoring z Daniel Szlicht - proponowane terminy", body);
     }

@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting;
+package szlicht.daniel.calendar.meeting.core;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
@@ -16,7 +16,7 @@ import static szlicht.daniel.calendar.common.GoogleCalendarClient.toDateTime;
 import static szlicht.daniel.calendar.common.GoogleCalendarClient.toLocalDateTime;
 
 @Service
-public class MeetingsPlanner {
+class MeetingsPlanner {
     private static final String CALENDAR_OTHER_ID = "primary";
     private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
     private static final LocalTime WORK_START = LocalTime.of(11, 30);
@@ -25,13 +25,13 @@ public class MeetingsPlanner {
     private Set<Event> events =
             new TreeSet<>(Comparator.comparingLong(event -> event.getStart().getDateTime().getValue()));
 
-    public MeetingsPlanner(Calendar calendar) {
+    MeetingsPlanner(Calendar calendar) {
         this.calendar = calendar;
     }
 
     //generating suggestions ------------------------------
 
-    public Propositions getMeetingSuggestions(int timeMinutes) {
+    Propositions getMeetingSuggestions(int timeMinutes) {
         update();
         Map<LocalDate, List<Event>> allEvents = sortEventsByDays();
         Map<LocalDate, Meeting> result = new TreeMap<>(LocalDate::compareTo);

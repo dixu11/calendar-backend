@@ -2,29 +2,28 @@ package szlicht.daniel.calendar.meeting;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import szlicht.daniel.calendar.meeting.core.CalendarFacade;
+
 import java.util.Scanner;
 
 @Component
-public class CommandLineController implements CommandLineRunner {
+class CommandLineController implements CommandLineRunner {
 
-    private CalendarService calendarService;
-    private MeetingsSender meetingsSender;
+    private CalendarFacade facade;
 
-    public CommandLineController(CalendarService calendarService, MeetingsSender meetingsSender) {
-        this.calendarService = calendarService;
-        this.meetingsSender = meetingsSender;
+    CommandLineController(CalendarFacade facade) {
+        this.facade = facade;
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         System.out.println("Wprowadź mail na który należy wysłać grafik:");
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String[] input = scanner.nextLine().split(" ");
             String mail = input[0];
             int minutes = (int) (Double.parseDouble(input[1]) * 60);
-            Propositions meetingPropositions = calendarService.getMeetingPropositions(minutes);
-            meetingsSender.sendPropositions(meetingPropositions, mail);
+            facade.sendPropositions(minutes,mail);
             System.out.println("Wysłano!");
         }
     }

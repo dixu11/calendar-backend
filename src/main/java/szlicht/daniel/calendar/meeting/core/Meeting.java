@@ -1,52 +1,51 @@
-package szlicht.daniel.calendar.meeting;
+package szlicht.daniel.calendar.meeting.core;
 
 import com.google.api.services.calendar.model.Event;
 import szlicht.daniel.calendar.common.GoogleCalendarClient;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 
-public class Meeting {
+class Meeting {
     private static final int BUFFER = 15;
     private static final int NO_BUFFER_BELOW = 60;
 
     private LocalDateTime start;
     private LocalDateTime end;
 
-    public Meeting(LocalDateTime start, LocalDateTime end) {
+    Meeting(LocalDateTime start, LocalDateTime end) {
         this.start = start;
         this.end = end;
     }
 
-    public Meeting(Meeting meetingAfter, int lengthMinutes) {
+    Meeting(Meeting meetingAfter, int lengthMinutes) {
         this.start = meetingAfter.getStart().minusMinutes(lengthMinutes);
         this.end = meetingAfter.getStart();
         moveBy(-getBufferAfter());
     }
 
-    public Meeting(Event event) {
+    Meeting(Event event) {
         this.start = GoogleCalendarClient.toLocalDateTime(event.getStart().getDateTime());
         this.end = GoogleCalendarClient.toLocalDateTime(event.getEnd().getDateTime());
     }
 
-    public Meeting() {
+    Meeting() {
     }
 
-    public static Meeting createBefore(Meeting meetingAfter, int minutes) {
+    static Meeting createBefore(Meeting meetingAfter, int minutes) {
         return new Meeting(meetingAfter,minutes);
     }
 
-    public LocalDateTime getStart() {
+    LocalDateTime getStart() {
         return start;
     }
 
-    public LocalDateTime getEnd() {
+    LocalDateTime getEnd() {
         return end;
     }
 
 
-    public boolean collideWith(Meeting otherMeeting) {
+    boolean collideWith(Meeting otherMeeting) {
         LocalDateTime thisEndWithBuffer = getEndPlusBuffer();
         LocalDateTime otherEndWithBuffer = otherMeeting.getEndPlusBuffer();
         boolean collide = thisEndWithBuffer.isAfter(otherMeeting.start)

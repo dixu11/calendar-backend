@@ -1,24 +1,22 @@
-package szlicht.daniel.calendar.meeting;
+package szlicht.daniel.calendar.meeting.core;
 
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Map;
 
 @Service
-public class CalendarService {
+class CalendarService {
 
     private static final int DEFAULT_MEETING_LENGTH_MINUTES = 90;
     private static final double[] ACCEPTABLE_LENGTH_HOURS = {1, 1.25, 1.5, 2, 2.5, 3};
 
     private MeetingsPlanner meetingsPlanner;
 
-    public CalendarService(MeetingsPlanner meetingsPlanner) {
+    CalendarService(MeetingsPlanner meetingsPlanner) {
         this.meetingsPlanner = meetingsPlanner;
     }
 
-    public Propositions getMeetingPropositions(Integer minutesLength) {
+    Propositions getMeetingPropositions(Integer minutesLength) {
         if (minutesLength == null) {
             minutesLength = DEFAULT_MEETING_LENGTH_MINUTES;
         }

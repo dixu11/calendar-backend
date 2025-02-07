@@ -27,6 +27,11 @@ public class ReadingMailIntegration {
     private String username;
     @Value("${spring.mail.password}")
     private String password;
+    private MailResponder responder;
+
+    public ReadingMailIntegration(MailResponder responder) {
+        this.responder = responder;
+    }
 
     @Bean
     public ImapMailReceiver imapMailReceiver() {
@@ -63,16 +68,7 @@ public class ReadingMailIntegration {
     public MessageHandler mailHandler() {
         return message -> {
             IMAPMessage payload = (IMAPMessage) message.getPayload();
-            try {
-                System.out.println("New mail received! "
-                        + payload.getSubject() + " from: "
-                        + payload.getSender() +
-                        " content: " + payload.getContent());
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            responder.respondToMail(payload);
         };
     }
 }
