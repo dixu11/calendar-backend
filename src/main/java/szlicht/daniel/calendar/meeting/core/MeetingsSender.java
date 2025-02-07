@@ -63,7 +63,7 @@ class MeetingsSender {
         StringBuilder mailto = new StringBuilder();
         for (Double meetingHour : MEETING_HOURS) {
             mailto.append(mailto(
-                    String.valueOf(meetingHour),
+                    "terminy " + meetingHour + "h",
                     String.format("Poproszę o proponowane terminy mentoringu o długości %.1fh",meetingHour),
                     String.format("%.1fh",meetingHour),
                     BOT_MAIL))
@@ -98,7 +98,9 @@ class MeetingsSender {
     private String formatMailtoProposition(Meeting meeting) {
         return mailto(
                 String.format("Chcę zaproponować spotkanie | meeting"),
-                String.format("meeting\nstart:%s\nlength:%d",meeting.getStart(),meeting.getLengthMinutes()),
+                String.format("start#%s\nlength#%d\n\n" +
+                        "Uwaga: nie modyfikuj powyższych kluczy aby aplikacja mogła je poprawnie zinterpretować"
+                        ,meeting.getStart(),meeting.getLengthMinutes()),
                 String.format("umów się"),
                 BOT_MAIL
         );

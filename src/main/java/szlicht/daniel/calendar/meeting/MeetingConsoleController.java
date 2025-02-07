@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 import java.util.Scanner;
 
 @Component
-class CommandLineController implements CommandLineRunner {
+class MeetingConsoleController implements CommandLineRunner {
 
     private CalendarFacade facade;
 
-    CommandLineController(CalendarFacade facade) {
+    MeetingConsoleController(CalendarFacade facade) {
         this.facade = facade;
     }
 

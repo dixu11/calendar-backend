@@ -10,10 +10,10 @@ import szlicht.daniel.calendar.meeting.core.CalendarOfflineException;
 
 @RestController
 @RequestMapping("/api/v0/meetings")
-class MeetingController {
+class MeetingRestController {
     private CalendarFacade facade;
 
-    MeetingController(CalendarFacade facade) {
+    MeetingRestController(CalendarFacade facade) {
         this.facade = facade;
     }
 
