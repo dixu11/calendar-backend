@@ -80,6 +80,9 @@ class MeetingsSender {
     private String formatPropositions(List<Meeting> meetings) {
         StringBuilder propositions = new StringBuilder();
         propositions.append("<pre>");
+        if (meetings.isEmpty()) {
+            propositions.append("Brak terminów w tym okresie :(");
+        }
         for (Meeting meeting : meetings) {
             System.out.println(meeting);
             StringBuilder line = new StringBuilder();
