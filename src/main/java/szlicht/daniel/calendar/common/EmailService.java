@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    @Value("${spring.mail.username}")
+    @Value("${meeting.mail.bot}")
     private String fromEmail;
-    @Value("${test.mail}")
+    @Value("${meeting.mail.owner}")
     private String testMail;
     private final JavaMailSender sender;
 

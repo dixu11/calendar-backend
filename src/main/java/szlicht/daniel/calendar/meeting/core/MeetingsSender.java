@@ -8,12 +8,17 @@ import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 
+import static szlicht.daniel.calendar.common.HtmlUtils.mailto;
 import static szlicht.daniel.calendar.common.LocalDateUtils.*;
 
 @Service
 class MeetingsSender {
-    @Value("${test.mail}")
-    private String myEmail;
+    @Value("${meeting.mail.owner}")
+    private String MY_MAIL;
+    @Value("${meeting.mail.bot}")
+    private String BOT_MAIL;
+    @Value("${meeting.params.hours}")
+    private List<Double> MEETING_HOURS;
     private EmailService emailService;
 
     MeetingsSender(EmailService emailService) {
@@ -38,14 +43,12 @@ class MeetingsSender {
         result += "Kolejne tygodnie:";
         List<Meeting> followingWeeks = propositions.getAfterNextWeek();
         result += formatPropositions(followingWeeks);
-        result += "Aby wybrać inną dłogość lekcji:";
+        result += "Aby wybrać inną dłogość wybierz i wyślij mail:";
         result += "<br>";
-        result += "Wyślij maila o tytule zawierającym interesującą długość lekcji";
-        result += "<br>";
-        result += "Dostępne długości lekcji: 1h, 1.5h, 2h, 2.5h, 3h";
+        result += "Dostępne długości lekcji: " + formatMailtoHours();
         result += "<br>";
         result += String.format("Jeśli żaden z terminów Ci nie podpasował a zależy Ci na spotkaniu " +
-                "napisz kiedy jesteś dostępny/a na: %s, poszukamy terminu indywidualnie :)", myEmail);
+                "napisz kiedy jesteś dostępny/a na: %s, poszukamy terminu indywidualnie :)", MY_MAIL);
         result += "<br>";
         result += "<br>";
         result += "UWAGA - AKTUALNA WERSJA APLIKACJI NIE ZOSTAŁA JESZCZE WDROŻONA.";
@@ -53,8 +56,20 @@ class MeetingsSender {
         result += "Nie działa stale online, a tylko gdy mam ją uruchomioną.";
         result += "<br>";
         result += "Jeśli odpowiedź nie przyjdzie natychmiast skontaktuj się ze mną w inny sposób lub zaczekaj aż sprawdzę te maile ręcznie (zwykle raz dziennie)";
-
         return result;
+    }
+
+    private String formatMailtoHours() {
+        StringBuilder mailto = new StringBuilder();
+        for (Double meetingHour : MEETING_HOURS) {
+            mailto.append(mailto(
+                    String.valueOf(meetingHour),
+                    String.format("Poproszę o proponowane terminy mentoringu o długości %.1fh",meetingHour),
+                    String.format("%.1fh",meetingHour),
+                    BOT_MAIL))
+                    .append(" ");
+        }
+        return mailto.toString();
     }
 
     private String formatPropositions(List<Meeting> meetings) {
