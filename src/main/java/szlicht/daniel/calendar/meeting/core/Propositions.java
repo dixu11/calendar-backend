@@ -9,12 +9,18 @@ import static szlicht.daniel.calendar.common.LocalDateUtils.nextMonday;
 
 class Propositions {
     private List<Meeting> meetings;
+    private double hours;
 
-    Propositions(List<Meeting> meetings) {
+    Propositions(List<Meeting> meetings, double hours) {
         this.meetings = meetings;
+        this.hours = hours;
     }
 
     Propositions() {
+    }
+
+    public double getHours() {
+        return hours;
     }
 
     List<Meeting> getFirstWeek() {

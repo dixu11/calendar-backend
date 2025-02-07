@@ -24,15 +24,20 @@ class MeetingMailResponder implements MailResponder {
                     + message.getSubject() + " from: "
                     + message.getSender() +
                     " content: " + message.getContent());
-            sendPropositions(null,message.getSender().toString());
+            sendPropositions(message);
         } catch (MessagingException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void sendPropositions(Integer length, String to) {
-        facade.sendPropositions(length, to);
+    private void sendPropositions(IMAPMessage message) throws MessagingException {
+        Integer minutes;
+        try {
+            String subject = message.getSubject();
+            minutes = (int) (Double.parseDouble(subject.replace(",", ".")) * 60);
+        } catch (NumberFormatException e) {
+            minutes = null;
+        }
+        facade.sendPropositions(minutes, message.getSender().toString());
     }
 }
-
-//działa!

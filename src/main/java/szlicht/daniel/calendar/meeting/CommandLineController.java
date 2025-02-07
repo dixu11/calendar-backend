@@ -17,7 +17,7 @@ class CommandLineController implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        System.out.println("Wprowadź mail na który należy wysłać grafik:");
+        System.out.println("Wprowadź mail na który należy wysłać grafik ({mail} {godziny double}):");
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String[] input = scanner.nextLine().split(" ");

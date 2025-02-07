@@ -39,7 +39,7 @@ class MeetingsPlanner {
             Optional<Meeting> meeting = getMeetingPropositionsFor(allEvents.get(date), timeMinutes, date);
             meeting.ifPresent(value -> result.put(date, value));
         }
-        return new Propositions(new ArrayList<>(result.values()));
+        return new Propositions(new ArrayList<>(result.values()),timeMinutes/60.0);
     }
 
     private Map<LocalDate, List<Event>> sortEventsByDays() {
