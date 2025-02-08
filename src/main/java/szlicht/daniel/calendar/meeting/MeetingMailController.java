@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.common.MailResponder;
 import szlicht.daniel.calendar.meeting.core.CalendarFacade;
+import szlicht.daniel.calendar.meeting.core.CalendarOfflineException;
 import szlicht.daniel.calendar.meeting.core.Meeting;
 
 import java.io.IOException;
@@ -38,18 +39,19 @@ class MeetingMailController implements MailResponder {
         try {
             System.out.println("New mail received! "
                     + message.getSubject() + " from: "
-                    + message.getSender() +
-                    " content: " + message.getContent());
+                    + message.getSender());
             String subject = message.getSubject();
             if (containsAnyOf(subject, PROPOSITIONS_KEYWORDS)) {
                 sendPropositions(message);
+                System.out.println("Propositions send");
             } else if (containsAnyOf(subject, ARRANGE_KEYWORDS)) {
                 processProposition(message);
+                System.out.println("proposition processed");
             } else {
                 System.out.println(String.format("(%s)%s don't mach to any patter so it's probably spam -> ignore\n",
                         message.getSender(), subject));
             }
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -87,9 +89,6 @@ class MeetingMailController implements MailResponder {
                     .map(String::trim)
                     .filter(line -> !line.isEmpty())
                     .toList();
-
-            System.out.println("lines from email body:");
-            firstLines.forEach(System.out::println);
             LocalDateTime start = LocalDateTime.parse(firstLines.get(0).split("#")[1]);
             int minutes = Integer.parseInt(firstLines.get(1).split("#")[1]);
             Meeting meeting = new Meeting(start, minutes)

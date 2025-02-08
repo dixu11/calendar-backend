@@ -102,7 +102,6 @@ class MeetingsSender {
             propositions.append("Brak terminów w tym okresie :(");
         }
         for (Meeting meeting : meetings) {
-            System.out.println(meeting);
             StringBuilder line = new StringBuilder();
             String weekDay = meeting.getStart()
                     .getDayOfWeek()
@@ -153,5 +152,10 @@ class MeetingsSender {
         body += "Do tego czasu <b>naskrob trochę kodu</b> !";
         emailService.sendHtmlEmail(meeting.getMail(), "Zaplanowano lekcję: " + meeting.when(),
                 body);
+    }
+
+    public void notifyCalendarOffline(Meeting meeting,String errorMessage) {
+        emailService.sendSimpleEmail(meeting.getMail(),"Nie mogę umówić Twojego spotkania w tej chwili.",
+                "System rejestracji jest wyłączony. Spróbuj ponownie później.\n\n Błąd: " + errorMessage);
     }
 }

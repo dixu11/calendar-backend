@@ -2,9 +2,6 @@ package szlicht.daniel.calendar.meeting.core;
 
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Service
 public class CalendarFacade {
     private CalendarService calendarService;
@@ -25,7 +22,11 @@ public class CalendarFacade {
     }
 
     public void arrangeMeeting(Meeting meeting) {
-        calendarService.arrangeMeeting(meeting);
-        meetingsSender.notifyArrangementComplete(meeting);
+        try {
+            calendarService.arrangeMeeting(meeting);
+            meetingsSender.notifyArrangementComplete(meeting);
+        } catch (CalendarOfflineException e) {
+            meetingsSender.notifyCalendarOffline(meeting,e.getMessage());
+        }
     }
 }
