@@ -22,7 +22,6 @@ public class CalendarFacade implements ApplicationListener<ApplicationReadyEvent
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        System.out.println("Run");
         SpringUtils.initParams();
         sendPropositions(60, params.mail().owner());
     }
