@@ -9,7 +9,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "meeting")
 public record MeetingParams(
         Mail mail,
-        Params params,
+        Values values,
         Keywords keywords
 ) {
 
@@ -19,7 +19,7 @@ public record MeetingParams(
 
     public record Mail(String bot, String owner, String phone) {}
 
-    public record Params(int minutes, List<Double> hours) {}
+    public record Values(int minutes, List<Double> hours) {}
 
     public record Keywords(String description, List<String> propositions, List<String> arrange) {}
 }

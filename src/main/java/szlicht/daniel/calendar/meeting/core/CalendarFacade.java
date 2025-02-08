@@ -1,14 +1,16 @@
 package szlicht.daniel.calendar.meeting.core;
 
-import jakarta.annotation.PostConstruct;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.JavaUtils;
+import szlicht.daniel.calendar.common.spring.SpringUtils;
 
-import static szlicht.daniel.calendar.meeting.Params.OWNER_MAIL;
+import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 
 
 @Service
-public class CalendarFacade {
+public class CalendarFacade implements ApplicationListener<ApplicationReadyEvent> {
     private CalendarService calendarService;
     private MeetingsSender meetingsSender;
     private WarningService warningService;
@@ -18,10 +20,11 @@ public class CalendarFacade {
         this.meetingsSender = meetingsSender;
     }
 
-    @PostConstruct
-        //todo for production
-    void sendPropositionsToOwnerAtStartup() {
-        sendPropositions(60,OWNER_MAIL);
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent event) {
+        System.out.println("Run");
+        SpringUtils.initParams();
+        sendPropositions(60, params.mail().owner());
     }
 
     public void sendPropositions(Integer minutes, String to) {

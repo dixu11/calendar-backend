@@ -2,8 +2,6 @@ package szlicht.daniel.calendar.meeting.core;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;
-import szlicht.daniel.calendar.common.spring.SpringUtils;
-import szlicht.daniel.calendar.meeting.MeetingParams;
 
 import java.time.format.TextStyle;
 import java.util.List;
@@ -11,7 +9,7 @@ import java.util.Locale;
 
 import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.*;
-import static szlicht.daniel.calendar.meeting.Params.*;
+import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 
 @Service
 class MeetingsSender {
@@ -57,7 +55,7 @@ class MeetingsSender {
         result += String.format("Jeśli <b>żaden</b> z terminów Ci nie podpasował");
                 result +=  "a zależy Ci na spotkaniu <b>napisz</b> kiedy jesteś dostępny/a na:";
         result += "<br>";
-        result += OWNER_MAIL;
+        result += params.mail().owner();
         result += "<br>";
         result += "poszukamy terminu <b>indywidualnie</b> :)";
         result += "<br>";
@@ -77,12 +75,12 @@ class MeetingsSender {
 
     private String formatMailtoHours() {
         StringBuilder mailto = new StringBuilder();
-        for (Double meetingHour : SpringUtils.getParams().params().hours()) {
+        for (Double meetingHour : params.values().hours()) {
             mailto.append(mailto(
                             "terminy " + meetingHour + "h",
                             String.format("Poproszę o proponowane terminy mentoringu o długości %.1fh", meetingHour),
                             String.format("%.1fh", meetingHour),
-                            BOT_MAIL))
+                            params.mail().bot()))
                     .append("  ");
         }
         return mailto.toString();
@@ -119,9 +117,9 @@ class MeetingsSender {
                 String.format("start#%s\nlength#%d\n\n" +
                                 "Uwaga:\nNie modyfikuj powyższych kluczy aby aplikacja mogła je poprawnie zinterpretować.\n" +
                                 "Jeśli masz do mnie jakieś uwagi przed spotkaniem dopisz je poniżej:\n%s"
-                        , meeting.getStart(), meeting.getLengthMinutes(), DESCRIPTION_PREFIX),
+                        , meeting.getStart(), meeting.getLengthMinutes(), params.keywords().description()),
                 String.format("umów się"),
-                BOT_MAIL
+                params.mail().bot()
         );
     }
 
@@ -129,7 +127,7 @@ class MeetingsSender {
         String body = "<h2>Lekcja zaplanowana!</h2>";
         body += "Spotkanie można bezpłatnie anulować na <b>dobę</b> przed. " +
                 "<br>W tym celu napisz mi SMS na numer: <b>"
-                + PHONE_NUMBER + "</b> lub powiadom na <b>Skype</b>.";
+                + params.mail().phone() + "</b> lub powiadom na <b>Skype</b>.";
         body += "<br>";
         body += "Mój brak odpowiedzi potraktuj jako <b>akceptację spotkania.</b>";
         body += "<br>";

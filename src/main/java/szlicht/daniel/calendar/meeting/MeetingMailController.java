@@ -4,7 +4,6 @@ import jakarta.mail.MessagingException;
 import org.eclipse.angus.mail.imap.IMAPMessage;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.common.mail.MailResponder;
-import szlicht.daniel.calendar.common.mail.MailUtils;
 import szlicht.daniel.calendar.meeting.core.CalendarFacade;
 import szlicht.daniel.calendar.meeting.core.Meeting;
 
@@ -14,9 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import static szlicht.daniel.calendar.common.mail.MailUtils.extractTextFromMessage;
-import static szlicht.daniel.calendar.meeting.Params.*;
+import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 
 @Component
 class MeetingMailController implements MailResponder {
@@ -34,9 +32,9 @@ class MeetingMailController implements MailResponder {
                     + message.getSubject() + " from: "
                     + message.getSender());
             String subject = message.getSubject();
-            if (containsAnyOf(subject, PROPOSITIONS_KEYWORDS)) {
+            if (containsAnyOf(subject, params.keywords().propositions())) {
                 sendPropositions(message);
-            } else if (containsAnyOf(subject, ARRANGE_KEYWORDS)) {
+            } else if (containsAnyOf(subject, params.keywords().arrange())) {
                 processProposition(message);
             } else {
                 System.out.println(String.format("(%s)%s don't mach to any patter so it's probably spam -> ignore\n",
@@ -96,9 +94,9 @@ class MeetingMailController implements MailResponder {
         StringBuilder result = new StringBuilder();
         boolean startAdding = false;
         for (String line : allLines) {
-            if (line.startsWith(DESCRIPTION_PREFIX)) {
+            if (line.startsWith(params.keywords().description())) {
                 startAdding = true;
-                line = line.replace(DESCRIPTION_PREFIX, "");
+                line = line.replace(params.keywords().description(), "");
             }
             if (!startAdding || line.isBlank()) {
                 continue;

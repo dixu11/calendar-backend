@@ -4,7 +4,9 @@ import szlicht.daniel.calendar.meeting.MeetingParams;
 
 public class SpringUtils {
 
-    public static MeetingParams getParams(){
-        return ApplicationContextProvider.getBean(MeetingParams.class);
+    public static MeetingParams params;
+
+    public static void initParams() {
+        params = ApplicationContextProvider.getBean(MeetingParams.class);
     }
 }

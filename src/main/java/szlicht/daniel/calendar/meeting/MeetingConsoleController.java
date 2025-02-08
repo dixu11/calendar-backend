@@ -22,7 +22,7 @@ class MeetingConsoleController implements CommandLineRunner {
         System.out.println("Wprowadź mail na który należy wysłać grafik ({mail} {godziny double}):");
         System.out.println("Lub podaj meeting(meeting {start} {length minutes}):");
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        /*while (true) {
             try {
                 String[] input = scanner.nextLine().split(" ");
                 if (input[0].equals("meeting")) {
@@ -33,7 +33,7 @@ class MeetingConsoleController implements CommandLineRunner {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-         }
+         }*/
     }
 
     private void arrangeMeeting(String[] input) {

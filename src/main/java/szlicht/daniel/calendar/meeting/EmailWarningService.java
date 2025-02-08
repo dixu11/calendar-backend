@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;
 import szlicht.daniel.calendar.meeting.core.WarningService;
 
-import static szlicht.daniel.calendar.meeting.Params.OWNER_MAIL;
+import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 
 @Service
 public class EmailWarningService implements WarningService {
@@ -23,6 +23,6 @@ public class EmailWarningService implements WarningService {
             message = message.toUpperCase();
         }
         System.err.printf("%s - %s - notification mail send to owner\n", subject, message);
-        emailService.sendSimpleEmail(OWNER_MAIL, subject, message);
+        emailService.sendSimpleEmail(params.mail().owner(), subject, message);
     }
 }

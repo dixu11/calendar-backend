@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static szlicht.daniel.calendar.common.spring.SpringUtils.getParams;
-import static szlicht.daniel.calendar.meeting.Params.DEFAULT_MEETING_LENGTH_MINUTES;
+import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 
 @Service
 class CalendarService {
@@ -31,12 +30,12 @@ class CalendarService {
 
     Propositions getMeetingPropositions(Integer minutesLength) {
         if (minutesLength == null) {
-            minutesLength = DEFAULT_MEETING_LENGTH_MINUTES;
+            minutesLength = params.values().minutes();
         }
         if (notAcceptableLength(minutesLength)) {
             throw new IllegalArgumentException(
                     String.format("Only length of %s hours is acceptable for automatic meeting with me.",
-                            getParams().params().hours())
+                            params.values().hours())
             );
         }
         return meetingsPlanner.getMeetingSuggestions(minutesLength);
@@ -73,7 +72,7 @@ class CalendarService {
     }
 
     private boolean notAcceptableLength(int minutes) {
-        return getParams().params().hours().stream()
+        return params.values().hours().stream()
                 .mapToInt(hour -> (int) (hour * 60))
                 .noneMatch(minutesAccepted -> minutesAccepted == minutes);
     }
