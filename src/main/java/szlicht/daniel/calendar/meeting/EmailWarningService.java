@@ -1,14 +1,14 @@
 package szlicht.daniel.calendar.meeting;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.EmailService;
+import szlicht.daniel.calendar.common.mail.EmailService;
 import szlicht.daniel.calendar.meeting.core.WarningService;
+
+import static szlicht.daniel.calendar.meeting.Params.OWNER_MAIL;
 
 @Service
 public class EmailWarningService implements WarningService {
-    @Value("${meeting.mail.owner}")
-    private String OWNER_MAIL;
+
 
     private final EmailService emailService;
 

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static szlicht.daniel.calendar.common.LocalDateUtils.nextMonday;
+import static szlicht.daniel.calendar.common.java.LocalDateUtils.nextMonday;
 
 class Propositions {
     private List<Meeting> meetings;

@@ -2,12 +2,9 @@ package szlicht.daniel.calendar.meeting.core;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.Events;
-import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.GoogleCalendarColor;
-import szlicht.daniel.calendar.common.LocalDateUtils;
+import szlicht.daniel.calendar.common.java.LocalDateUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -15,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-import static szlicht.daniel.calendar.common.GoogleCalendarClient.*;
+import static szlicht.daniel.calendar.common.calendar.GoogleCalendarClient.*;
 
 @Service
 class MeetingsPlanner {

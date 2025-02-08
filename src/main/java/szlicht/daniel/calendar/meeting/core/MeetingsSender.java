@@ -1,28 +1,21 @@
 package szlicht.daniel.calendar.meeting.core;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.EmailService;
+import szlicht.daniel.calendar.common.mail.EmailService;
+import szlicht.daniel.calendar.meeting.MeetingParams;
 
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 
-import static szlicht.daniel.calendar.common.HtmlUtils.mailto;
-import static szlicht.daniel.calendar.common.LocalDateUtils.*;
+import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
+import static szlicht.daniel.calendar.common.java.LocalDateUtils.*;
+import static szlicht.daniel.calendar.meeting.Params.BOT_MAIL;
+import static szlicht.daniel.calendar.meeting.Params.OWNER_MAIL;
 
 @Service
 class MeetingsSender {
-    @Value("${meeting.mail.owner}")
-    private String MY_MAIL;
-    @Value("${meeting.mail.bot}")
-    private String BOT_MAIL;
-    @Value("${meeting.params.hours}")
-    private List<Double> MEETING_HOURS;
-    @Value("${meeting.keywords.prefix.description}")
-    private String DESCRIPTION_PREFIX;
-    @Value("${meeting.mail.phone}")
-    private String PHONE_NUMBER;
+
     private EmailService emailService;
 
     MeetingsSender(EmailService emailService) {
@@ -64,7 +57,7 @@ class MeetingsSender {
         result += String.format("Jeśli <b>żaden</b> z terminów Ci nie podpasował");
                 result +=  "a zależy Ci na spotkaniu <b>napisz</b> kiedy jesteś dostępny/a na:";
         result += "<br>";
-        result += MY_MAIL;
+        result += OWNER_MAIL;
         result += "<br>";
         result += "poszukamy terminu <b>indywidualnie</b> :)";
         result += "<br>";
@@ -84,7 +77,7 @@ class MeetingsSender {
 
     private String formatMailtoHours() {
         StringBuilder mailto = new StringBuilder();
-        for (Double meetingHour : MEETING_HOURS) {
+        for (Double meetingHour : MeetingParams.ACCEPTABLE_LENGTH_HOURS) {
             mailto.append(mailto(
                             "terminy " + meetingHour + "h",
                             String.format("Poproszę o proponowane terminy mentoringu o długości %.1fh", meetingHour),

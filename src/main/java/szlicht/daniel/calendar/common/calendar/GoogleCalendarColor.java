@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.common;
+package szlicht.daniel.calendar.common.calendar;
 
 public enum GoogleCalendarColor {
     NEW_MEETING_COLOR("4"),             // pink

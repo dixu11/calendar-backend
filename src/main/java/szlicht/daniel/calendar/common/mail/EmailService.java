@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.common;
+package szlicht.daniel.calendar.common.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

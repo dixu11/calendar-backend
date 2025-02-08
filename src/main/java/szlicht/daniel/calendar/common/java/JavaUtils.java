@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.common;
+package szlicht.daniel.calendar.common.java;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

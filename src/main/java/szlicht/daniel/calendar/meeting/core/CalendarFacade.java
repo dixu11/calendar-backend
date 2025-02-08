@@ -1,15 +1,14 @@
 package szlicht.daniel.calendar.meeting.core;
 
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.JavaUtils;
+import szlicht.daniel.calendar.common.java.JavaUtils;
+
+import static szlicht.daniel.calendar.meeting.Params.OWNER_MAIL;
+
 
 @Service
 public class CalendarFacade {
-    @Value("${meeting.mail.owner}")
-    private String OWNER_MAIL;
-
     private CalendarService calendarService;
     private MeetingsSender meetingsSender;
     private WarningService warningService;

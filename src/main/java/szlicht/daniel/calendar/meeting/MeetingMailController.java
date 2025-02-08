@@ -2,11 +2,10 @@ package szlicht.daniel.calendar.meeting;
 
 import jakarta.mail.MessagingException;
 import org.eclipse.angus.mail.imap.IMAPMessage;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import szlicht.daniel.calendar.common.MailResponder;
+import szlicht.daniel.calendar.common.mail.MailResponder;
+import szlicht.daniel.calendar.common.mail.MailUtils;
 import szlicht.daniel.calendar.meeting.core.CalendarFacade;
-import szlicht.daniel.calendar.meeting.core.CalendarOfflineException;
 import szlicht.daniel.calendar.meeting.core.Meeting;
 
 import java.io.IOException;
@@ -16,17 +15,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static szlicht.daniel.calendar.common.MailUtils.extractTextFromMessage;
+import static szlicht.daniel.calendar.common.mail.MailUtils.extractTextFromMessage;
+import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
+import static szlicht.daniel.calendar.meeting.Params.ARRANGE_KEYWORDS;
+import static szlicht.daniel.calendar.meeting.Params.PROPOSITIONS_KEYWORDS;
 
 @Component
 class MeetingMailController implements MailResponder {
-
-    @Value("${meeting.keywords.propositions}")
-    private List<String> PROPOSITIONS_KEYWORDS;
-    @Value("${meeting.keywords.arrange}")
-    private List<String> ARRANGE_KEYWORDS;
-    @Value("${meeting.keywords.prefix.description}")
-    private String DESCRIPTION_PREFIX;
 
     private final CalendarFacade facade;
 

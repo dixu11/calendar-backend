@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.common;
+package szlicht.daniel.calendar.common.calendar;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;

@@ -2,16 +2,16 @@ package szlicht.daniel.calendar.meeting.core;
 
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
-import szlicht.daniel.calendar.common.GoogleCalendarClient;
-import szlicht.daniel.calendar.common.GoogleCalendarColor;
-import szlicht.daniel.calendar.common.LocalDateUtils;
+import szlicht.daniel.calendar.common.calendar.GoogleCalendarClient;
+import szlicht.daniel.calendar.common.calendar.GoogleCalendarColor;
+import szlicht.daniel.calendar.common.java.LocalDateUtils;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Objects;
 
-import static szlicht.daniel.calendar.common.GoogleCalendarClient.toEventDateTime;
+import static szlicht.daniel.calendar.common.calendar.GoogleCalendarClient.toEventDateTime;
 
 public class Meeting {
     private static final int BUFFER = 15;
@@ -27,19 +27,17 @@ public class Meeting {
     }
 
     public Meeting(LocalDateTime start, int minutes) {
-        this.start = start;
-        this.end = start.plusMinutes(minutes);
+        this(start, start.plusMinutes(minutes));
     }
 
     Meeting(Meeting meetingAfter, int lengthMinutes) {
-        this.start = meetingAfter.getStart().minusMinutes(lengthMinutes);
-        this.end = meetingAfter.getStart();
+        this(meetingAfter.getStart().minusMinutes(lengthMinutes),meetingAfter.getStart());
         moveBy(-getBufferAfter());
     }
 
     Meeting(Event event) {
-        this.start = GoogleCalendarClient.toLocalDateTime(event.getStart().getDateTime());
-        this.end = GoogleCalendarClient.toLocalDateTime(event.getEnd().getDateTime());
+        this(GoogleCalendarClient.toLocalDateTime(event.getStart().getDateTime()),
+                GoogleCalendarClient.toLocalDateTime(event.getEnd().getDateTime()));
     }
 
     Meeting() {

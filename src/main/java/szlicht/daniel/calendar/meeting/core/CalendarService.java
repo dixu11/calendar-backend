@@ -1,21 +1,17 @@
 package szlicht.daniel.calendar.meeting.core;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.IllegalFormatCodePointException;
-import java.util.List;
+
+import static szlicht.daniel.calendar.meeting.Params.ACCEPTABLE_LENGTH_HOURS;
+import static szlicht.daniel.calendar.meeting.Params.DEFAULT_MEETING_LENGTH_MINUTES;
 
 @Service
 class CalendarService {
 
-    @Value("${meeting.params.default.minutes}")
-    private int DEFAULT_MEETING_LENGTH_MINUTES;
-    @Value("${meeting.params.hours}")
-    private List<Double> ACCEPTABLE_LENGTH_HOURS;
+
 
     private final MeetingsPlanner meetingsPlanner;
     private final WarningService warningService;

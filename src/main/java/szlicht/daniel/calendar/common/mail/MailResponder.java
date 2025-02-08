@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.common;
+package szlicht.daniel.calendar.common.mail;
 
 import org.eclipse.angus.mail.imap.IMAPMessage;
 

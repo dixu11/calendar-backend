@@ -1,7 +1,5 @@
-package szlicht.daniel.calendar.common;
+package szlicht.daniel.calendar.common.mail;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
 import org.eclipse.angus.mail.imap.IMAPMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +12,6 @@ import org.springframework.integration.mail.ImapMailReceiver;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
