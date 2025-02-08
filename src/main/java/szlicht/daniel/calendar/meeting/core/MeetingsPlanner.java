@@ -13,13 +13,12 @@ import java.time.LocalTime;
 import java.util.*;
 
 import static szlicht.daniel.calendar.common.calendar.GoogleCalendarClient.*;
+import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 
 @Service
 class MeetingsPlanner {
     private static final String CALENDAR_OTHER_ID = "primary";
     private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
-    private static final LocalTime WORK_START = LocalTime.of(11, 15);
-    private static final LocalTime WORK_END = LocalTime.of(15, 45);
     private final Calendar calendar;
     private Set<Event> events =
             new TreeSet<>(Comparator.comparingLong(event -> event.getStart().getDateTime().getValue()));
@@ -56,14 +55,15 @@ class MeetingsPlanner {
     }
 
     private Optional<Meeting> getMeetingPropositionsFor(List<Event> events, int minutes, LocalDate date) {
-        Meeting proposition = new Meeting(date.atTime(WORK_END).minusMinutes(minutes), date.atTime(WORK_END));
+        var workHours = params.values().workHours().forDay(date.getDayOfWeek());
+        Meeting proposition = new Meeting(date.atTime(workHours.end()).minusMinutes(minutes), date.atTime(workHours.end()));
         for (Event event : events) {
             Meeting otherMeeting = new Meeting(event);
             if (!proposition.collideWith(otherMeeting)) {
                 continue;
             }
             proposition = Meeting.createBefore(otherMeeting, minutes);
-            if (proposition.getStart().toLocalTime().isBefore(WORK_START)) {
+            if (proposition.getStart().toLocalTime().isBefore(workHours.start())) {
                 return Optional.empty();
             }
         }

@@ -5,6 +5,9 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.JavaUtils;
 import szlicht.daniel.calendar.common.spring.SpringUtils;
+import szlicht.daniel.calendar.meeting.MeetingParams;
+
+import java.time.DayOfWeek;
 
 import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 

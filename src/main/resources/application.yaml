@@ -26,6 +26,15 @@ meeting:
       - 2.5
       - 3.0
     minutes: 90
+    work-hours:
+      start: "11:15"
+      end: "15:45"
+      work-hours-overrides:
+        saturday:
+          end: "14:45"
+        sunday:
+          end: "14:45"
+
   keywords:
     propositions:
       - terminy
