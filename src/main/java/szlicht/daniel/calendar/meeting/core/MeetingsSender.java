@@ -32,7 +32,7 @@ class MeetingsSender {
         result += String.format("<h2>Wybierz dogodny termin na lekcję trwającą <b>%.1fh</b></h2>", propositions.getHours());
         if (propositions.getHours() == 1) {
             result += "<h3>Uwaga!</h3>";
-            result += "Godzinne spotkania trwają dokładnie <b>55 minut</b> ponieważ po nich nie robię przerw.";
+            result += "\"Godzinne\" spotkania trwają dokładnie <b>55 minut</b>.";
             result += "<br>";
             result += "Umów się na dłuże spotkanie jeśli chcesz odzyskać swoje 5 minut ;)";
         }
@@ -130,6 +130,7 @@ class MeetingsSender {
                 + params.mail().phone() + "</b> lub powiadom na <b>Skype</b>.";
         body += "<br>";
         body += "Mój brak odpowiedzi potraktuj jako <b>akceptację spotkania.</b>";
+        body += "<br>";
         body += "<br>";
         body += "W szczególnej sytuacji mogę odrzucić zaproponowane spotkanie," +
                 " dostaniesz wtedy o tym informację mailową.";
