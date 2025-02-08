@@ -53,7 +53,7 @@ class MeetingsSender {
         result += "Dostępne długości lekcji: " + formatMailtoHours();
         result += "<br>";
         result += String.format("Jeśli <b>żaden</b> z terminów Ci nie podpasował");
-                result +=  "a zależy Ci na spotkaniu <b>napisz</b> kiedy jesteś dostępny/a na:";
+        result +=  " a zależy Ci na spotkaniu <b>napisz</b> kiedy jesteś dostępny/a na:";
         result += "<br>";
         result += params.mail().owner();
         result += "<br>";
