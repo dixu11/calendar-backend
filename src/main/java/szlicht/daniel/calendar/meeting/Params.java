@@ -16,8 +16,8 @@ public class Params {
     @Value("${meeting.params.default.minutes}")
     public static int DEFAULT_MEETING_LENGTH_MINUTES;
     @Value("${meeting.params.hours}")
-    public static List<Double> ACCEPTABLE_LENGTH_HOURS;
-    @Value("${meeting.keywords.prefix.description}")
+//    public static List<Double> ACCEPTABLE_LENGTH_HOURS;
+//    @Value("${meeting.keywords.prefix.description}")
     public static String DESCRIPTION_PREFIX;
     @Value("${meeting.keywords.propositions}")
     public static List<String> PROPOSITIONS_KEYWORDS;

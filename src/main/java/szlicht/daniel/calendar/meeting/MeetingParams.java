@@ -17,10 +17,9 @@ public record MeetingParams(
     public MeetingParams {
     }
 
-
     public record Mail(String bot, String owner, String phone) {}
 
-    public record Params(int defaultMinutes, List<Double> hours) {}
+    public record Params(int minutes, List<Double> hours) {}
 
-    public record Keywords(String descriptionPrefix, List<String> propositions, List<String> arrange) {}
+    public record Keywords(String description, List<String> propositions, List<String> arrange) {}
 }

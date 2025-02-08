@@ -16,9 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static szlicht.daniel.calendar.common.mail.MailUtils.extractTextFromMessage;
-import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
-import static szlicht.daniel.calendar.meeting.Params.ARRANGE_KEYWORDS;
-import static szlicht.daniel.calendar.meeting.Params.PROPOSITIONS_KEYWORDS;
+import static szlicht.daniel.calendar.meeting.Params.*;
 
 @Component
 class MeetingMailController implements MailResponder {

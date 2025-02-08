@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.meeting.core;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;
+import szlicht.daniel.calendar.common.spring.SpringUtils;
 import szlicht.daniel.calendar.meeting.MeetingParams;
 
 import java.time.format.TextStyle;
@@ -10,8 +11,7 @@ import java.util.Locale;
 
 import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.*;
-import static szlicht.daniel.calendar.meeting.Params.BOT_MAIL;
-import static szlicht.daniel.calendar.meeting.Params.OWNER_MAIL;
+import static szlicht.daniel.calendar.meeting.Params.*;
 
 @Service
 class MeetingsSender {
@@ -77,7 +77,7 @@ class MeetingsSender {
 
     private String formatMailtoHours() {
         StringBuilder mailto = new StringBuilder();
-        for (Double meetingHour : MeetingParams.ACCEPTABLE_LENGTH_HOURS) {
+        for (Double meetingHour : SpringUtils.getParams().params().hours()) {
             mailto.append(mailto(
                             "terminy " + meetingHour + "h",
                             String.format("Poproszę o proponowane terminy mentoringu o długości %.1fh", meetingHour),
