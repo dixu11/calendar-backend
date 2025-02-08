@@ -48,14 +48,16 @@ class CalendarService {
 
     void arrangeMeeting(Meeting meeting) {
         if (!canArrange) {
-            throw new CalendarOfflineException("Cannot arrange any more meetings, try again after few hours");
+            throw new CalendarOfflineException("Nie mogę umówić Twojego spotkania. " +
+                    "Serwis chwilowo niedostępny, spróbuj za kilka godzin.");
         }
         Propositions propositions = getMeetingPropositions(meeting.getLengthMinutes());
         if (propositions.isNotValid(meeting)) {
-            throw new IllegalArgumentException("(collision) Cannot arrange meeting: " + meeting);
+            throw new MeetingCollisionException("Zdaje się, że termin jest już zajęty :( " +
+                    "Pobierz jeszcze raz aktualne terminy i spróbuj umówić się na inny dostępny termin!");
         }
         meetingsPlanner.arrange(meeting);
-        warningService.notifyOwner(meeting.getMail() + " at "+ meeting.when(),"",false);
+        warningService.notifyOwner(meeting.getMail() + " at "+ meeting.when(),"Użytkownik dodał się do kalendarza",false);
         arrangedLastHour++;
         if (arrangeCounterLastRestart.until(LocalDateTime.now(), ChronoUnit.MINUTES) >= ARRANGE_RESTART_EVERY) {
             arrangeCounterLastRestart = LocalDateTime.now();

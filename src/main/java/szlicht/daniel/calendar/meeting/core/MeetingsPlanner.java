@@ -81,7 +81,7 @@ class MeetingsPlanner {
             calendar.events().insert(CALENDAR_MEETINGS_ID, event).execute();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new CalendarOfflineException("Nie udało się wstawić spotkania do kalendarza: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 

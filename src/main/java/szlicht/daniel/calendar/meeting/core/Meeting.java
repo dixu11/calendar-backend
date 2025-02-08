@@ -92,14 +92,13 @@ public class Meeting {
         return this;
     }
 
-    private static int color = 1;//todo debug
     public Event asEvent() {
         Event event = new Event();
         event.setSummary("Nowe spotkanie");
         event.setDescription("Spotkanie umówione automatycznie");
         event.setStart(toEventDateTime(start));
         event.setEnd(toEventDateTime(end));
-        event.setColorId(GoogleCalendarColor.YELLOW.getColorId());
+        event.setColorId(GoogleCalendarColor.NEW_MEETING_COLOR.getColorId());
         if (details != null) {
             EventAttendee attendee = new EventAttendee().setEmail(details.mail);
             event.setDescription(details.providedDescription + "\n\n" + event.getDescription());
@@ -109,8 +108,6 @@ public class Meeting {
                 event.setSummary("*"+event.getSummary());
             }
         }
-        event.setSummary("Color " + color);//debug
-        event.setColorId(""+color++);//todo debug
         return event;
     }
 

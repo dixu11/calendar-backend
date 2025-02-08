@@ -3,7 +3,6 @@ package szlicht.daniel.calendar.meeting.core;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.EmailService;
-import szlicht.daniel.calendar.common.LocalDateUtils;
 
 import java.time.format.TextStyle;
 import java.util.List;
@@ -33,6 +32,7 @@ class MeetingsSender {
     void sendPropositions(Propositions propositions, String to) {
         String body = formatBody(propositions);
         emailService.sendHtmlEmail(to, "Mentoring z Daniel Szlicht - proponowane terminy", body);
+        System.err.println("Propositions send to " + to);
     }
 
     private String formatBody(Propositions propositions) {
@@ -154,8 +154,8 @@ class MeetingsSender {
                 body);
     }
 
-    public void notifyCalendarOffline(Meeting meeting,String errorMessage) {
-        emailService.sendSimpleEmail(meeting.getMail(),"Nie mogę umówić Twojego spotkania w tej chwili.",
-                "System rejestracji jest wyłączony. Spróbuj ponownie później.\n\n Błąd: " + errorMessage);
+    public void notifyArrangementFailed(Meeting meeting, String errorMessage) {
+        emailService.sendSimpleEmail(meeting.getMail(),"Nie mogę umówić Twojego spotkania.",
+                errorMessage);
     }
 }

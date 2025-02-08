@@ -43,10 +43,8 @@ class MeetingMailController implements MailResponder {
             String subject = message.getSubject();
             if (containsAnyOf(subject, PROPOSITIONS_KEYWORDS)) {
                 sendPropositions(message);
-                System.out.println("Propositions send");
             } else if (containsAnyOf(subject, ARRANGE_KEYWORDS)) {
                 processProposition(message);
-                System.out.println("proposition processed");
             } else {
                 System.out.println(String.format("(%s)%s don't mach to any patter so it's probably spam -> ignore\n",
                         message.getSender(), subject));

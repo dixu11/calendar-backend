@@ -22,7 +22,7 @@ public class EmailWarningService implements WarningService {
             subject = subject.toUpperCase();
             message = message.toUpperCase();
         }
-        System.err.printf("%s - %s\n", subject, message);
+        System.err.printf("%s - %s - notification mail send to owner\n", subject, message);
         emailService.sendSimpleEmail(OWNER_MAIL, subject, message);
     }
 }
