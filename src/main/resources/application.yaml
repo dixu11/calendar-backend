@@ -1,4 +1,6 @@
 spring:
+  calendar:
+    credentials: ${CREDENTIALS}
   application:
     name: calendar
   mail:
@@ -46,5 +48,5 @@ meeting:
       - calendar
     arrange:
       - meeting
-      - umów
+      - umï¿½w
     description: "Moje uwagi:"

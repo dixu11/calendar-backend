@@ -14,6 +14,7 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.services.calendar.model.EventDateTime;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,16 +31,15 @@ public class GoogleCalendarClient {
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+
+    @Value("${meeting.mail.bot}")
+    private String fromEmail;
+    @Value("${spring.calendar.credentials}")
+    private String credentials;
 
     //configuration -----
-
-    private static Credential getCredentials(NetHttpTransport httpTransport) throws IOException {
-        InputStream in = GoogleCalendarClient.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        if (in == null){
-            throw new FileNotFoundException("Not found: " + CREDENTIALS_FILE_PATH);
-        }
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+    private Credential getCredentials(NetHttpTransport httpTransport) throws IOException {
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new StringReader(credentials));
 
         GoogleAuthorizationCodeFlow flow =  new GoogleAuthorizationCodeFlow.Builder(
                 httpTransport,JSON_FACTORY,clientSecrets,SCOPES)
