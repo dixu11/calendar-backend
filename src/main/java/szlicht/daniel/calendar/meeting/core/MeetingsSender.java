@@ -61,11 +61,9 @@ class MeetingsSender {
         result += "<br>";
         result += "<br>";
         result += "<br>";
-        result += "<b>AKTUALNA WERSJA APLIKACJI JEST BARDZO WCZESNA I NIE ZOSTAŁA JESZCZE WDROŻONA.</b>";
+        result += "<b>AKTUALNA WERSJA APLIKACJI JEST BARDZO WCZESNA I MOŻE ZAWIERAĆ BŁĘDY!</b>";
         result += "<br>";
-        result += "Działa tylko gdy mam uruchomiony komputer.";
-        result += "<br>";
-        result += "Jeśli odpowiedź nie przyjdzie natychmiast skontaktuj się ze mną w inny sposób lub zaczekaj aż sprawdzę te maile ręcznie (zwykle raz dziennie)";
+        result += "Jeśli odpowiedź nie przyjdzie w ciągu minuty, skontaktuj się ze mną w inny sposób.";
         result += "<br>";
         result += "<br>";
         result += "Jeśli znajdziesz <b>błędy</b> lub masz jakieś <b>uwagi i pomysły</b> - koniecznie mi o tym powiedz!";
