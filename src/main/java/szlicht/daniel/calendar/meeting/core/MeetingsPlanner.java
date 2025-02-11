@@ -5,14 +5,13 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-
-import static szlicht.daniel.calendar.common.calendar.GoogleCalendarClient.*;
+import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toDateTime;
+import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toLocalDateTime;
 import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 
 @Service
@@ -26,7 +25,6 @@ class MeetingsPlanner {
     MeetingsPlanner(Calendar calendar) {
         this.calendar = calendar;
     }
-
     //generating suggestions ------------------------------
 
     Propositions getMeetingSuggestions(int timeMinutes) {

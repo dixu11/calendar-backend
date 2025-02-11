@@ -2,16 +2,14 @@ package szlicht.daniel.calendar.meeting.core;
 
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
-import szlicht.daniel.calendar.common.calendar.GoogleCalendarClient;
 import szlicht.daniel.calendar.common.calendar.GoogleCalendarColor;
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Objects;
-
-import static szlicht.daniel.calendar.common.calendar.GoogleCalendarClient.toEventDateTime;
+import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toEventDateTime;
+import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toLocalDateTime;
 
 public class Meeting {
     private static final int BUFFER = 15;
@@ -36,8 +34,8 @@ public class Meeting {
     }
 
     Meeting(Event event) {
-        this(GoogleCalendarClient.toLocalDateTime(event.getStart().getDateTime()),
-                GoogleCalendarClient.toLocalDateTime(event.getEnd().getDateTime()));
+        this(toLocalDateTime(event.getStart().getDateTime()),
+                toLocalDateTime(event.getEnd().getDateTime()));
     }
 
     Meeting() {

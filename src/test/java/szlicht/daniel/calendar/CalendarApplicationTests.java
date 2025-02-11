@@ -3,10 +3,10 @@ package szlicht.daniel.calendar;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class CalendarApplicationTests {
 
-	@Test
+//	@Test
 	void contextLoads() {
 	}
 

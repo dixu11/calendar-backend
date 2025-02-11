@@ -8,6 +8,7 @@ import szlicht.daniel.calendar.common.spring.SpringUtils;
 import szlicht.daniel.calendar.meeting.MeetingParams;
 
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 
 import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 
@@ -30,8 +31,16 @@ public class CalendarFacade implements ApplicationListener<ApplicationReadyEvent
     }
 
     public void sendPropositions(Integer minutes, String to) {
-        Propositions meetingPropositions = calendarService.getMeetingPropositions(minutes);
-        meetingsSender.sendPropositions(meetingPropositions, to);
+        if (minutes == null) {
+            minutes = 90;
+        }
+        try {
+            Propositions meetingPropositions = calendarService.getMeetingPropositions(minutes);
+            meetingsSender.sendPropositions(meetingPropositions, to);
+        } catch (CalendarOfflineException e) {
+            System.err.println("calendar offline");
+        }
+
     }
 
     public Propositions getMeetingPropositions(Integer minutes) {

@@ -1,6 +1,7 @@
 spring:
   calendar:
     credentials: ${CREDENTIALS}
+    account-mail: ${CALENDAR_ACCOUNT_MAIL}
   application:
     name: calendar
   mail:
@@ -14,6 +15,15 @@ spring:
           auth: true
           starttls:
             enable: true
+  datasource:
+    url: ${URL}
+    username: postgres
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 meeting:
   mail:
