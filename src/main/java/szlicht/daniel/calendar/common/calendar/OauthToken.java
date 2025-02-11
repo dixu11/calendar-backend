@@ -1,17 +1,17 @@
 package szlicht.daniel.calendar.common.calendar;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.io.Serializable;
+
 @Entity
-public class OauthToken {
+public class OauthToken implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    //    @Column(unique = true,nullable = false)
+    @Column(unique = true, nullable = false)
     private String userId;
-    //    @Column(columnDefinition = "TEXT",nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String refreshToken;
     //    @Column
     private String accessToken;
@@ -44,7 +44,7 @@ public class OauthToken {
         return accessToken;
     }
 
-    public long getAccessTokenExpiresAt() {
+    public Long getAccessTokenExpiresAt() {
         return accessTokenExpiresAt;
     }
 
