@@ -32,8 +32,6 @@ public class GoogleCalendarClient {
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
-    @Value("${meeting.mail.bot}")
-    private String fromEmail;
     @Value("${spring.calendar.credentials}")
     private String credentials;
 
