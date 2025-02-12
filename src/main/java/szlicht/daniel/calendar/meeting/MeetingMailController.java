@@ -46,8 +46,7 @@ class MeetingMailController implements MailResponder {
     }
 
     private void sendPropositions(IMAPMessage message) throws MessagingException {
-        Integer optionalMinutes = extractMinutes(message.getSubject()); //todo extract all this
-
+        Integer optionalMinutes = extractMinutes(message.getSubject());
         facade.sendPropositions(optionalMinutes, message.getSender().toString());
     }
 

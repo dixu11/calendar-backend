@@ -32,7 +32,7 @@ public class CalendarFacade implements ApplicationListener<ApplicationReadyEvent
 
     public void sendPropositions(Integer minutes, String to) {
         if (minutes == null) {
-            minutes = 90;
+            minutes = params.values().minutes();
         }
         try {
             Propositions meetingPropositions = calendarService.getMeetingPropositions(minutes);

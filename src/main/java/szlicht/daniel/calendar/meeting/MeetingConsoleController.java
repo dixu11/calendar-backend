@@ -11,7 +11,7 @@ import szlicht.daniel.calendar.meeting.core.Meeting;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
-//@Component
+@Component
 class MeetingConsoleController implements ApplicationListener<ApplicationReadyEvent> {
 
     private CalendarFacade facade;

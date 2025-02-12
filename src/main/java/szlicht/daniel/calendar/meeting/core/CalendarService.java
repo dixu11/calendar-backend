@@ -10,8 +10,6 @@ import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 @Service
 class CalendarService {
 
-
-
     private final MeetingsPlanner meetingsPlanner;
     private final WarningService warningService;
 

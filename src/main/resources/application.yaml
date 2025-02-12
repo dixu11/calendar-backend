@@ -46,7 +46,6 @@ meeting:
           end: "14:45"
         sunday:
           end: "14:45"
-
   keywords:
     propositions:
       - terminy
