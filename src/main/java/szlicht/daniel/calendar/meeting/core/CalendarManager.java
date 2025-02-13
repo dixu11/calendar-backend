@@ -13,21 +13,21 @@ import java.time.LocalTime;
 import java.util.*;
 
 import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toDateTime;
+import static szlicht.daniel.calendar.common.java.LocalDateUtils.nextMonthEnd;
+import static szlicht.daniel.calendar.common.java.LocalDateUtils.tomorrowStart;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
 class CalendarManager {
-    private static final String CALENDAR_OTHER_ID = "primary";
-    private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
-    private final Calendar calendar;
 
-    CalendarManager(Calendar calendar) {
-        this.calendar = calendar;
+    private final CalendarRepository calendarRepository;
+
+    CalendarManager( CalendarRepository calendarRepository) {
+        this.calendarRepository = calendarRepository;
     }
     //generating suggestions ------------------------------
 
     Propositions getMeetingSuggestions(int timeMinutes) {
-        getMonthRangeMeetings();
         Map<LocalDate, List<Meeting>> allMeetings = sortMeetingsByDays();
         Map<LocalDate, Meeting> result = new TreeMap<>(LocalDate::compareTo);
         for (LocalDate date : allMeetings.keySet()) {
@@ -39,10 +39,10 @@ class CalendarManager {
 
     private Map<LocalDate, List<Meeting>> sortMeetingsByDays() {
         Map<LocalDate, List<Meeting>> result = new TreeMap<>(LocalDate::compareTo);
-        Set<Meeting> events = getMonthRangeMeetings();
+        Set<Meeting> events = calendarRepository.getMonthRangeMeetings();
         for (LocalDate date : LocalDateUtils.getDatesBetweenInclude(
-                firstDay().toLocalDate(),
-                lastDay().toLocalDate())) {
+                tomorrowStart().toLocalDate(),
+                nextMonthEnd().toLocalDate())) {
             List<Meeting> eventsForThisDay = events.stream()
                     .filter(meeting -> meeting.getStart().toLocalDate().equals(date))
                     .sorted((meeting1, meeting2) -> -meeting1.compareTo(meeting2))
@@ -67,73 +67,7 @@ class CalendarManager {
         return Optional.of(proposition);
     }
 
-    //arrange new meetings -------------------------
-
-    void arrange(Meeting meeting) {
-        Event event = meeting.asEvent();
-        try {
-            calendar.events().insert(CALENDAR_MEETINGS_ID, event).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    //collecting events ----------------------------
-
-    private Set<Meeting> getMonthRangeMeetings() {
-        LocalDateTime from = firstDay();
-        LocalDateTime to = lastDay();
-        return getMeetings(from,to);
-    }
-
-    Set<Meeting> getTodayMeetings(){
-        LocalDateTime from = LocalDateTime.now().with(LocalTime.MIN);
-        LocalDateTime to = LocalDateTime.now().with(LocalTime.MAX);
-        return new TreeSet<>(getMeetings(from, to));
-    }
-
-    private Set<Meeting> getMeetings(LocalDateTime from, LocalDateTime to) {
-        Set<Meeting> meetings = new TreeSet<>();
-        meetings.addAll(getOneCalendarMeetings(CALENDAR_MEETINGS_ID,from,to));
-        meetings.addAll(getOneCalendarMeetings(CALENDAR_OTHER_ID, from, to));
-        return meetings;
-    }
-
-    private List<Meeting> getOneCalendarMeetings(String calendarId, LocalDateTime from, LocalDateTime to) {
-        return getTimedEvents(getEvents(calendarId,from,to))
-                .stream()
-                .map(Meeting::new)
-                .toList();
-
-    }
-
-    private List<Event> getTimedEvents(Events newEvents) {
-        return newEvents.getItems().stream()
-                .filter(event -> event.getStart().getDateTime() != null)
-                .toList();
-    }
-
-    private Events getEvents(String calendarId,LocalDateTime from, LocalDateTime to) {
-        try {
-            return calendar.events().list(calendarId)
-                    .setMaxResults(100)
-                    .setTimeMin(toDateTime(from))
-                    .setTimeMax(toDateTime(to))
-                    .setOrderBy("startTime")
-                    .setSingleEvents(true)
-                    .execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new CalendarOfflineException(e.getMessage());
-        }
-    }
-
-    private LocalDateTime firstDay() {
-        return LocalDateTime.now().plusDays(1).with(LocalTime.MIN);
-    }
-
-    private LocalDateTime lastDay() {
-        return LocalDateTime.now().plusMonths(1).with(LocalTime.MAX);
+    public void arrange(Meeting meeting) {
+        calendarRepository.arrange(meeting);
     }
 }

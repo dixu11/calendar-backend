@@ -25,7 +25,6 @@ class ReminderService  {
 
     @EventListener
     public void onStart(AppStartedEvent appStartedEvent) {
-        System.out.println("Processing propositions remainder");
         Set<Meeting> todayMeetings = calendarManager.getTodayMeetings();
         for (Meeting todayMeeting : todayMeetings) {
             LocalDateTime notificationTime = todayMeeting.getEnd().minusMinutes(NOTIFY_MINUTES_BEFORE_MEETING_END);

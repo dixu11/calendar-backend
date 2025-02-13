@@ -3,6 +3,7 @@ package szlicht.daniel.calendar.common.java;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,5 +39,13 @@ public class LocalDateUtils {
             next = next.plusDays(1);
         }
         return next;
+    }
+
+    public static LocalDateTime tomorrowStart() {
+        return LocalDateTime.now().plusDays(1).with(LocalTime.MIN);
+    }
+
+    public static LocalDateTime nextMonthEnd() {
+        return LocalDateTime.now().plusMonths(1).with(LocalTime.MAX);
     }
 }
