@@ -17,7 +17,9 @@ public class Meeting implements Comparable<Meeting>{
 
     private LocalDateTime start;
     private LocalDateTime end;
+    private MeetingType type = MeetingType.MENTORING;
     private Details details = null;
+
 
     public Meeting(LocalDateTime start, LocalDateTime end) {
         this.start = start;
@@ -49,6 +51,7 @@ public class Meeting implements Comparable<Meeting>{
         if (event.getAttendees() != null) {
             email = event.getAttendees().get(0).getEmail();
         }
+        type = MeetingType.fromColorId(event.getColorId());
         details = new Details(summary, description, email);
     }
 
@@ -87,6 +90,10 @@ public class Meeting implements Comparable<Meeting>{
         return BUFFER;
     }
 
+    public boolean isMentoring() {
+        return type == MeetingType.MENTORING;
+    }
+
     public int getLengthMinutes() {
         return (int) start.until(end, ChronoUnit.MINUTES);
     }
@@ -107,7 +114,7 @@ public class Meeting implements Comparable<Meeting>{
         event.setDescription("Spotkanie umówione automatycznie");
         event.setStart(toEventDateTime(start));
         event.setEnd(toEventDateTime(end));
-        event.setColorId(GoogleCalendarColor.NEW_MEETING_COLOR.getColorId());
+        event.setColorId(GoogleCalendarColor.PINK.getColorId());
         if (details != null) {
             EventAttendee attendee = new EventAttendee().setEmail(details.mail);
             event.setDescription(details.providedDescription + "\n\n" + event.getDescription());

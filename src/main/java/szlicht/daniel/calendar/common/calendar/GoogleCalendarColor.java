@@ -1,11 +1,11 @@
 package szlicht.daniel.calendar.common.calendar;
 
 public enum GoogleCalendarColor {
-    NEW_MEETING_COLOR("4"),             // pink
-    YELLOW("5"),           // yellow
-    PURPLE("3"), // purple
     LIGHT_BLUE("1"),       // Jasnoniebieski
     LIGHT_GREEN("2"),      // Jasnozielony
+    PURPLE("3"), // purple
+    PINK("4"),             // pink
+    YELLOW("5"),           // yellow
     DARK_BLUE("6"),        // Ciemnoniebieski
     RED("7"),              // Czerwony
     GRAY("8"),             // Szary

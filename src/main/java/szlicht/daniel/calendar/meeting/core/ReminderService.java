@@ -35,6 +35,9 @@ class ReminderService  {
             if (todayMeeting.getMail().isBlank()) {
                 continue;
             }
+            if (!todayMeeting.isMentoring()) {
+                continue;
+            }
             taskScheduler.schedule(() -> calendarFacade.sendPropositions(
                             todayMeeting.getLengthMinutes(),
                             todayMeeting.getMail()),
