@@ -11,7 +11,7 @@ import java.util.Objects;
 import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toEventDateTime;
 import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toLocalDateTime;
 
-public class Meeting {
+public class Meeting implements Comparable<Meeting>{
     private static final int BUFFER = 15;
     private static final int NO_BUFFER_BELOW = 60;
 
@@ -134,6 +134,12 @@ public class Meeting {
                 ", end=" + end +
                 '}';
     }
+
+    @Override
+    public int compareTo(Meeting o) {
+        return start.compareTo(o.start);
+    }
+
     public static class Details {
         private String mail = "";
         private String providedDescription = "";

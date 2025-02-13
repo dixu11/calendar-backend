@@ -29,35 +29,34 @@ class MeetingsPlanner {
 
     Propositions getMeetingSuggestions(int timeMinutes) {
         getMonthlyEvents();
-        Map<LocalDate, List<Event>> allEvents = sortEventsByDays();
+        Map<LocalDate, List<Meeting>> allMeetings = sortMeetingsByDays();
         Map<LocalDate, Meeting> result = new TreeMap<>(LocalDate::compareTo);
-        for (LocalDate date : allEvents.keySet()) {
-            Optional<Meeting> meeting = getMeetingPropositionsFor(allEvents.get(date), timeMinutes, date);
+        for (LocalDate date : allMeetings.keySet()) {
+            Optional<Meeting> meeting = getMeetingPropositionsFor(allMeetings.get(date), timeMinutes, date);
             meeting.ifPresent(value -> result.put(date, value));
         }
         return new Propositions(new ArrayList<>(result.values()), timeMinutes / 60.0);
     }
 
-    private Map<LocalDate, List<Event>> sortEventsByDays() {
-        Map<LocalDate, List<Event>> result = new TreeMap<>(LocalDate::compareTo);
-        Set<Event> events = getMonthlyEvents();
+    private Map<LocalDate, List<Meeting>> sortMeetingsByDays() {
+        Map<LocalDate, List<Meeting>> result = new TreeMap<>(LocalDate::compareTo);
+        Set<Meeting> events = getMonthlyEvents();
         for (LocalDate date : LocalDateUtils.getDatesBetweenInclude(
                 firstDay().toLocalDate(),
                 lastDay().toLocalDate())) {
-            List<Event> eventsForThisDay = events.stream()
-                    .filter(event -> toLocalDateTime(event.getStart().getDateTime()).toLocalDate().equals(date))
-                    .sorted(Comparator.comparingLong(event -> -event.getStart().getDateTime().getValue()))
+            List<Meeting> eventsForThisDay = events.stream()
+                    .filter(meeting -> meeting.getStart().toLocalDate().equals(date))
+                    .sorted((meeting1, meeting2) -> -meeting1.compareTo(meeting2))
                     .toList();
             result.put(date, eventsForThisDay);
         }
         return result;
     }
 
-    private Optional<Meeting> getMeetingPropositionsFor(List<Event> events, int minutes, LocalDate date) {
+    private Optional<Meeting> getMeetingPropositionsFor(List<Meeting> meetings, int minutes, LocalDate date) {
         var workHours = params.values().workHours().forDay(date.getDayOfWeek());
         Meeting proposition = new Meeting(date.atTime(workHours.end()).minusMinutes(minutes), date.atTime(workHours.end()));
-        for (Event event : events) {
-            Meeting otherMeeting = new Meeting(event);
+        for (Meeting otherMeeting : meetings) {
             if (!proposition.collideWith(otherMeeting)) {
                 continue;
             }
@@ -83,11 +82,19 @@ class MeetingsPlanner {
 
     //collecting events ----------------------------
 
-    private Set<Event> getMonthlyEvents() {
-        Set<Event> events = new TreeSet<>(Comparator.comparingLong(event -> event.getStart().getDateTime().getValue()));
-        events.addAll(getTimedEvents(getEvents(CALENDAR_MEETINGS_ID)));
-        events.addAll(getTimedEvents(getEvents(CALENDAR_OTHER_ID)));
-        return events;
+    private Set<Meeting> getMonthlyEvents() {
+        Set<Meeting> meetings = new TreeSet<>();
+        meetings.addAll(getMeetings(CALENDAR_MEETINGS_ID));
+        meetings.addAll(getMeetings(CALENDAR_OTHER_ID));
+        return meetings;
+    }
+
+    private List<Meeting> getMeetings(String calendarId) {
+        return getTimedEvents(getEvents(calendarId))
+                .stream()
+                .map(Meeting::new)
+                .toList();
+
     }
 
     private List<Event> getTimedEvents(Events newEvents) {
