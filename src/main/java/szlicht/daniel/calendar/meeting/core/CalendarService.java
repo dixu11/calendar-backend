@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
 class CalendarService {
 
-    private final MeetingsPlanner meetingsPlanner;
+    private final CalendarManager calendarManager;
     private final WarningService warningService;
 
     //max arrangements per hour for safety
@@ -21,8 +21,8 @@ class CalendarService {
     private LocalDateTime arrangeCounterLastRestart = LocalDateTime.now();
     private boolean canArrange = true;
 
-    CalendarService(MeetingsPlanner meetingsPlanner, WarningService warningService) {
-        this.meetingsPlanner = meetingsPlanner;
+    CalendarService(CalendarManager calendarManager, WarningService warningService) {
+        this.calendarManager = calendarManager;
         this.warningService = warningService;
     }
 
@@ -36,7 +36,7 @@ class CalendarService {
                             params.values().hours())
             );
         }
-        return meetingsPlanner.getMeetingSuggestions(minutesLength);
+        return calendarManager.getMeetingSuggestions(minutesLength);
     }
 
     void arrangeMeeting(Meeting meeting) {
@@ -49,8 +49,8 @@ class CalendarService {
             throw new MeetingCollisionException("Zdaje się, że termin jest już zajęty :( " +
                     "Pobierz jeszcze raz aktualne terminy i spróbuj umówić się na inny dostępny termin!");
         }
-        meetingsPlanner.arrange(meeting);
-        warningService.notifyOwner(meeting.getMail() + " at "+ meeting.when(),"Użytkownik dodał się do kalendarza",false);
+        calendarManager.arrange(meeting);
+        warningService.notifyOwner("Umówił się: " + meeting.getMail() + " at "+ meeting.when(),"Użytkownik dodał się do kalendarza",false);
         arrangedLastHour++;
         if (arrangeCounterLastRestart.until(LocalDateTime.now(), ChronoUnit.MINUTES) >= ARRANGE_RESTART_EVERY) {
             arrangeCounterLastRestart = LocalDateTime.now();

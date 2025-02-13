@@ -1,20 +1,15 @@
 package szlicht.daniel.calendar.meeting.core;
 
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.JavaUtils;
-import szlicht.daniel.calendar.common.spring.SpringUtils;
-import szlicht.daniel.calendar.meeting.MeetingParams;
+import szlicht.daniel.calendar.common.spring.AppStartedEvent;
 
-import java.time.DayOfWeek;
-import java.util.ArrayList;
-
-import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 
 @Service
-public class CalendarFacade implements ApplicationListener<ApplicationReadyEvent> {
+public class CalendarFacade  {
     private CalendarService calendarService;
     private MeetingsSender meetingsSender;
     private WarningService warningService;
@@ -24,11 +19,12 @@ public class CalendarFacade implements ApplicationListener<ApplicationReadyEvent
         this.meetingsSender = meetingsSender;
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationReadyEvent event) {
-        SpringUtils.initParams();
+    @EventListener
+    public void handle(AppStartedEvent appStartedEvent) {
         sendPropositions(60, params.mail().owner());
     }
+
+
 
     public void sendPropositions(Integer minutes, String to) {
         if (minutes == null) {
@@ -40,7 +36,6 @@ public class CalendarFacade implements ApplicationListener<ApplicationReadyEvent
         } catch (CalendarOfflineException e) {
             System.err.println("calendar offline");
         }
-
     }
 
     public Propositions getMeetingPropositions(Integer minutes) {

@@ -36,6 +36,20 @@ public class Meeting implements Comparable<Meeting>{
     Meeting(Event event) {
         this(toLocalDateTime(event.getStart().getDateTime()),
                 toLocalDateTime(event.getEnd().getDateTime()));
+        String summary = "";
+        String description = "";
+        String email = "";
+
+        if (event.getSummary() != null) {
+            summary = event.getSummary();
+        }
+        if (event.getDescription() != null) {
+            description = event.getDescription();
+        }
+        if (event.getAttendees() != null) {
+            email = event.getAttendees().get(0).getEmail();
+        }
+        details = new Details(summary, description, email);
     }
 
     Meeting() {
@@ -98,7 +112,7 @@ public class Meeting implements Comparable<Meeting>{
             EventAttendee attendee = new EventAttendee().setEmail(details.mail);
             event.setDescription(details.providedDescription + "\n\n" + event.getDescription());
             event.setAttendees(Collections.singletonList(attendee));
-            event.setSummary("Mentoring IT " + details.mail);
+            event.setSummary("Mentoring IT " + attendee.getDisplayName());
             if (!details.providedDescription.isBlank()) {
                 event.setSummary("*"+event.getSummary());
             }
@@ -141,12 +155,14 @@ public class Meeting implements Comparable<Meeting>{
     }
 
     public static class Details {
-        private String mail = "";
+        private String summary = "";
         private String providedDescription = "";
+        private String mail = "";
 
-        public Details(String mail, String providedDescription) {
-            this.mail = mail;
+        public Details(String summary, String providedDescription, String mail) {
+            this.summary = summary;
             this.providedDescription = providedDescription;
+            this.mail = mail;
         }
     }
 }

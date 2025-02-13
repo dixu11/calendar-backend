@@ -13,22 +13,21 @@ import java.time.LocalTime;
 import java.util.*;
 
 import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toDateTime;
-import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toLocalDateTime;
-import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
-class MeetingsPlanner {
+class CalendarManager {
     private static final String CALENDAR_OTHER_ID = "primary";
     private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
     private final Calendar calendar;
 
-    MeetingsPlanner(Calendar calendar) {
+    CalendarManager(Calendar calendar) {
         this.calendar = calendar;
     }
     //generating suggestions ------------------------------
 
     Propositions getMeetingSuggestions(int timeMinutes) {
-        getMonthlyEvents();
+        getMonthRangeMeetings();
         Map<LocalDate, List<Meeting>> allMeetings = sortMeetingsByDays();
         Map<LocalDate, Meeting> result = new TreeMap<>(LocalDate::compareTo);
         for (LocalDate date : allMeetings.keySet()) {
@@ -40,7 +39,7 @@ class MeetingsPlanner {
 
     private Map<LocalDate, List<Meeting>> sortMeetingsByDays() {
         Map<LocalDate, List<Meeting>> result = new TreeMap<>(LocalDate::compareTo);
-        Set<Meeting> events = getMonthlyEvents();
+        Set<Meeting> events = getMonthRangeMeetings();
         for (LocalDate date : LocalDateUtils.getDatesBetweenInclude(
                 firstDay().toLocalDate(),
                 lastDay().toLocalDate())) {
@@ -82,15 +81,27 @@ class MeetingsPlanner {
 
     //collecting events ----------------------------
 
-    private Set<Meeting> getMonthlyEvents() {
+    private Set<Meeting> getMonthRangeMeetings() {
+        LocalDateTime from = firstDay();
+        LocalDateTime to = lastDay();
+        return getMeetings(from,to);
+    }
+
+    Set<Meeting> getTodayMeetings(){
+        LocalDateTime from = LocalDateTime.now().with(LocalTime.MIN);
+        LocalDateTime to = LocalDateTime.now().with(LocalTime.MAX);
+        return new TreeSet<>(getMeetings(from, to));
+    }
+
+    private Set<Meeting> getMeetings(LocalDateTime from, LocalDateTime to) {
         Set<Meeting> meetings = new TreeSet<>();
-        meetings.addAll(getMeetings(CALENDAR_MEETINGS_ID));
-        meetings.addAll(getMeetings(CALENDAR_OTHER_ID));
+        meetings.addAll(getOneCalendarMeetings(CALENDAR_MEETINGS_ID,from,to));
+        meetings.addAll(getOneCalendarMeetings(CALENDAR_OTHER_ID, from, to));
         return meetings;
     }
 
-    private List<Meeting> getMeetings(String calendarId) {
-        return getTimedEvents(getEvents(calendarId))
+    private List<Meeting> getOneCalendarMeetings(String calendarId, LocalDateTime from, LocalDateTime to) {
+        return getTimedEvents(getEvents(calendarId,from,to))
                 .stream()
                 .map(Meeting::new)
                 .toList();
@@ -103,14 +114,12 @@ class MeetingsPlanner {
                 .toList();
     }
 
-    private Events getEvents(String calendarId) {
+    private Events getEvents(String calendarId,LocalDateTime from, LocalDateTime to) {
         try {
-            LocalDateTime timeMin = firstDay();
-            LocalDateTime timeMax = lastDay();
             return calendar.events().list(calendarId)
                     .setMaxResults(100)
-                    .setTimeMin(toDateTime(timeMin))
-                    .setTimeMax(toDateTime(timeMax))
+                    .setTimeMin(toDateTime(from))
+                    .setTimeMax(toDateTime(to))
                     .setOrderBy("startTime")
                     .setSingleEvents(true)
                     .execute();

@@ -1,30 +1,45 @@
 package szlicht.daniel.calendar.meeting.core;
 
-import com.google.api.services.calendar.Calendar;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.spring.MyTaskScheduler;
-
-import java.time.Instant;
+import szlicht.daniel.calendar.common.spring.AppStartedEvent;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.util.Set;
 
 @Service
-public class ReminderService implements ApplicationListener<ApplicationReadyEvent> {
+class ReminderService  {
 
-    private TaskScheduler taskScheduler;
-    private Calendar calendar;
+    private static final int NOTIFY_MINUTES_BEFORE_MEETING_END = 15;
 
-    public ReminderService( TaskScheduler taskScheduler) {
+    private final TaskScheduler taskScheduler;
+    private final CalendarManager calendarManager;
+    private final CalendarFacade calendarFacade;
+
+    ReminderService(TaskScheduler taskScheduler, CalendarManager calendarManager, CalendarFacade calendarFacade) {
         this.taskScheduler = taskScheduler;
+        this.calendarManager = calendarManager;
+        this.calendarFacade = calendarFacade;
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationReadyEvent event) {
-        taskScheduler.schedule(() -> System.out.println("Zaczynamy zabawę ze springowym"),LocalDateTime.now().plusSeconds(30).atZone(ZoneId.systemDefault()).toInstant());
-
+    @EventListener
+    public void onStart(AppStartedEvent appStartedEvent) {
+        System.out.println("Processing propositions remainder");
+        Set<Meeting> todayMeetings = calendarManager.getTodayMeetings();
+        for (Meeting todayMeeting : todayMeetings) {
+            LocalDateTime notificationTime = todayMeeting.getEnd().minusMinutes(NOTIFY_MINUTES_BEFORE_MEETING_END);
+            if (notificationTime.isBefore(LocalDateTime.now())) {
+                continue;
+            }
+            if (todayMeeting.getMail().isBlank()) {
+                continue;
+            }
+            taskScheduler.schedule(() -> calendarFacade.sendPropositions(
+                            todayMeeting.getLengthMinutes(),
+                            todayMeeting.getMail()),
+                    notificationTime.atZone(ZoneId.systemDefault()).toInstant());
+            System.out.println("Will send notification at " + notificationTime + " for event " + todayMeeting);
+        }
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static szlicht.daniel.calendar.common.mail.MailUtils.extractTextFromMessage;
-import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Component
 class MeetingMailController implements MailResponder {
@@ -79,9 +79,9 @@ class MeetingMailController implements MailResponder {
                     .toList();
             LocalDateTime start = LocalDateTime.parse(firstLines.get(0).split("#")[1]);
             int minutes = Integer.parseInt(firstLines.get(1).split("#")[1]);
+            String mail = message.getSender().toString();
             Meeting meeting = new Meeting(start, minutes)
-                    .setDetails(new Meeting.Details(message.getSender().toString(),
-                            extractProvidedDescriptions(firstLines)));
+                    .setDetails(new Meeting.Details(mail, extractProvidedDescriptions(firstLines),mail));
             facade.arrangeMeeting(meeting);
         } catch (MessagingException | IOException e) {
             e.printStackTrace();

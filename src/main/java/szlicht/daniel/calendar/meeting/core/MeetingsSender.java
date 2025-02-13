@@ -9,7 +9,7 @@ import java.util.Locale;
 
 import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.*;
-import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
 class MeetingsSender {

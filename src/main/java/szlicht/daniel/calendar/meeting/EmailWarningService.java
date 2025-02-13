@@ -4,11 +4,10 @@ import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;
 import szlicht.daniel.calendar.meeting.core.WarningService;
 
-import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
 class EmailWarningService implements WarningService {
-
 
     private final EmailService emailService;
 
