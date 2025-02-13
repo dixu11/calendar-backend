@@ -5,11 +5,13 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+
 import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toDateTime;
 import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toLocalDateTime;
 import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
@@ -19,8 +21,6 @@ class MeetingsPlanner {
     private static final String CALENDAR_OTHER_ID = "primary";
     private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
     private final Calendar calendar;
-    private Set<Event> events =
-            new TreeSet<>(Comparator.comparingLong(event -> event.getStart().getDateTime().getValue()));
 
     MeetingsPlanner(Calendar calendar) {
         this.calendar = calendar;
@@ -28,7 +28,7 @@ class MeetingsPlanner {
     //generating suggestions ------------------------------
 
     Propositions getMeetingSuggestions(int timeMinutes) {
-        update();
+        getMonthlyEvents();
         Map<LocalDate, List<Event>> allEvents = sortEventsByDays();
         Map<LocalDate, Meeting> result = new TreeMap<>(LocalDate::compareTo);
         for (LocalDate date : allEvents.keySet()) {
@@ -40,6 +40,7 @@ class MeetingsPlanner {
 
     private Map<LocalDate, List<Event>> sortEventsByDays() {
         Map<LocalDate, List<Event>> result = new TreeMap<>(LocalDate::compareTo);
+        Set<Event> events = getMonthlyEvents();
         for (LocalDate date : LocalDateUtils.getDatesBetweenInclude(
                 firstDay().toLocalDate(),
                 lastDay().toLocalDate())) {
@@ -82,17 +83,17 @@ class MeetingsPlanner {
 
     //collecting events ----------------------------
 
-    private void update() {
-        events.clear();
-        addTimedEvents(getEvents(CALENDAR_MEETINGS_ID));
-        addTimedEvents(getEvents(CALENDAR_OTHER_ID));
+    private Set<Event> getMonthlyEvents() {
+        Set<Event> events = new TreeSet<>(Comparator.comparingLong(event -> event.getStart().getDateTime().getValue()));
+        events.addAll(getTimedEvents(getEvents(CALENDAR_MEETINGS_ID)));
+        events.addAll(getTimedEvents(getEvents(CALENDAR_OTHER_ID)));
+        return events;
     }
 
-    private void addTimedEvents(Events newEvents) {
-        List<Event> timedEvents = newEvents.getItems().stream()
+    private List<Event> getTimedEvents(Events newEvents) {
+        return newEvents.getItems().stream()
                 .filter(event -> event.getStart().getDateTime() != null)
                 .toList();
-        events.addAll(timedEvents);
     }
 
     private Events getEvents(String calendarId) {
