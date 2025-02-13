@@ -70,4 +70,8 @@ class CalendarManager {
     public void arrange(Meeting meeting) {
         calendarRepository.arrange(meeting);
     }
+
+    public Set<Meeting> getTodayMeetings() {
+        return calendarRepository.getTodayMeetings();
+    }
 }

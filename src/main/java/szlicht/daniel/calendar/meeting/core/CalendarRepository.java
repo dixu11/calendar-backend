@@ -3,6 +3,9 @@ package szlicht.daniel.calendar.meeting.core;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
+import org.springframework.stereotype.Service;
+import szlicht.daniel.calendar.common.java.LocalDateUtils;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -14,6 +17,7 @@ import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toDate
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.nextMonthEnd;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.tomorrowStart;
 
+@Service
 public class CalendarRepository {
 
     private static final String CALENDAR_OTHER_ID = "primary";
@@ -45,6 +49,12 @@ public class CalendarRepository {
         LocalDateTime from = LocalDateTime.now().with(LocalTime.MIN);
         LocalDateTime to = LocalDateTime.now().with(LocalTime.MAX);
         return new TreeSet<>(getMeetings(from, to));
+    }
+
+    public Set<Meeting> getLastMonthAndCurrentMeetings() {
+        LocalDateTime from = LocalDateUtils.lastMonthStart();
+        LocalDateTime to = LocalDateTime.now();
+        return getMeetings(from, to);
     }
 
     private Set<Meeting> getMeetings(LocalDateTime from, LocalDateTime to) {

@@ -48,4 +48,8 @@ public class LocalDateUtils {
     public static LocalDateTime nextMonthEnd() {
         return LocalDateTime.now().plusMonths(1).with(LocalTime.MAX);
     }
+
+    public static LocalDateTime lastMonthStart() {
+        return LocalDateTime.now().minusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
+    }
 }
