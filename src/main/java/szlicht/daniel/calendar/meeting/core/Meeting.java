@@ -90,7 +90,6 @@ public class Meeting {
 
     public Event asEvent() {
         Event event = new Event();
-        event.setSummary("Nowe spotkanie");
         event.setDescription("Spotkanie umówione automatycznie");
         event.setStart(toEventDateTime(start));
         event.setEnd(toEventDateTime(end));
@@ -99,7 +98,7 @@ public class Meeting {
             EventAttendee attendee = new EventAttendee().setEmail(details.mail);
             event.setDescription(details.providedDescription + "\n\n" + event.getDescription());
             event.setAttendees(Collections.singletonList(attendee));
-            event.setSummary(details.mail);
+            event.setSummary("Mentoring IT " + details.mail);
             if (!details.providedDescription.isBlank()) {
                 event.setSummary("*"+event.getSummary());
             }

@@ -7,7 +7,7 @@ import szlicht.daniel.calendar.meeting.core.WarningService;
 import static szlicht.daniel.calendar.common.spring.SpringUtils.params;
 
 @Service
-public class EmailWarningService implements WarningService {
+class EmailWarningService implements WarningService {
 
 
     private final EmailService emailService;
