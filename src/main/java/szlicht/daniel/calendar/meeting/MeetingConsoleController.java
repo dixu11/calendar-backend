@@ -3,6 +3,7 @@ package szlicht.daniel.calendar.meeting;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.meeting.core.CalendarFacade;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Scanner;
 
 @Component
+@Profile("dev")
 class MeetingConsoleController implements ApplicationListener<ApplicationReadyEvent> {
 
     private CalendarFacade facade;
@@ -30,7 +32,7 @@ class MeetingConsoleController implements ApplicationListener<ApplicationReadyEv
         System.out.println("Wprowadź mail na który należy wysłać grafik ({mail} {godziny double}):");
         System.out.println("Lub podaj meeting(meeting {start} {length minutes}):");
         Scanner scanner = new Scanner(System.in);
-       /* while (true) {
+        while (true) {
             try {
                 String[] input = scanner.nextLine().split(" ");
                 if (input[0].equals("meeting")) {
@@ -41,7 +43,7 @@ class MeetingConsoleController implements ApplicationListener<ApplicationReadyEv
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }*/
+        }
     }
 
     private void arrangeMeeting(String[] input) {
