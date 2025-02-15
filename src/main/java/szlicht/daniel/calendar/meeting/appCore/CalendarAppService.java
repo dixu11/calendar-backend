@@ -15,10 +15,11 @@ public class CalendarAppService {
     private MeetingsSender meetingsSender;
     private WarningLogger warningLogger;
 
-    public CalendarAppService(PropositionsDomainService propositionsDomainService, ArrangeMeetingDomainService arrangeMeetingDomainService, MeetingsSender meetingsSender) {
+    public CalendarAppService(PropositionsDomainService propositionsDomainService, ArrangeMeetingDomainService arrangeMeetingDomainService, MeetingsSender meetingsSender, WarningLogger warningLogger) {
         this.propositionsDomainService = propositionsDomainService;
         this.arrangeMeetingDomainService = arrangeMeetingDomainService;
         this.meetingsSender = meetingsSender;
+        this.warningLogger = warningLogger;
     }
 
     @EventListener
@@ -39,8 +40,9 @@ public class CalendarAppService {
         return propositionsDomainService.createMeetingPropositions(minutes);
     }
 
-    public void arrangeMeeting(Meeting meeting) {
+    public void arrangeMeeting(Meeting meeting,String description, String mail) {
         try {
+            meeting.setDetails(new Meeting.Details("", description, mail));
             arrangeMeetingDomainService.arrange(meeting);
             meetingsSender.notifyArrangementComplete(meeting);
             System.err.println(meeting.getMail() + " meeting proposition at: " + meeting.when() + " approved");

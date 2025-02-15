@@ -119,7 +119,7 @@ public class Meeting implements Comparable<Meeting>{
             EventAttendee attendee = new EventAttendee().setEmail(details.mail);
             event.setDescription(details.providedDescription + "\n\n" + event.getDescription());
             event.setAttendees(Collections.singletonList(attendee));
-            event.setSummary("Mentoring IT " + attendee.getDisplayName());
+            event.setSummary(details.summary);
             if (!details.providedDescription.isBlank()) {
                 event.setSummary("*"+event.getSummary());
             }
@@ -167,6 +167,9 @@ public class Meeting implements Comparable<Meeting>{
         private String mail = "";
 
         public Details(String summary, String providedDescription, String mail) {
+            if (summary.isEmpty()) {
+                summary = "Mentoring IT " + mail;
+            }
             this.summary = summary;
             this.providedDescription = providedDescription;
             this.mail = mail;

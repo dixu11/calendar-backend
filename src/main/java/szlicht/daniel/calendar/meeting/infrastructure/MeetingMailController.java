@@ -19,10 +19,10 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 @Component
 class MeetingMailController implements MailResponder {
 
-    private final CalendarAppService facade;
+    private final CalendarAppService calendarAppService;
 
-    MeetingMailController(CalendarAppService facade) {
-        this.facade = facade;
+    MeetingMailController(CalendarAppService calendarAppService) {
+        this.calendarAppService = calendarAppService;
     }
 
     @Override
@@ -47,7 +47,7 @@ class MeetingMailController implements MailResponder {
 
     private void sendPropositions(IMAPMessage message) throws MessagingException {
         Integer optionalMinutes = extractMinutes(message.getSubject());
-        facade.sendPropositions(optionalMinutes, message.getSender().toString());
+        calendarAppService.sendPropositions(optionalMinutes, message.getSender().toString());
     }
 
     private Integer extractMinutes(String subject) {
@@ -73,16 +73,15 @@ class MeetingMailController implements MailResponder {
                 return;
             }
 
-            List<String> firstLines = Arrays.stream(content.split("\n"))
+            List<String> lines = Arrays.stream(content.split("\n"))
                     .map(String::trim)
                     .filter(line -> !line.isEmpty())
                     .toList();
-            LocalDateTime start = LocalDateTime.parse(firstLines.get(0).split("#")[1]);
-            int minutes = Integer.parseInt(firstLines.get(1).split("#")[1]);
+            LocalDateTime start = LocalDateTime.parse(lines.get(0).split("#")[1]);
+            int minutes = Integer.parseInt(lines.get(1).split("#")[1]);
             String mail = message.getSender().toString();
-            Meeting meeting = new Meeting(start, minutes)
-                    .setDetails(new Meeting.Details(mail, extractProvidedDescriptions(firstLines),mail));
-            facade.arrangeMeeting(meeting);
+            Meeting meeting = new Meeting(start, minutes);
+            calendarAppService.arrangeMeeting(meeting,extractProvidedDescriptions(lines),mail);
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
             System.err.println("Cannot process body");

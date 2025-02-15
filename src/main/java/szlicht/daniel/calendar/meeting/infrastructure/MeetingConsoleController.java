@@ -28,12 +28,12 @@ class MeetingConsoleController implements ApplicationListener<ApplicationReadyEv
 
     private void startConsoleController() {
         System.out.println("Wprowadź mail na który należy wysłać grafik ({mail} {godziny double}):");
-        System.out.println("Lub podaj meeting(meeting {start} {length minutes}):");
+        System.out.println("Lub podaj meeting(arrange {start} {length minutes} {mail}):");
         Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
                 String[] input = scanner.nextLine().split(" ");
-                if (input[0].equals("meeting")) {
+                if (input[0].equals("arrange")) {
                     arrangeMeeting(input);
                 } else {
                     sendPropositions(input);
@@ -46,7 +46,7 @@ class MeetingConsoleController implements ApplicationListener<ApplicationReadyEv
 
     private void arrangeMeeting(String[] input) {
         Meeting meeting = new Meeting(LocalDateTime.parse(input[1]), Integer.parseInt(input[2]));
-        facade.arrangeMeeting(meeting);
+        facade.arrangeMeeting(meeting,"",input[3]);
     }
 
     private void sendPropositions(String[] input) {
