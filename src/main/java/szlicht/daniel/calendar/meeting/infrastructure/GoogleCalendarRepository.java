@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toDateTime;
+import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toEventDateTime;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.nextMonthEnd;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.tomorrowStart;
 
