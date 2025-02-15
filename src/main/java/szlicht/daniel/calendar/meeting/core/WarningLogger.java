@@ -1,5 +1,5 @@
 package szlicht.daniel.calendar.meeting.core;
 
-public interface WarningService {
+public interface WarningLogger {
     void notifyOwner(String subject, String message, boolean critical);
 }

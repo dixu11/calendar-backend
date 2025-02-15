@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting;
+package szlicht.daniel.calendar.meeting.infrastructure;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

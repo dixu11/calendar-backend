@@ -12,7 +12,7 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 public class CalendarFacade  {
     private CalendarService calendarService;
     private MeetingsSender meetingsSender;
-    private WarningService warningService;
+    private WarningLogger warningLogger;
 
     public CalendarFacade(CalendarService calendarService, MeetingsSender meetingsSender) {
         this.calendarService = calendarService;
@@ -23,8 +23,6 @@ public class CalendarFacade  {
     public void handle(AppStartedEvent appStartedEvent) {
         sendPropositions(60, params.mail().owner());
     }
-
-
 
     public void sendPropositions(Integer minutes, String to) {
         if (minutes == null) {
@@ -51,7 +49,7 @@ public class CalendarFacade  {
             System.err.println(meeting.getMail() + " meeting proposition at: " + meeting.when() + " declined");
             meetingsSender.notifyArrangementFailed(meeting, e.getMessage());
         } catch (Exception e) {
-            warningService.notifyOwner("Unexpected error",
+            warningLogger.notifyOwner("Unexpected error",
                     e.getMessage() + " " + JavaUtils.getStackTrace(e),
                     true);
             e.printStackTrace();

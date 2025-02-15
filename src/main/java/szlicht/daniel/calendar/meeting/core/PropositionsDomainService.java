@@ -1,43 +1,44 @@
 package szlicht.daniel.calendar.meeting.core;
 
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.Events;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
 
-import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
-import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toDateTime;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.nextMonthEnd;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.tomorrowStart;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
-class CalendarManager {
+class PropositionsDomainService {
 
     private final CalendarRepository calendarRepository;
 
-    CalendarManager( CalendarRepository calendarRepository) {
+    PropositionsDomainService(CalendarRepository calendarRepository) {
         this.calendarRepository = calendarRepository;
     }
-    //generating suggestions ------------------------------
 
-    Propositions getMeetingSuggestions(int timeMinutes) {
-        Map<LocalDate, List<Meeting>> allMeetings = sortMeetingsByDays();
+    Propositions createMeetingPropositions(Integer minutes) {
+        if (minutes == null) {
+            minutes = params.values().minutes();
+        }
+        if (notAcceptableLength(minutes)) {
+            throw new IllegalArgumentException(
+                    String.format("Only length of %s hours is acceptable for automatic meeting with me.",
+                            params.values().hours())
+            );
+        }
+        Map<LocalDate, List<Meeting>> allMeetings = sortMeetingsByDaysReverse();
         Map<LocalDate, Meeting> result = new TreeMap<>(LocalDate::compareTo);
         for (LocalDate date : allMeetings.keySet()) {
-            Optional<Meeting> meeting = getMeetingPropositionsFor(allMeetings.get(date), timeMinutes, date);
+            Optional<Meeting> meeting = getMeetingPropositionsFor(allMeetings.get(date), minutes, date);
             meeting.ifPresent(value -> result.put(date, value));
         }
-        return new Propositions(new ArrayList<>(result.values()), timeMinutes / 60.0);
+        return new Propositions(new ArrayList<>(result.values()), minutes / 60.0);
     }
 
-    private Map<LocalDate, List<Meeting>> sortMeetingsByDays() {
+    private Map<LocalDate, List<Meeting>> sortMeetingsByDaysReverse() {
         Map<LocalDate, List<Meeting>> result = new TreeMap<>(LocalDate::compareTo);
         Set<Meeting> events = calendarRepository.getMonthRangeMeetings();
         for (LocalDate date : LocalDateUtils.getDatesBetweenInclude(
@@ -65,6 +66,12 @@ class CalendarManager {
             }
         }
         return Optional.of(proposition);
+    }
+
+    private boolean notAcceptableLength(int minutes) {
+        return params.values().hours().stream()
+                .mapToInt(hour -> (int) (hour * 60))
+                .noneMatch(minutesAccepted -> minutesAccepted == minutes);
     }
 
     public void arrange(Meeting meeting) {

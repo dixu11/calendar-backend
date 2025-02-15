@@ -4,6 +4,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Set;
@@ -14,18 +15,18 @@ class ReminderService  {
     private static final int NOTIFY_MINUTES_BEFORE_MEETING_END = 15;
 
     private final TaskScheduler taskScheduler;
-    private final CalendarManager calendarManager;
+    private final PropositionsDomainService propositionsDomainService;
     private final CalendarFacade calendarFacade;
 
-    ReminderService(TaskScheduler taskScheduler, CalendarManager calendarManager, CalendarFacade calendarFacade) {
+    ReminderService(TaskScheduler taskScheduler, PropositionsDomainService propositionsDomainService, CalendarFacade calendarFacade) {
         this.taskScheduler = taskScheduler;
-        this.calendarManager = calendarManager;
+        this.propositionsDomainService = propositionsDomainService;
         this.calendarFacade = calendarFacade;
     }
 
     @EventListener
     public void onStart(AppStartedEvent appStartedEvent) {
-        Set<Meeting> todayMeetings = calendarManager.getTodayMeetings();
+        Set<Meeting> todayMeetings = propositionsDomainService.getTodayMeetings();
         for (Meeting todayMeeting : todayMeetings) {
             LocalDateTime notificationTime = todayMeeting.getEnd().minusMinutes(NOTIFY_MINUTES_BEFORE_MEETING_END);
             if (notificationTime.isBefore(LocalDateTime.now())) {

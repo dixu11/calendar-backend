@@ -5,38 +5,28 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
-
 @Service
 class CalendarService {
 
-    private final CalendarManager calendarManager;
-    private final WarningService warningService;
+    private final PropositionsDomainService propositionsDomainService;
+    private final WarningLogger warningLogger;
 
     //max arrangements per hour for safety
-    private static final int ARRANGE_RESTART_EVERY = 60;
     private static final int WARNING_WHEN_ARRANGED = 5;
     private static final int SHUT_DOWN_WHEN_ARRANGED = 10;
+
+    private static final int ARRANGE_RESTART_EVERY = 60;
     private int arrangedLastHour;
     private LocalDateTime arrangeCounterLastRestart = LocalDateTime.now();
     private boolean canArrange = true;
 
-    CalendarService(CalendarManager calendarManager, WarningService warningService) {
-        this.calendarManager = calendarManager;
-        this.warningService = warningService;
+    CalendarService(PropositionsDomainService propositionsDomainService, WarningLogger warningLogger) {
+        this.propositionsDomainService = propositionsDomainService;
+        this.warningLogger = warningLogger;
     }
 
     Propositions getMeetingPropositions(Integer minutesLength) {
-        if (minutesLength == null) {
-            minutesLength = params.values().minutes();
-        }
-        if (notAcceptableLength(minutesLength)) {
-            throw new IllegalArgumentException(
-                    String.format("Only length of %s hours is acceptable for automatic meeting with me.",
-                            params.values().hours())
-            );
-        }
-        return calendarManager.getMeetingSuggestions(minutesLength);
+        return propositionsDomainService.createMeetingPropositions(minutesLength);
     }
 
     void arrangeMeeting(Meeting meeting) {
@@ -49,8 +39,8 @@ class CalendarService {
             throw new MeetingCollisionException("Zdaje się, że termin jest już zajęty :( " +
                     "Pobierz jeszcze raz aktualne terminy i spróbuj umówić się na inny dostępny termin!");
         }
-        calendarManager.arrange(meeting);
-        warningService.notifyOwner("Umówił się: " + meeting.getMail() + " at "+ meeting.when(),"Użytkownik dodał się do kalendarza",false);
+        propositionsDomainService.arrange(meeting);
+        warningLogger.notifyOwner("Umówił się: " + meeting.getMail() + " at "+ meeting.when(),"Użytkownik dodał się do kalendarza",false);
         arrangedLastHour++;
         if (arrangeCounterLastRestart.until(LocalDateTime.now(), ChronoUnit.MINUTES) >= ARRANGE_RESTART_EVERY) {
             arrangeCounterLastRestart = LocalDateTime.now();
@@ -60,18 +50,14 @@ class CalendarService {
             canArrange = false;
             String subject = "Max arrangements in hour reached";
             String message = "Performing arrangement system shutdown";
-            warningService.notifyOwner(subject, message, true);
+            warningLogger.notifyOwner(subject, message, true);
         }
         if (arrangedLastHour >= WARNING_WHEN_ARRANGED) {
             String subject = "Big number of arrangements last hour:" + arrangedLastHour;
             String message = "have a nice day!";
-            warningService.notifyOwner(subject, message, false);
+            warningLogger.notifyOwner(subject, message, false);
         }
     }
 
-    private boolean notAcceptableLength(int minutes) {
-        return params.values().hours().stream()
-                .mapToInt(hour -> (int) (hour * 60))
-                .noneMatch(minutesAccepted -> minutesAccepted == minutes);
-    }
+
 }

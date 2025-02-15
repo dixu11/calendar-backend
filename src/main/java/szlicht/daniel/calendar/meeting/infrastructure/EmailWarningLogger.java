@@ -1,17 +1,17 @@
-package szlicht.daniel.calendar.meeting;
+package szlicht.daniel.calendar.meeting.infrastructure;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;
-import szlicht.daniel.calendar.meeting.core.WarningService;
+import szlicht.daniel.calendar.meeting.core.WarningLogger;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
-class EmailWarningService implements WarningService {
+class EmailWarningLogger implements WarningLogger {
 
     private final EmailService emailService;
 
-    public EmailWarningService(EmailService emailService) {
+    public EmailWarningLogger(EmailService emailService) {
         this.emailService = emailService;
     }
 

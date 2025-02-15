@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting;
+package szlicht.daniel.calendar.meeting.infrastructure;
 
 import jakarta.mail.MessagingException;
 import org.eclipse.angus.mail.imap.IMAPMessage;
