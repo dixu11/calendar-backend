@@ -1,6 +1,7 @@
 package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.stereotype.Service;
+import szlicht.daniel.calendar.meeting.infrastructure.GoogleCalendarRepository;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -36,7 +37,7 @@ public class ArrangeMeetingDomainService {
                     "Pobierz jeszcze raz aktualne terminy i spróbuj umówić się na inny dostępny termin!");
         }
         arrangedLastHour++;
-        calendarRepository.arrange(meeting);
+        calendarRepository.save(meeting);
         warningLogger.notifyOwner("Umówił się: " + meeting.getMail() + " at "+ meeting.when(),
                 "Użytkownik dodał się do kalendarza",false);
         if (arrangeCounterLastRestart.until(LocalDateTime.now(), ChronoUnit.MINUTES) >= ARRANGE_RESTART_EVERY) {

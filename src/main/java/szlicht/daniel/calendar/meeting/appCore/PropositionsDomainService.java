@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
+import szlicht.daniel.calendar.meeting.infrastructure.GoogleCalendarRepository;
 
 import java.time.LocalDate;
 import java.util.*;

@@ -4,6 +4,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
+import szlicht.daniel.calendar.meeting.infrastructure.GoogleCalendarRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -16,17 +17,19 @@ class ReminderService  {
 
     private final TaskScheduler taskScheduler;
     private final PropositionsDomainService propositionsDomainService;
-    private final CalendarService calendarService;
+    private final CalendarAppService calendarAppService;
+    private final CalendarRepository calendarRepository;
 
-    ReminderService(TaskScheduler taskScheduler, PropositionsDomainService propositionsDomainService, CalendarService calendarService) {
+    ReminderService(TaskScheduler taskScheduler, PropositionsDomainService propositionsDomainService, CalendarAppService calendarAppService, CalendarRepository calendarRepository) {
         this.taskScheduler = taskScheduler;
         this.propositionsDomainService = propositionsDomainService;
-        this.calendarService = calendarService;
+        this.calendarAppService = calendarAppService;
+        this.calendarRepository = calendarRepository;
     }
 
     @EventListener
     public void onStart(AppStartedEvent appStartedEvent) {
-        Set<Meeting> todayMeetings = propositionsDomainService.getTodayMeetings();
+        Set<Meeting> todayMeetings = calendarRepository.getTodayMeetings();
         for (Meeting todayMeeting : todayMeetings) {
             LocalDateTime notificationTime = todayMeeting.getEnd().minusMinutes(NOTIFY_MINUTES_BEFORE_MEETING_END);
             if (notificationTime.isBefore(LocalDateTime.now())) {
@@ -38,7 +41,7 @@ class ReminderService  {
             if (!todayMeeting.isMentoring()) {
                 continue;
             }
-            taskScheduler.schedule(() -> calendarService.sendPropositions(
+            taskScheduler.schedule(() -> calendarAppService.sendPropositions(
                             todayMeeting.getLengthMinutes(),
                             todayMeeting.getMail()),
                     notificationTime.atZone(ZoneId.systemDefault()).toInstant());

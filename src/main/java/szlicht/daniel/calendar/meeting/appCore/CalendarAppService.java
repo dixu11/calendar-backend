@@ -9,13 +9,13 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 
 @Service
-public class CalendarService {
+public class CalendarAppService {
     private PropositionsDomainService propositionsDomainService;
     private ArrangeMeetingDomainService arrangeMeetingDomainService;
     private MeetingsSender meetingsSender;
     private WarningLogger warningLogger;
 
-    public CalendarService(PropositionsDomainService propositionsDomainService, ArrangeMeetingDomainService arrangeMeetingDomainService, MeetingsSender meetingsSender) {
+    public CalendarAppService(PropositionsDomainService propositionsDomainService, ArrangeMeetingDomainService arrangeMeetingDomainService, MeetingsSender meetingsSender) {
         this.propositionsDomainService = propositionsDomainService;
         this.arrangeMeetingDomainService = arrangeMeetingDomainService;
         this.meetingsSender = meetingsSender;

@@ -4,16 +4,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import szlicht.daniel.calendar.meeting.appCore.CalendarService;
+import szlicht.daniel.calendar.meeting.appCore.CalendarAppService;
 import szlicht.daniel.calendar.meeting.appCore.CalendarOfflineException;
 
 
 @RestController
 @RequestMapping("/api/v0/meetings")
 class MeetingRestController {
-    private CalendarService facade;
+    private CalendarAppService facade;
 
-    MeetingRestController(CalendarService facade) {
+    MeetingRestController(CalendarAppService facade) {
         this.facade = facade;
     }
 

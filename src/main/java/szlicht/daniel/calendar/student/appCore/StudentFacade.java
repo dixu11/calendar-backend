@@ -3,7 +3,7 @@ package szlicht.daniel.calendar.student.appCore;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
-import szlicht.daniel.calendar.meeting.appCore.CalendarRepository;
+import szlicht.daniel.calendar.meeting.infrastructure.GoogleCalendarRepository;
 import szlicht.daniel.calendar.meeting.appCore.Meeting;
 
 import java.util.Set;
@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 @Service
 public class StudentFacade {
 
-    private final CalendarRepository calendarRepository;
+    private final GoogleCalendarRepository googleCalendarRepository;
     private final StudentRepository studentRepository;
 
-    public StudentFacade(CalendarRepository calendarRepository, StudentRepository studentRepository) {
-        this.calendarRepository = calendarRepository;
+    public StudentFacade(GoogleCalendarRepository googleCalendarRepository, StudentRepository studentRepository) {
+        this.googleCalendarRepository = googleCalendarRepository;
         this.studentRepository = studentRepository;
     }
 
@@ -28,7 +28,7 @@ public class StudentFacade {
     }
 
     private Set<String> getActiveStudentsMails() {
-       return calendarRepository.getLastMonthAndCurrentMeetings()
+       return googleCalendarRepository.getLastMonthAndCurrentMeetings()
                 .stream()
                 .filter(Meeting::isMentoring)
                 .map(Meeting::getMail)

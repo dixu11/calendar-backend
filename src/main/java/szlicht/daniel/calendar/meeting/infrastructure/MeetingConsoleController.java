@@ -4,7 +4,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import szlicht.daniel.calendar.meeting.appCore.CalendarService;
+import szlicht.daniel.calendar.meeting.appCore.CalendarAppService;
 import szlicht.daniel.calendar.meeting.appCore.Meeting;
 
 import java.time.LocalDateTime;
@@ -14,9 +14,9 @@ import java.util.Scanner;
 @Profile("dev")
 class MeetingConsoleController implements ApplicationListener<ApplicationReadyEvent> {
 
-    private CalendarService facade;
+    private CalendarAppService facade;
 
-    MeetingConsoleController(CalendarService facade) {
+    MeetingConsoleController(CalendarAppService facade) {
         this.facade = facade;
     }
 

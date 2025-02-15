@@ -35,7 +35,7 @@ public class Meeting implements Comparable<Meeting>{
         moveBy(-getBufferAfter());
     }
 
-    Meeting(Event event) {
+    public Meeting(Event event) {
         this(toLocalDateTime(event.getStart().getDateTime()),
                 toLocalDateTime(event.getEnd().getDateTime()));
         String summary = "";
