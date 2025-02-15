@@ -4,7 +4,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
-import szlicht.daniel.calendar.meeting.core.MeetingParams;
+import szlicht.daniel.calendar.meeting.appCore.MeetingParams;
 
 @Configuration
 public class ParamsProvider implements ApplicationListener<ApplicationReadyEvent> {

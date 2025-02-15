@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.core;
+package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
@@ -16,12 +16,12 @@ class ReminderService  {
 
     private final TaskScheduler taskScheduler;
     private final PropositionsDomainService propositionsDomainService;
-    private final CalendarFacade calendarFacade;
+    private final CalendarService calendarService;
 
-    ReminderService(TaskScheduler taskScheduler, PropositionsDomainService propositionsDomainService, CalendarFacade calendarFacade) {
+    ReminderService(TaskScheduler taskScheduler, PropositionsDomainService propositionsDomainService, CalendarService calendarService) {
         this.taskScheduler = taskScheduler;
         this.propositionsDomainService = propositionsDomainService;
-        this.calendarFacade = calendarFacade;
+        this.calendarService = calendarService;
     }
 
     @EventListener
@@ -38,7 +38,7 @@ class ReminderService  {
             if (!todayMeeting.isMentoring()) {
                 continue;
             }
-            taskScheduler.schedule(() -> calendarFacade.sendPropositions(
+            taskScheduler.schedule(() -> calendarService.sendPropositions(
                             todayMeeting.getLengthMinutes(),
                             todayMeeting.getMail()),
                     notificationTime.atZone(ZoneId.systemDefault()).toInstant());

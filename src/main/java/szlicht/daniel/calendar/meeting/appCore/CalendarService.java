@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.core;
+package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -9,13 +9,15 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 
 @Service
-public class CalendarFacade  {
-    private CalendarService calendarService;
+public class CalendarService {
+    private PropositionsDomainService propositionsDomainService;
+    private ArrangeMeetingDomainService arrangeMeetingDomainService;
     private MeetingsSender meetingsSender;
     private WarningLogger warningLogger;
 
-    public CalendarFacade(CalendarService calendarService, MeetingsSender meetingsSender) {
-        this.calendarService = calendarService;
+    public CalendarService(PropositionsDomainService propositionsDomainService, ArrangeMeetingDomainService arrangeMeetingDomainService, MeetingsSender meetingsSender) {
+        this.propositionsDomainService = propositionsDomainService;
+        this.arrangeMeetingDomainService = arrangeMeetingDomainService;
         this.meetingsSender = meetingsSender;
     }
 
@@ -25,11 +27,8 @@ public class CalendarFacade  {
     }
 
     public void sendPropositions(Integer minutes, String to) {
-        if (minutes == null) {
-            minutes = params.values().minutes();
-        }
         try {
-            Propositions meetingPropositions = calendarService.getMeetingPropositions(minutes);
+            Propositions meetingPropositions = getMeetingPropositions(minutes);
             meetingsSender.sendPropositions(meetingPropositions, to);
         } catch (CalendarOfflineException e) {
             System.err.println("calendar offline");
@@ -37,12 +36,12 @@ public class CalendarFacade  {
     }
 
     public Propositions getMeetingPropositions(Integer minutes) {
-        return calendarService.getMeetingPropositions(minutes);
+        return propositionsDomainService.createMeetingPropositions(minutes);
     }
 
     public void arrangeMeeting(Meeting meeting) {
         try {
-            calendarService.arrangeMeeting(meeting);
+            arrangeMeetingDomainService.arrange(meeting);
             meetingsSender.notifyArrangementComplete(meeting);
             System.err.println(meeting.getMail() + " meeting proposition at: " + meeting.when() + " approved");
         } catch (CalendarOfflineException | MeetingCollisionException e) {

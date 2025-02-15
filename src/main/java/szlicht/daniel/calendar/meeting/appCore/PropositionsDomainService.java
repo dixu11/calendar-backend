@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.core;
+package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
@@ -72,13 +72,5 @@ class PropositionsDomainService {
         return params.values().hours().stream()
                 .mapToInt(hour -> (int) (hour * 60))
                 .noneMatch(minutesAccepted -> minutesAccepted == minutes);
-    }
-
-    public void arrange(Meeting meeting) {
-        calendarRepository.arrange(meeting);
-    }
-
-    public Set<Meeting> getTodayMeetings() {
-        return calendarRepository.getTodayMeetings();
     }
 }

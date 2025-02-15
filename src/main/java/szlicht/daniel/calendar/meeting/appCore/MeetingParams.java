@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.core;
+package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;

@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.core;
+package szlicht.daniel.calendar.meeting.appCore;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;

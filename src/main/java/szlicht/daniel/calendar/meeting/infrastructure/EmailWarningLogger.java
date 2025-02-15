@@ -2,7 +2,7 @@ package szlicht.daniel.calendar.meeting.infrastructure;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;
-import szlicht.daniel.calendar.meeting.core.WarningLogger;
+import szlicht.daniel.calendar.meeting.appCore.WarningLogger;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 

@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.core;
+package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;

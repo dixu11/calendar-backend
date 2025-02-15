@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.student.core;
+package szlicht.daniel.calendar.student.appCore;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.PersistenceCreator;

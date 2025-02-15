@@ -4,8 +4,8 @@ import jakarta.mail.MessagingException;
 import org.eclipse.angus.mail.imap.IMAPMessage;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.common.mail.MailResponder;
-import szlicht.daniel.calendar.meeting.core.CalendarFacade;
-import szlicht.daniel.calendar.meeting.core.Meeting;
+import szlicht.daniel.calendar.meeting.appCore.CalendarService;
+import szlicht.daniel.calendar.meeting.appCore.Meeting;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -19,9 +19,9 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 @Component
 class MeetingMailController implements MailResponder {
 
-    private final CalendarFacade facade;
+    private final CalendarService facade;
 
-    MeetingMailController(CalendarFacade facade) {
+    MeetingMailController(CalendarService facade) {
         this.facade = facade;
     }
 

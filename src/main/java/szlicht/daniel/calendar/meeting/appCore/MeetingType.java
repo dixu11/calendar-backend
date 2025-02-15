@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.core;
+package szlicht.daniel.calendar.meeting.appCore;
 
 import szlicht.daniel.calendar.common.calendar.GoogleCalendarColor;
 

@@ -1,10 +1,10 @@
-package szlicht.daniel.calendar.student.core;
+package szlicht.daniel.calendar.student.appCore;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
-import szlicht.daniel.calendar.meeting.core.CalendarRepository;
-import szlicht.daniel.calendar.meeting.core.Meeting;
+import szlicht.daniel.calendar.meeting.appCore.CalendarRepository;
+import szlicht.daniel.calendar.meeting.appCore.Meeting;
 
 import java.util.Set;
 import java.util.stream.Collectors;
