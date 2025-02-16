@@ -13,12 +13,15 @@ class StudentEntity {
     private int id;
     @Column(unique = true)
     private String email;
+    @Column(unique = true)
+    private String name;
 
     @PersistenceCreator
     StudentEntity() {
     }
 
-    public StudentEntity(String email) {
+    public StudentEntity(String name, String email) {
+        this.name = name;
         this.email = email;
     }
 
@@ -33,13 +36,5 @@ class StudentEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(email);
-    }
-
-    @Override
-    public String toString() {
-        return "StudentEntity{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                '}';
     }
 }

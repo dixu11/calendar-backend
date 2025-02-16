@@ -26,6 +26,7 @@ public record MeetingParams(
             int minutes,
             String zone,
             List<Double> hours,
+            String summaryPrefix,
             WorkHours workHours
     ) {
         public ZoneId getZoneId() {

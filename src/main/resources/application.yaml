@@ -33,6 +33,7 @@ meeting:
     bot: ${BOT_MAIL}
     phone: ${PHONE_NUMBER}
   values:
+    summary-prefix: "Mentoring IT z "
     zone: "Europe/Warsaw"
     hours:
       - 1.0

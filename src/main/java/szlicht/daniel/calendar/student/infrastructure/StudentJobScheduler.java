@@ -25,6 +25,6 @@ public class StudentJobScheduler {
     void atStart(AppStartedEvent event) {
         studentAppService.collectNewStudents();
         taskScheduler.schedule(() -> studentAppService.collectNewStudents(),
-                new CronTrigger("0 0 8 ? * MON", params.values().getZoneId()));
+                new CronTrigger("0 0 8 * * ?", params.values().getZoneId()));
     }
 }

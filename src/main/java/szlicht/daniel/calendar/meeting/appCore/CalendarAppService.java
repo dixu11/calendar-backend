@@ -1,6 +1,7 @@
 package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.JavaUtils;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
@@ -23,6 +24,7 @@ public class CalendarAppService {
     }
 
     @EventListener
+    @Async
     public void handle(AppStartedEvent appStartedEvent) {
         sendPropositions(60, params.mail().owner());
     }
@@ -43,7 +45,7 @@ public class CalendarAppService {
 
     public void arrangeMeeting(Meeting meeting,String providedDescription, String mail) {
         try {
-            meeting.setDetails(new Meeting.Details("Mentoring IT z " + mail,
+            meeting.setDetails(new Meeting.Details(params.values().summaryPrefix() + mail,
                     "Spotkanie umówione automatycznie",
                     providedDescription, mail)
             );

@@ -1,6 +1,7 @@
 package szlicht.daniel.calendar.student.infrastructure;
 
 import org.springframework.stereotype.Service;
+import szlicht.daniel.calendar.student.appCore.Student;
 import szlicht.daniel.calendar.student.appCore.StudentRepository;
 
 import java.util.Set;
@@ -15,13 +16,12 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public void addIfNotExists(Set<String> mails) {
+    public void addIfNotExists(Set<Student> students) {
         Set<String> existingMails = studentJpaRepository.findAllEmails();
-        Set<StudentEntity> result = mails.stream()
-                .filter(mail -> !existingMails.contains(mail))
-                .map(StudentEntity::new)
+        Set<StudentEntity> result = students.stream()
+                .filter(student -> !existingMails.contains(student.getEmail()))
+                .map(student -> new StudentEntity(student.getName(),student.getEmail()))
                 .collect(Collectors.toSet());
-        System.out.println(result + " added");
         studentJpaRepository.saveAll(result);
     }
 }
