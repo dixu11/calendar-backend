@@ -20,8 +20,7 @@ public class StudentAppService {
         this.studentRepository = studentRepository;
     }
 
-    @EventListener
-    public void collectNewStudents(AppStartedEvent e) {
+    public void collectNewStudents() {
         System.out.println("Collecting new students");
         Set<String> mails = getActiveStudentsMails();
         studentRepository.addIfNotExists(mails);
