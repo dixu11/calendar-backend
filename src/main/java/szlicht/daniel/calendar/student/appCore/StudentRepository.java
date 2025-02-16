@@ -1,7 +1,7 @@
 package szlicht.daniel.calendar.student.appCore;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Set;
 
-interface StudentRepository extends JpaRepository<StudentEntity,Integer> {
-    boolean existsByEmail(String email);
+public interface StudentRepository {
+    void addIfNotExists(Set<String> mails);
 }
