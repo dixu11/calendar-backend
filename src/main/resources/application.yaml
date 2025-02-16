@@ -33,6 +33,7 @@ meeting:
     bot: ${BOT_MAIL}
     phone: ${PHONE_NUMBER}
   values:
+    zone: "Europe/Warsaw"
     hours:
       - 1.0
       - 1.5

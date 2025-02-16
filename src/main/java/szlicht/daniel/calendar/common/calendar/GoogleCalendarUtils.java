@@ -6,23 +6,23 @@ import com.google.api.services.calendar.model.EventDateTime;
 import java.time.*;
 import java.util.Date;
 
-public class GoogleCalendarUtils {
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-    private static final String APP_ZONE = "Europe/Warsaw";
+public class GoogleCalendarUtils {
 
     public static EventDateTime toEventDateTime(LocalDateTime localDateTime) {
         return new EventDateTime()
                 .setDateTime(toDateTime(localDateTime))
-                .setTimeZone(APP_ZONE);
+                .setTimeZone(params.values().zone());
     }
 
     public static DateTime toDateTime(LocalDateTime localDateTime) {
-        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of(APP_ZONE));
+        ZonedDateTime zonedDateTime = localDateTime.atZone(params.values().getZoneId());
         return new DateTime(zonedDateTime.toInstant().toEpochMilli());
     }
 
     public static LocalDateTime toLocalDateTime(DateTime dateTime) {
-       return Instant.ofEpochMilli(dateTime.getValue()).atZone(ZoneId.of(APP_ZONE))
+       return Instant.ofEpochMilli(dateTime.getValue()).atZone(params.values().getZoneId())
                 .toLocalDateTime();
     }
 }

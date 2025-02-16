@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +24,13 @@ public record MeetingParams(
 
     public record Values(
             int minutes,
+            String zone,
             List<Double> hours,
             WorkHours workHours
     ) {
+        public ZoneId getZoneId() {
+            return ZoneId.of(zone);
+        }
 
         public record WorkHours(
                 LocalTime start,

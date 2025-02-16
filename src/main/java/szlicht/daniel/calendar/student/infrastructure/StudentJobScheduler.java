@@ -9,6 +9,8 @@ import szlicht.daniel.calendar.student.appCore.StudentAppService;
 
 import java.time.ZoneId;
 
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
+
 @Service
 public class StudentJobScheduler {
     private StudentAppService studentAppService;
@@ -23,6 +25,6 @@ public class StudentJobScheduler {
     void atStart(AppStartedEvent event) {
         studentAppService.collectNewStudents();
         taskScheduler.schedule(() -> studentAppService.collectNewStudents(),
-                new CronTrigger("0 0 8 ? * MON", ZoneId.systemDefault()));
+                new CronTrigger("0 0 8 ? * MON", params.values().getZoneId()));
     }
 }

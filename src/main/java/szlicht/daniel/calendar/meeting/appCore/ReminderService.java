@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Set;
 
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
+
 @Service
 class ReminderService  {
 
@@ -45,7 +47,7 @@ class ReminderService  {
             taskScheduler.schedule(() -> calendarAppService.sendPropositions(
                             todayMeeting.getLengthMinutes(),
                             todayMeeting.getDetails().getMail()),
-                    notificationTime.atZone(ZoneId.systemDefault()).toInstant());
+                    notificationTime.atZone(params.values().getZoneId()).toInstant());
             System.out.println("Will send notification at " + notificationTime + " for event " + todayMeeting);
         }
     }
