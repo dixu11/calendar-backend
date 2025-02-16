@@ -1,6 +1,8 @@
 package szlicht.daniel.calendar.student.appCore;
 
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import szlicht.daniel.calendar.meeting.appCore.NextMonthMeetingsEvent;
 import szlicht.daniel.calendar.meeting.infrastructure.GoogleCalendarRepository;
 import szlicht.daniel.calendar.meeting.appCore.Meeting;
 
@@ -12,23 +14,20 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 @Service
 public class StudentAppService {
 
-    private final GoogleCalendarRepository googleCalendarRepository;
     private final StudentRepository studentRepository;
 
-    public StudentAppService(GoogleCalendarRepository googleCalendarRepository, StudentRepository studentRepository) {
-        this.googleCalendarRepository = googleCalendarRepository;
+    public StudentAppService( StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public void collectNewStudents() {
-        System.out.println("Collecting new students");
-        Set<Student> activeStudents = getActiveStudentsByEmails();
+    @EventListener
+    public void collectNewStudents(NextMonthMeetingsEvent event) {
+        Set<Student> activeStudents = getActiveStudentsByEmails(event.getMeetings());
         studentRepository.addIfNotExists(activeStudents);
     }
 
-    private Set<Student> getActiveStudentsByEmails() {
-       return googleCalendarRepository.getMonthFromNowMeetings()
-                .stream()
+    private Set<Student> getActiveStudentsByEmails(Set<Meeting> meetings) {
+       return meetings.stream()
                 .filter(Meeting::isMentoring)
                 .filter(meeting -> !meeting.getDetails().getMail().isEmpty())
                 .map(meeting -> new Student(extractStudentName(meeting.getDetails().getSummary()),
