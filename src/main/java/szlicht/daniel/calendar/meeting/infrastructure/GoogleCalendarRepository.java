@@ -59,8 +59,8 @@ public class GoogleCalendarRepository implements CalendarRepository {
     }
 
     public Set<Meeting> getMonthRangeMeetings() {
-        LocalDateTime from = LocalDateTime.now().minusWeeks(2).with(LocalDateTime.MIN);
-        LocalDateTime to = LocalDateTime.now().plusWeeks(2).with(LocalDateTime.MAX);
+        LocalDateTime from = LocalDateTime.now().minusWeeks(2).with(LocalTime.MIN);
+        LocalDateTime to = LocalDateTime.now().plusWeeks(2).with(LocalTime.MAX);
         return getMeetings(from, to);
     }
 
