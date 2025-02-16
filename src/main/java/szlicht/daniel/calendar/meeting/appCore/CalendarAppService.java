@@ -28,6 +28,7 @@ public class CalendarAppService {
     }
 
     public void sendPropositions(Integer minutes, String to) {
+        System.out.println("trying to send propositions to " + to);
         try {
             Propositions meetingPropositions = getMeetingPropositions(minutes);
             meetingsSender.sendPropositions(meetingPropositions, to);
