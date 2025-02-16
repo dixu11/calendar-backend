@@ -1,8 +1,6 @@
 package szlicht.daniel.calendar.student.appCore;
 
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.spring.AppStartedEvent;
 import szlicht.daniel.calendar.meeting.infrastructure.GoogleCalendarRepository;
 import szlicht.daniel.calendar.meeting.appCore.Meeting;
 
@@ -27,7 +25,7 @@ public class StudentAppService {
     }
 
     private Set<String> getActiveStudentsMails() {
-       return googleCalendarRepository.getLastMonthAndCurrentMeetings()
+       return googleCalendarRepository.getMonthRangeMeetings()
                 .stream()
                 .filter(Meeting::isMentoring)
                 .map(meeting -> meeting.getDetails().getMail())

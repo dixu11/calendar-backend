@@ -5,7 +5,6 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.Events;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.calendar.GoogleCalendarColor;
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
 import szlicht.daniel.calendar.meeting.appCore.CalendarOfflineException;
 import szlicht.daniel.calendar.meeting.appCore.CalendarRepository;
@@ -47,7 +46,7 @@ public class GoogleCalendarRepository implements CalendarRepository {
         }
     }
 
-    public Set<Meeting> getMonthRangeMeetings() {
+    public Set<Meeting> getMonthFromNowMeetings() {
         LocalDateTime from = tomorrowStart();
         LocalDateTime to = nextMonthEnd();
         return getMeetings(from, to);
@@ -59,9 +58,9 @@ public class GoogleCalendarRepository implements CalendarRepository {
         return new TreeSet<>(getMeetings(from, to));
     }
 
-    public Set<Meeting> getLastMonthAndCurrentMeetings() {
-        LocalDateTime from = LocalDateUtils.lastMonthStart();
-        LocalDateTime to = LocalDateTime.now();
+    public Set<Meeting> getMonthRangeMeetings() {
+        LocalDateTime from = LocalDateTime.now().minusWeeks(2).with(LocalDateTime.MIN);
+        LocalDateTime to = LocalDateTime.now().plusWeeks(2).with(LocalDateTime.MAX);
         return getMeetings(from, to);
     }
 

@@ -2,7 +2,6 @@ package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
-import szlicht.daniel.calendar.meeting.infrastructure.GoogleCalendarRepository;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -41,7 +40,7 @@ class PropositionsDomainService {
 
     private Map<LocalDate, List<Meeting>> sortMeetingsByDaysReverse() {
         Map<LocalDate, List<Meeting>> result = new TreeMap<>(LocalDate::compareTo);
-        Set<Meeting> events = calendarRepository.getMonthRangeMeetings();
+        Set<Meeting> events = calendarRepository.getMonthFromNowMeetings();
         for (LocalDate date : LocalDateUtils.getDatesBetweenInclude(
                 tomorrowStart().toLocalDate(),
                 nextMonthEnd().toLocalDate())) {
