@@ -38,7 +38,7 @@ public class ArrangeMeetingDomainService {
         }
         arrangedLastHour++;
         calendarRepository.save(meeting);
-        warningLogger.notifyOwner("Umówił się: " + meeting.getMail() + " at "+ meeting.when(),
+        warningLogger.notifyOwner("Umówił się: " + meeting.getDetails().getMail() + " at "+ meeting.when(),
                 "Użytkownik dodał się do kalendarza",false);
         if (arrangeCounterLastRestart.until(LocalDateTime.now(), ChronoUnit.MINUTES) >= ARRANGE_RESTART_EVERY) {
             arrangeCounterLastRestart = LocalDateTime.now();

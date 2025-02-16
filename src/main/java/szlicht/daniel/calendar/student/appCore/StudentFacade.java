@@ -31,7 +31,7 @@ public class StudentFacade {
        return googleCalendarRepository.getLastMonthAndCurrentMeetings()
                 .stream()
                 .filter(Meeting::isMentoring)
-                .map(Meeting::getMail)
+                .map(meeting -> meeting.getDetails().getMail())
                 .filter(mail -> !mail.isEmpty())
                 .collect(Collectors.toSet());
     }

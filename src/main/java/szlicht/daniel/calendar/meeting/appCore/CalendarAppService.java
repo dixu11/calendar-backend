@@ -40,14 +40,17 @@ public class CalendarAppService {
         return propositionsDomainService.createMeetingPropositions(minutes);
     }
 
-    public void arrangeMeeting(Meeting meeting,String description, String mail) {
+    public void arrangeMeeting(Meeting meeting,String providedDescription, String mail) {
         try {
-            meeting.setDetails(new Meeting.Details("", description, mail));
+            meeting.setDetails(new Meeting.Details("Mentoring IT z " + mail,
+                    "Spotkanie umówione automatycznie",
+                    providedDescription, mail)
+            );
             arrangeMeetingDomainService.arrange(meeting);
             meetingsSender.notifyArrangementComplete(meeting);
-            System.err.println(meeting.getMail() + " meeting proposition at: " + meeting.when() + " approved");
+            System.err.println(meeting.getDetails().getMail() + " meeting proposition at: " + meeting.when() + " approved");
         } catch (CalendarOfflineException | MeetingCollisionException e) {
-            System.err.println(meeting.getMail() + " meeting proposition at: " + meeting.when() + " declined");
+            System.err.println(meeting.getDetails().getMail() + " meeting proposition at: " + meeting.when() + " declined");
             meetingsSender.notifyArrangementFailed(meeting, e.getMessage());
         } catch (Exception e) {
             warningLogger.notifyOwner("Unexpected error",

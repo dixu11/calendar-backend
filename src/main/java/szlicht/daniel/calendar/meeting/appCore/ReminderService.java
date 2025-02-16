@@ -35,7 +35,7 @@ class ReminderService  {
             if (notificationTime.isBefore(LocalDateTime.now())) {
                 continue;
             }
-            if (todayMeeting.getMail().isBlank()) {
+            if (todayMeeting.getDetails().getMail().isBlank()) {
                 continue;
             }
             if (!todayMeeting.isMentoring()) {
@@ -43,7 +43,7 @@ class ReminderService  {
             }
             taskScheduler.schedule(() -> calendarAppService.sendPropositions(
                             todayMeeting.getLengthMinutes(),
-                            todayMeeting.getMail()),
+                            todayMeeting.getDetails().getMail()),
                     notificationTime.atZone(ZoneId.systemDefault()).toInstant());
             System.out.println("Will send notification at " + notificationTime + " for event " + todayMeeting);
         }

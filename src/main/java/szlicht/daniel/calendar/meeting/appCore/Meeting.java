@@ -1,17 +1,12 @@
 package szlicht.daniel.calendar.meeting.appCore;
 
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventAttendee;
-import szlicht.daniel.calendar.common.calendar.GoogleCalendarColor;
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.Objects;
-import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toEventDateTime;
-import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toLocalDateTime;
 
-public class Meeting implements Comparable<Meeting>{
+public class Meeting implements Comparable<Meeting> {
     private static final int BUFFER = 15;
     private static final int NO_BUFFER_BELOW = 60;
 
@@ -31,28 +26,8 @@ public class Meeting implements Comparable<Meeting>{
     }
 
     Meeting(Meeting meetingAfter, int lengthMinutes) {
-        this(meetingAfter.getStart().minusMinutes(lengthMinutes),meetingAfter.getStart());
+        this(meetingAfter.getStart().minusMinutes(lengthMinutes), meetingAfter.getStart());
         moveBy(-getBufferAfter());
-    }
-
-    public Meeting(Event event) {
-        this(toLocalDateTime(event.getStart().getDateTime()),
-                toLocalDateTime(event.getEnd().getDateTime()));
-        String summary = "";
-        String description = "";
-        String email = "";
-
-        if (event.getSummary() != null) {
-            summary = event.getSummary();
-        }
-        if (event.getDescription() != null) {
-            description = event.getDescription();
-        }
-        if (event.getAttendees() != null) {
-            email = event.getAttendees().get(0).getEmail();
-        }
-        type = MeetingType.fromColorId(event.getColorId());
-        details = new Details(summary, description, email);
     }
 
     Meeting() {
@@ -62,11 +37,11 @@ public class Meeting implements Comparable<Meeting>{
         return new Meeting(meetingAfter, minutes);
     }
 
-    LocalDateTime getStart() {
+    public LocalDateTime getStart() {
         return start;
     }
 
-    LocalDateTime getEnd() {
+    public LocalDateTime getEnd() {
         return end;
     }
 
@@ -109,28 +84,6 @@ public class Meeting implements Comparable<Meeting>{
         return this;
     }
 
-    public Event asEvent() {
-        Event event = new Event();
-        event.setDescription("Spotkanie umówione automatycznie");
-        event.setStart(toEventDateTime(start));
-        event.setEnd(toEventDateTime(end));
-        event.setColorId(GoogleCalendarColor.PINK.getColorId());
-        if (details != null) {
-            EventAttendee attendee = new EventAttendee().setEmail(details.mail);
-            event.setDescription(details.providedDescription + "\n\n" + event.getDescription());
-            event.setAttendees(Collections.singletonList(attendee));
-            event.setSummary(details.summary);
-            if (!details.providedDescription.isBlank()) {
-                event.setSummary("*"+event.getSummary());
-            }
-        }
-        return event;
-    }
-
-    public String getMail() {
-        return details.mail;
-    }
-
     public String when() {
         return LocalDateUtils.simpleDateTime(start) + "-" + LocalDateUtils.simpleTime(end);
     }
@@ -161,18 +114,54 @@ public class Meeting implements Comparable<Meeting>{
         return start.compareTo(o.start);
     }
 
+    public String getDescription() {
+        return details.ownerDescription;
+    }
+
+    public Details getDetails() {
+        return details;
+    }
+
+    public MeetingType getType() {
+        return type;
+    }
+
+    public Meeting setType(MeetingType meetingType) {
+        this.type = meetingType;
+        return this;
+    }
+
     public static class Details {
         private String summary = "";
+        private String ownerDescription = "";
         private String providedDescription = "";
         private String mail = "";
 
-        public Details(String summary, String providedDescription, String mail) {
-            if (summary.isEmpty()) {
-                summary = "Mentoring IT " + mail;
-            }
+        public Details(String summary, String ownerDescription, String providedDescription, String mail) {
             this.summary = summary;
+            this.ownerDescription = ownerDescription;
             this.providedDescription = providedDescription;
             this.mail = mail;
+        }
+
+        String getFullDescription() {
+            return ownerDescription + " " + providedDescription;
+        }
+
+        public String getSummary() {
+            return summary;
+        }
+
+        public String getOwnerDescription() {
+            return ownerDescription;
+        }
+
+        public String getProvidedDescription() {
+            return providedDescription;
+        }
+
+        public String getMail() {
+            return mail;
         }
     }
 }
