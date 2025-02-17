@@ -140,12 +140,12 @@ class MeetingsSender {
                 "że jesteś już gotowy/a to zadzwonię od razu :)";
         body += "<br>";
         body += "Do tego czasu <b>naskrob trochę kodu</b> !";
-        emailService.sendHtmlEmail(meeting.getDetails().getMail(), "Zaplanowano lekcję: " + meeting.when(),
+        emailService.sendHtmlEmail(meeting.getDetails().getEmail(), "Zaplanowano lekcję: " + meeting.when(),
                 body);
     }
 
     public void notifyArrangementFailed(Meeting meeting, String errorMessage) {
-        emailService.sendSimpleEmail(meeting.getDetails().getMail(),"Nie mogę umówić Twojego spotkania.",
+        emailService.sendSimpleEmail(meeting.getDetails().getEmail(),"Nie mogę umówić Twojego spotkania.",
                 errorMessage);
     }
 }

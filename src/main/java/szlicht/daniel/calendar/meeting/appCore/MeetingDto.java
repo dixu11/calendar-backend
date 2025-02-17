@@ -1,10 +1,12 @@
 package szlicht.daniel.calendar.meeting.appCore;
 
 import lombok.Builder;
+import lombok.Data;
 
 
 import java.time.LocalDateTime;
 @Builder
+@Data
 public class MeetingDto {
     private LocalDateTime start;
     private LocalDateTime end;
@@ -12,28 +14,6 @@ public class MeetingDto {
     private String summary;
     private String providedDescription;
     private String email;
+    private String studentName;
 
-    public LocalDateTime getStart() {
-        return start;
-    }
-
-    public LocalDateTime getEnd() {
-        return end;
-    }
-
-    public MeetingType getType() {
-        return type;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public String getProvidedDescription() {
-        return providedDescription;
-    }
-
-    public String getEmail() {
-        return email;
-    }
 }

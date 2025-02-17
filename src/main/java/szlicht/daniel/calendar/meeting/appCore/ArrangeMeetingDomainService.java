@@ -1,9 +1,14 @@
 package szlicht.daniel.calendar.meeting.appCore;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import szlicht.daniel.calendar.student.appCore.NewStudentEvent;
+import szlicht.daniel.calendar.student.appCore.Student;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
 public class ArrangeMeetingDomainService {
@@ -19,16 +24,17 @@ public class ArrangeMeetingDomainService {
     private int arrangedLastHour;
     private LocalDateTime arrangeCounterLastRestart = LocalDateTime.now();
 
-    public ArrangeMeetingDomainService(PropositionsDomainService propositionsDomainService, CalendarRepository calendarRepository, WarningLogger warningLogger) {
+    public ArrangeMeetingDomainService(PropositionsDomainService propositionsDomainService, CalendarRepository calendarRepository, WarningLogger warningLogger, ApplicationEventPublisher eventPublisher) {
         this.propositionsDomainService = propositionsDomainService;
         this.calendarRepository = calendarRepository;
         this.warningLogger = warningLogger;
     }
 
-    public void arrange(Meeting meeting) {
+    
+    public void arrangeFirstMeeting(Meeting meeting) {
         validate(meeting);
-        calendarRepository.save(meeting);
-        warningLogger.notifyOwner("Umówił się: " + meeting.getDetails().getMail() + " at "+ meeting.when(),
+        calendarRepository.saveFirst(meeting);
+        warningLogger.notifyOwner("Umówił się: " + meeting.getDetails().getEmail() + " at "+ meeting.when(),
                 "Użytkownik dodał się do kalendarza",false);
         preventTooManyArrangments();
     }

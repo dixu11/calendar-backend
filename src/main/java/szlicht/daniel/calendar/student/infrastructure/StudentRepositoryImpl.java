@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.student.appCore.Student;
 import szlicht.daniel.calendar.student.appCore.StudentRepository;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,5 +24,10 @@ public class StudentRepositoryImpl implements StudentRepository {
                 .map(student -> new StudentEntity(student.getName(),student.getEmail()))
                 .collect(Collectors.toSet());
         studentJpaRepository.saveAll(result);
+    }
+
+    @Override
+    public Optional<Student> getByEmail(String email) {
+        return studentJpaRepository.getByEmail(email);
     }
 }

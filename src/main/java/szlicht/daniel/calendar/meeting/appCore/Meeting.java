@@ -9,7 +9,7 @@ import java.util.Objects;
 public class Meeting implements Comparable<Meeting> {
     private static final int BUFFER = 15;
     private static final int NO_BUFFER_BELOW = 60;
-
+    private String id;
     private LocalDateTime start;
     private LocalDateTime end;
     private MeetingType type = MeetingType.MENTORING;
@@ -131,6 +131,15 @@ public class Meeting implements Comparable<Meeting> {
         return this;
     }
 
+    public Meeting setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getId() {
+        return id;
+    }
+
     public static class Details {
         private String summary = "";
         private String ownerDescription = "";
@@ -160,8 +169,12 @@ public class Meeting implements Comparable<Meeting> {
             return providedDescription;
         }
 
-        public String getMail() {
+        public String getEmail() {
             return mail;
+        }
+
+        public void setSummary(String newSummary) {
+            this.summary = newSummary;
         }
     }
 }

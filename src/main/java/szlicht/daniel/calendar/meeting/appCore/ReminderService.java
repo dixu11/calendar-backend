@@ -4,7 +4,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
-import szlicht.daniel.calendar.meeting.infrastructure.GoogleCalendarRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -37,7 +36,7 @@ class ReminderService  {
             if (notificationTime.isBefore(LocalDateTime.now())) {
                 continue;
             }
-            if (todayMeeting.getDetails().getMail().isBlank()) {
+            if (todayMeeting.getDetails().getEmail().isBlank()) {
                 continue;
             }
             if (!todayMeeting.isMentoring()) {
@@ -46,7 +45,7 @@ class ReminderService  {
             System.out.println(ZoneId.systemDefault());
             taskScheduler.schedule(() -> calendarAppService.sendPropositions(
                             todayMeeting.getLengthMinutes(),
-                            todayMeeting.getDetails().getMail()),
+                            todayMeeting.getDetails().getEmail()),
                     notificationTime.atZone(params.values().getZoneId()).toInstant());
             System.out.println("Will send notification at " + notificationTime + " for event " + todayMeeting);
         }

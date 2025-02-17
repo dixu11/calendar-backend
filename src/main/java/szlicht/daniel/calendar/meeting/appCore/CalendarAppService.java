@@ -1,10 +1,16 @@
 package szlicht.daniel.calendar.meeting.appCore;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.JavaUtils;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
+import szlicht.daniel.calendar.student.appCore.NewStudentEvent;
+import szlicht.daniel.calendar.student.appCore.Student;
+import szlicht.daniel.calendar.student.appCore.StudentRepository;
+
+import java.util.Optional;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
@@ -13,14 +19,21 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 public class CalendarAppService {
     private PropositionsDomainService propositionsDomainService;
     private ArrangeMeetingDomainService arrangeMeetingDomainService;
+    private StudentRepository studentRepository;
     private MeetingsSender meetingsSender;
     private WarningLogger warningLogger;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public CalendarAppService(PropositionsDomainService propositionsDomainService, ArrangeMeetingDomainService arrangeMeetingDomainService, MeetingsSender meetingsSender, WarningLogger warningLogger) {
+    public CalendarAppService(PropositionsDomainService propositionsDomainService,
+                              ArrangeMeetingDomainService arrangeMeetingDomainService, StudentRepository studentRepository,
+                              MeetingsSender meetingsSender,
+                              WarningLogger warningLogger, ApplicationEventPublisher eventPublisher) {
         this.propositionsDomainService = propositionsDomainService;
         this.arrangeMeetingDomainService = arrangeMeetingDomainService;
+        this.studentRepository = studentRepository;
         this.meetingsSender = meetingsSender;
         this.warningLogger = warningLogger;
+        this.eventPublisher = eventPublisher;
     }
 
     @EventListener
@@ -30,7 +43,6 @@ public class CalendarAppService {
     }
 
     public void sendPropositions(Integer minutes, String to) {
-        System.out.println("trying to send propositions to " + to);
         try {
             Propositions meetingPropositions = getMeetingPropositions(minutes);
             meetingsSender.sendPropositions(meetingPropositions, to);
@@ -44,19 +56,24 @@ public class CalendarAppService {
     }
 
     public void arrangeMeeting(MeetingDto meetingDto){
-        arrangeFirstMeeting(meetingDto);
+        Optional<Student> studentOptional = studentRepository.getByEmail(meetingDto.getEmail());
+        if (!studentOptional.isPresent()) {
+            arrangeFirstMeeting(meetingDto);
+        }
     }
 
     private void arrangeFirstMeeting(MeetingDto meetingDto) {
         Meeting meeting = new Meeting(meetingDto.getStart(),meetingDto.getEnd());
-        meeting.setDetails(new Meeting.Details(params.values().summaryPrefix() + meetingDto.getEmail(),
+        String studentName = formatStudentName(meetingDto.getStudentName());
+        meeting.setDetails(new Meeting.Details(params.values().summaryPrefix() + studentName,
                 "Spotkanie umówione automatycznie",
                 meetingDto.getProvidedDescription(), meetingDto.getEmail())
         );
         try {
-            arrangeMeetingDomainService.arrange(meeting);
+            arrangeMeetingDomainService.arrangeFirstMeeting(meeting);
             meetingsSender.notifyArrangementComplete(meeting);
-            System.err.println(meeting.getDetails().getMail() + " meeting proposition at: " + meeting.when() + " approved");
+            System.err.println(meeting.getDetails().getEmail() + " meeting proposition at: " + meeting.when() + " approved");
+            eventPublisher.publishEvent(new NewStudentEvent(new Student(studentName, meetingDto.getEmail())));
         } catch (CalendarOfflineException | MeetingCollisionException e) {
             System.err.println(meetingDto.getEmail() + " meeting proposition at: " + meeting.when() + " declined");
             meetingsSender.notifyArrangementFailed(meeting, e.getMessage());
@@ -66,5 +83,13 @@ public class CalendarAppService {
                     true);
             e.printStackTrace();
         }
+    }
+
+    private String formatStudentName(String name) {
+        String[] split = name.split(" ");
+        if (split.length == 2 && split[1].length() > 3) {
+            name = split[0] + " " + split[1].substring(0, 3);
+        }
+        return name;
     }
 }

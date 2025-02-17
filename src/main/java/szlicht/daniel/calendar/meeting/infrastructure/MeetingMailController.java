@@ -81,13 +81,16 @@ class MeetingMailController implements MailResponder {
             LocalDateTime start = LocalDateTime.parse(lines.get(0).split("#")[1]);
             int minutes = Integer.parseInt(lines.get(1).split("#")[1]);
             LocalDateTime end = start.plusMinutes(minutes);
-            String mail = message.getSender().toString();
+            List<String> elements = extractStudentNameAndEmail(message.getSender().toString());
+            String name = elements.get(0);
+            String email = elements.get(1);
             String description = extractProvidedDescriptions(lines);
 
             MeetingDto meetingDto = MeetingDto.builder()
                     .start(start)
                     .end(end)
-                    .email(mail)
+                    .email(email)
+                    .studentName(name)
                     .providedDescription(description)
                     .build();
             calendarAppService.arrangeMeeting(meetingDto);
@@ -113,6 +116,18 @@ class MeetingMailController implements MailResponder {
         }
         return result.toString();
     }
+
+    private List<String> extractStudentNameAndEmail(String input) {
+        Pattern pattern = Pattern.compile("^(.*?)\\s*<(.*?)>$");
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.matches()) {
+            String name = matcher.group(1).strip();
+            String email = matcher.group(2).strip();
+            return List.of(name, email);
+        }
+        throw new IllegalArgumentException("Input format is invalid. Expected format: 'Name Surname <email@example.com>', but got:" + input);
+    }
+    
 
     private boolean containsAnyOf(String content, List<String> keywords) {
         return keywords.stream()

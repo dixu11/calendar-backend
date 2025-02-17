@@ -4,6 +4,7 @@ import java.util.Set;
 
 public interface CalendarRepository {
     Set<Meeting> getMonthFromNowMeetings();
-    void save(Meeting meeting);
+    void saveFirst(Meeting meeting);
     Set<Meeting> getTodayMeetings();
+    void updateMeeting(Meeting meeting);
 }

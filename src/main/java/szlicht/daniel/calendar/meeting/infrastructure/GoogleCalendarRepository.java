@@ -5,7 +5,6 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.Events;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.java.LocalDateUtils;
 import szlicht.daniel.calendar.meeting.appCore.CalendarOfflineException;
 import szlicht.daniel.calendar.meeting.appCore.CalendarRepository;
 import szlicht.daniel.calendar.meeting.appCore.Meeting;
@@ -36,12 +35,11 @@ public class GoogleCalendarRepository implements CalendarRepository {
         this.calendar = calendar;
     }
 
-    public void save(Meeting meeting) {
+    public void saveFirst(Meeting meeting) {
         Event event = toEvent(meeting);
         try {
             Event execute = calendar.events().insert(CALENDAR_MEETINGS_ID, event).execute();
-            String summary = execute.getSummary();
-            System.out.println(summary);
+            meeting.setId(execute.getId());
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -59,6 +57,19 @@ public class GoogleCalendarRepository implements CalendarRepository {
         LocalDateTime to = LocalDateTime.now().with(LocalTime.MAX);
         return new TreeSet<>(getMeetings(from, to));
     }
+
+    @Override
+    public void updateMeeting(Meeting meeting) { //currently updates only summary
+        Event event = findMeetingById(meeting.getId());
+        event.setSummary(meeting.getDetails().getSummary());
+        try {
+            calendar.events().update(CALENDAR_MEETINGS_ID, event.getId(), event).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public Set<Meeting> getMonthRangeMeetings() {
         LocalDateTime from = LocalDateTime.now().minusWeeks(2).with(LocalTime.MIN);
@@ -104,10 +115,11 @@ public class GoogleCalendarRepository implements CalendarRepository {
 
     private Event toEvent(Meeting meeting) {
         Event event = new Event();
+        event.setId(meeting.getId());
         event.setStart(toEventDateTime(meeting.getStart()));
         event.setEnd(toEventDateTime(meeting.getEnd()));
         event.setColorId(meeting.getType().getColor().getColorId());
-        EventAttendee attendee = new EventAttendee().setEmail(meeting.getDetails().getMail());
+        EventAttendee attendee = new EventAttendee().setEmail(meeting.getDetails().getEmail());
         event.setAttendees(Collections.singletonList(attendee));
         String summary = meeting.getDetails().getSummary();
         String description = meeting.getDetails().getOwnerDescription();
@@ -146,8 +158,18 @@ public class GoogleCalendarRepository implements CalendarRepository {
             email = event.getAttendees().get(0).getEmail();
         }
         return new Meeting(start, end)
+                .setId(event.getId())
                 .setType(MeetingType.fromColorId(event.getColorId()))
                 .setDetails(new Meeting.Details(summary,description, prividedDescription, email));
+    }
+
+    private Event findMeetingById(String id) {
+        try {
+            return calendar.events().get(CALENDAR_MEETINGS_ID, id).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
 }

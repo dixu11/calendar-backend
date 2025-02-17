@@ -21,6 +21,11 @@ public class StudentAppService {
     }
 
     @EventListener
+    public void newStudentAdded(NewStudentEvent event) {
+        studentRepository.addIfNotExists(Set.of(event.getStudent()));
+    }
+
+   /* @EventListener
     public void collectNewStudents(NextMonthMeetingsEvent event) {
         Set<Student> activeStudents = getActiveStudentsByEmails(event.getMeetings());
         studentRepository.addIfNotExists(activeStudents);
@@ -33,21 +38,8 @@ public class StudentAppService {
                 .map(meeting -> new Student(extractStudentName(meeting.getDetails().getSummary()),
                         meeting.getDetails().getMail()))
                 .collect(Collectors.toSet());
-    }
+    }*/
 
-    private String extractStudentName(String summary) {
-        String result = summary.replace(params.values().summaryPrefix(), "")
-                .replace("*", "");
-        int emailStart = result.indexOf("<");
-        if (emailStart != -1) {
-            result = result.substring(0, emailStart);
-        }
-        String[] split = result.split(" ");
-        if (split.length == 2 && split[1].length() > 3) {
-            result = split[0] + " " + split[1].substring(0, 3);
-        }
-        return result;
-    }
 }
 
 

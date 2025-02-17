@@ -1,5 +1,7 @@
 package szlicht.daniel.calendar.student.appCore;
 
+
+
 public class Student {
     private int id;
     private String name;
