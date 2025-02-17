@@ -25,7 +25,7 @@ public class CalendarAppService {
 
     @EventListener
     @Async
-    public void handle(AppStartedEvent appStartedEvent) {
+    public void handle(AppStartedEvent e) {
         sendPropositions(60, params.mail().owner());
     }
 
@@ -43,17 +43,22 @@ public class CalendarAppService {
         return propositionsDomainService.createMeetingPropositions(minutes);
     }
 
-    public void arrangeMeeting(Meeting meeting,String providedDescription, String mail) {
+    public void arrangeMeeting(MeetingDto meetingDto){
+        arrangeFirstMeeting(meetingDto);
+    }
+
+    private void arrangeFirstMeeting(MeetingDto meetingDto) {
+        Meeting meeting = new Meeting(meetingDto.getStart(),meetingDto.getEnd());
+        meeting.setDetails(new Meeting.Details(params.values().summaryPrefix() + meetingDto.getEmail(),
+                "Spotkanie umówione automatycznie",
+                meetingDto.getProvidedDescription(), meetingDto.getEmail())
+        );
         try {
-            meeting.setDetails(new Meeting.Details(params.values().summaryPrefix() + mail,
-                    "Spotkanie umówione automatycznie",
-                    providedDescription, mail)
-            );
             arrangeMeetingDomainService.arrange(meeting);
             meetingsSender.notifyArrangementComplete(meeting);
             System.err.println(meeting.getDetails().getMail() + " meeting proposition at: " + meeting.when() + " approved");
         } catch (CalendarOfflineException | MeetingCollisionException e) {
-            System.err.println(meeting.getDetails().getMail() + " meeting proposition at: " + meeting.when() + " declined");
+            System.err.println(meetingDto.getEmail() + " meeting proposition at: " + meeting.when() + " declined");
             meetingsSender.notifyArrangementFailed(meeting, e.getMessage());
         } catch (Exception e) {
             warningLogger.notifyOwner("Unexpected error",

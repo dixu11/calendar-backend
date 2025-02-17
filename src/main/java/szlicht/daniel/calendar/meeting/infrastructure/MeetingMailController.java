@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.common.mail.MailResponder;
 import szlicht.daniel.calendar.meeting.appCore.CalendarAppService;
 import szlicht.daniel.calendar.meeting.appCore.Meeting;
+import szlicht.daniel.calendar.meeting.appCore.MeetingDto;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -79,9 +80,17 @@ class MeetingMailController implements MailResponder {
                     .toList();
             LocalDateTime start = LocalDateTime.parse(lines.get(0).split("#")[1]);
             int minutes = Integer.parseInt(lines.get(1).split("#")[1]);
+            LocalDateTime end = start.plusMinutes(minutes);
             String mail = message.getSender().toString();
-            Meeting meeting = new Meeting(start, minutes);
-            calendarAppService.arrangeMeeting(meeting,extractProvidedDescriptions(lines),mail);
+            String description = extractProvidedDescriptions(lines);
+
+            MeetingDto meetingDto = MeetingDto.builder()
+                    .start(start)
+                    .end(end)
+                    .email(mail)
+                    .providedDescription(description)
+                    .build();
+            calendarAppService.arrangeMeeting(meetingDto);
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
             System.err.println("Cannot process body");

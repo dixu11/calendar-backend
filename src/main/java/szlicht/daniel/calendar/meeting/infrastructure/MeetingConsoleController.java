@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.meeting.appCore.CalendarAppService;
-import szlicht.daniel.calendar.meeting.appCore.Meeting;
+import szlicht.daniel.calendar.meeting.appCore.MeetingDto;
 
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -14,10 +14,10 @@ import java.util.Scanner;
 @Profile("dev")
 class MeetingConsoleController implements ApplicationListener<ApplicationReadyEvent> {
 
-    private CalendarAppService facade;
+    private CalendarAppService calendarAppService;
 
-    MeetingConsoleController(CalendarAppService facade) {
-        this.facade = facade;
+    MeetingConsoleController(CalendarAppService calendarAppService) {
+        this.calendarAppService = calendarAppService;
     }
 
     @Override
@@ -45,14 +45,19 @@ class MeetingConsoleController implements ApplicationListener<ApplicationReadyEv
     }
 
     private void arrangeMeeting(String[] input) {
-        Meeting meeting = new Meeting(LocalDateTime.parse(input[1]), Integer.parseInt(input[2]));
-        facade.arrangeMeeting(meeting,"",input[3]);
+        MeetingDto meetingDto = MeetingDto.builder()
+                .start(LocalDateTime.parse(input[1]))
+                .end(LocalDateTime.parse(input[1]).plusMinutes(Integer.parseInt(input[2])))
+                .providedDescription("")
+                .email(input[3])
+                .build();
+        calendarAppService.arrangeMeeting(meetingDto);
     }
 
     private void sendPropositions(String[] input) {
         String mail = input[0];
         int minutes = (int) (Double.parseDouble(input[1]) * 60);
-        facade.sendPropositions(minutes, mail);
+        calendarAppService.sendPropositions(minutes, mail);
         System.out.println("Wysłano!");
     }
 }
