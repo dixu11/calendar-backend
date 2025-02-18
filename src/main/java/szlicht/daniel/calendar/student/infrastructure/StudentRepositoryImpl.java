@@ -30,4 +30,9 @@ public class StudentRepositoryImpl implements StudentRepository {
     public Optional<Student> getByEmail(String email) {
         return studentJpaRepository.getByEmail(email);
     }
+
+    @Override
+    public Optional<Student> getByName(String name) {
+        return studentJpaRepository.getByName(name);
+    }
 }

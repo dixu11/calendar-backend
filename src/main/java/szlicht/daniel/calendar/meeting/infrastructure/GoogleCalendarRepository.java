@@ -49,13 +49,20 @@ public class GoogleCalendarRepository implements CalendarRepository {
     public Set<Meeting> getMonthFromNowMeetings() {
         LocalDateTime from = tomorrowStart();
         LocalDateTime to = nextMonthEnd();
-        return getMeetings(from, to);
+        return getMeetings(from, to,List.of(CALENDAR_MEETINGS_ID));
+    }
+
+    @Override
+    public Set<Meeting> getMonthFromNowEvents() {
+        LocalDateTime from = tomorrowStart();
+        LocalDateTime to = nextMonthEnd();
+        return getMeetings(from, to,List.of(CALENDAR_MEETINGS_ID,CALENDAR_OTHER_ID));
     }
 
     public Set<Meeting> getTodayMeetings() {
         LocalDateTime from = LocalDateTime.now().with(LocalTime.MIN);
         LocalDateTime to = LocalDateTime.now().with(LocalTime.MAX);
-        return new TreeSet<>(getMeetings(from, to));
+        return new TreeSet<>(getMeetings(from, to, List.of(CALENDAR_MEETINGS_ID)));
     }
 
     @Override
@@ -70,17 +77,19 @@ public class GoogleCalendarRepository implements CalendarRepository {
         }
     }
 
-
-    public Set<Meeting> getMonthRangeMeetings() {
-        LocalDateTime from = LocalDateTime.now().minusWeeks(2).with(LocalTime.MIN);
-        LocalDateTime to = LocalDateTime.now().plusWeeks(2).with(LocalTime.MAX);
-        return getMeetings(from, to);
+    @Override
+    public void removeMeetingById(String id) {
+        try {
+            calendar.events().delete(CALENDAR_MEETINGS_ID, id).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
-    private Set<Meeting> getMeetings(LocalDateTime from, LocalDateTime to) {
+    private Set<Meeting> getMeetings(LocalDateTime from, LocalDateTime to, List<String> calendarIds) {
         Set<Meeting> meetings = new TreeSet<>();
-        meetings.addAll(getOneCalendarMeetings(CALENDAR_MEETINGS_ID, from, to));
-        meetings.addAll(getOneCalendarMeetings(CALENDAR_OTHER_ID, from, to));
+        calendarIds.forEach(calendarId -> meetings.addAll(getOneCalendarMeetings(calendarId, from, to)));
         return meetings;
     }
 

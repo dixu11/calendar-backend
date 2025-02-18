@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
+
 public class Meeting implements Comparable<Meeting> {
     private static final int BUFFER = 15;
     private static final int NO_BUFFER_BELOW = 60;
@@ -140,17 +142,27 @@ public class Meeting implements Comparable<Meeting> {
         return id;
     }
 
+    public boolean isManual() {
+        return !details.summary.toLowerCase()
+                .contains(params.values().summaryPrefix().toLowerCase());
+    }
+
+    public MeetingDto toDto() {
+        return new MeetingDto(start,end,type, details.summary, details.ownerDescription,details.email,"");
+    }
+
+
     public static class Details {
         private String summary = "";
         private String ownerDescription = "";
         private String providedDescription = "";
-        private String mail = "";
+        private String email = "";
 
-        public Details(String summary, String ownerDescription, String providedDescription, String mail) {
+        public Details(String summary, String ownerDescription, String providedDescription, String email) {
             this.summary = summary;
             this.ownerDescription = ownerDescription;
             this.providedDescription = providedDescription;
-            this.mail = mail;
+            this.email = email;
         }
 
         String getFullDescription() {
@@ -170,11 +182,19 @@ public class Meeting implements Comparable<Meeting> {
         }
 
         public String getEmail() {
-            return mail;
+            return email;
         }
 
         public void setSummary(String newSummary) {
             this.summary = newSummary;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public void setOwnerDescription(String ownerDescription) {
+            this.ownerDescription = ownerDescription;
         }
     }
 }

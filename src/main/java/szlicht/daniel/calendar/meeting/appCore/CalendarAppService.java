@@ -11,6 +11,7 @@ import szlicht.daniel.calendar.student.appCore.Student;
 import szlicht.daniel.calendar.student.appCore.StudentRepository;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
@@ -23,17 +24,19 @@ public class CalendarAppService {
     private MeetingsSender meetingsSender;
     private WarningLogger warningLogger;
     private final ApplicationEventPublisher eventPublisher;
+    private CalendarRepository calendarRepository;
 
     public CalendarAppService(PropositionsDomainService propositionsDomainService,
                               ArrangeMeetingDomainService arrangeMeetingDomainService, StudentRepository studentRepository,
                               MeetingsSender meetingsSender,
-                              WarningLogger warningLogger, ApplicationEventPublisher eventPublisher) {
+                              WarningLogger warningLogger, ApplicationEventPublisher eventPublisher, CalendarRepository calendarRepository) {
         this.propositionsDomainService = propositionsDomainService;
         this.arrangeMeetingDomainService = arrangeMeetingDomainService;
         this.studentRepository = studentRepository;
         this.meetingsSender = meetingsSender;
         this.warningLogger = warningLogger;
         this.eventPublisher = eventPublisher;
+        this.calendarRepository = calendarRepository;
     }
 
     @EventListener
@@ -53,6 +56,27 @@ public class CalendarAppService {
 
     public Propositions getMeetingPropositions(Integer minutes) {
         return propositionsDomainService.createMeetingPropositions(minutes);
+    }
+    @EventListener
+    void arrangeManualMeeting(NextMonthMeetingsEvent event){
+        event.getMeetings().stream()
+                .filter(Meeting::isManual)
+                .forEach(this::arrangeManualMeeting);
+    }
+
+    private void arrangeManualMeeting(Meeting meeting) {
+        System.out.println("preparing cleanup for meeting: " + meeting.getDetails().getSummary());
+        Optional<Student> studentOptional = studentRepository.getByName(meeting.getDetails().getSummary());
+        if (studentOptional.isPresent()) {
+            meeting.getDetails().setEmail(studentOptional.get().getEmail());
+            meeting.getDetails().setOwnerDescription("Manual meeting corrected by app");
+            meeting.getDetails().setSummary(formatSummary(studentOptional.get().getName()));
+            meeting.setType(MeetingType.MENTORING);
+            calendarRepository.removeMeetingById(meeting.getId());
+            MeetingDto meetingDto = meeting.toDto();
+            meetingDto.setStudentName(studentOptional.get().getName());
+            arrangeNextMeeting(meetingDto);
+        }
     }
 
     public void arrangeMeeting(MeetingDto meetingDto){
@@ -79,7 +103,7 @@ public class CalendarAppService {
 
     private boolean arrange(MeetingDto meetingDto) {
         Meeting meeting = new Meeting(meetingDto.getStart(),meetingDto.getEnd());
-        meeting.setDetails(new Meeting.Details(meetingDto.getStudentName()  + " " + params.values().summaryPrefix() + params.values().ownerName(),
+        meeting.setDetails(new Meeting.Details(formatSummary(meetingDto.getStudentName()),
                 "Spotkanie umówione automatycznie",
                 meetingDto.getProvidedDescription(), meetingDto.getEmail())
         );
@@ -106,5 +130,9 @@ public class CalendarAppService {
             name = split[0] + " " + split[1].substring(0, 3);
         }
         return name;
+    }
+
+    private String formatSummary(String studentName) {
+        return studentName + " " + params.values().summaryPrefix() + params.values().ownerName();
     }
 }

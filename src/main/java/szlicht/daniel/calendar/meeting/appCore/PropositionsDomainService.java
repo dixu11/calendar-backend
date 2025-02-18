@@ -40,7 +40,7 @@ class PropositionsDomainService {
 
     private Map<LocalDate, List<Meeting>> sortMeetingsByDaysReverse() {
         Map<LocalDate, List<Meeting>> result = new TreeMap<>(LocalDate::compareTo);
-        Set<Meeting> events = calendarRepository.getMonthFromNowMeetings();
+        Set<Meeting> events = calendarRepository.getMonthFromNowEvents();
         for (LocalDate date : LocalDateUtils.getDatesBetweenInclude(
                 tomorrowStart().toLocalDate(),
                 nextMonthEnd().toLocalDate())) {

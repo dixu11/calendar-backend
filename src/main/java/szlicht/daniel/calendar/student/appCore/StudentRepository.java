@@ -8,4 +8,5 @@ public interface StudentRepository {
 
     Optional<Student> getByEmail(String email);
 
+    Optional<Student> getByName(String name);
 }
