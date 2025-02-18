@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.appCore;
+package szlicht.daniel.calendar.meeting.app_core;
 
 import java.time.LocalDate;
 import java.util.List;

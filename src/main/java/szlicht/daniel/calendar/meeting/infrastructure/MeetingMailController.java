@@ -4,9 +4,8 @@ import jakarta.mail.MessagingException;
 import org.eclipse.angus.mail.imap.IMAPMessage;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.common.mail.MailResponder;
-import szlicht.daniel.calendar.meeting.appCore.CalendarAppService;
-import szlicht.daniel.calendar.meeting.appCore.Meeting;
-import szlicht.daniel.calendar.meeting.appCore.MeetingDto;
+import szlicht.daniel.calendar.meeting.app_core.CalendarAppService;
+import szlicht.daniel.calendar.meeting.app_core.MeetingDto;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

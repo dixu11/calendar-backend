@@ -1,8 +1,8 @@
 package szlicht.daniel.calendar.student.infrastructure;
 
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.student.appCore.Student;
-import szlicht.daniel.calendar.student.appCore.StudentRepository;
+import szlicht.daniel.calendar.student.app_core.Student;
+import szlicht.daniel.calendar.student.app_core.StudentRepository;
 
 import java.util.Optional;
 import java.util.Set;
@@ -21,7 +21,7 @@ public class StudentRepositoryImpl implements StudentRepository {
         Set<String> existingMails = studentJpaRepository.findAllEmails();
         Set<StudentEntity> result = students.stream()
                 .filter(student -> !existingMails.contains(student.getEmail()))
-                .map(student -> new StudentEntity(student.getName(),student.getEmail()))
+                .map(student -> new StudentEntity(student.getName(),student.getEmail(),student.getRank()))
                 .collect(Collectors.toSet());
         studentJpaRepository.saveAll(result);
     }

@@ -1,8 +1,7 @@
-package szlicht.daniel.calendar.meeting.infrastructure;
+package szlicht.daniel.calendar.common.spring;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;
-import szlicht.daniel.calendar.meeting.appCore.WarningLogger;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
@@ -21,7 +20,10 @@ class EmailWarningLogger implements WarningLogger {
             subject = subject.toUpperCase();
             message = message.toUpperCase();
         }
-        System.err.printf("%s - %s - notification mail send to owner\n", subject, message);
         emailService.sendSimpleEmail(params.mail().owner(), subject, message);
+        if (message.length() > 100) {
+            message = message.substring(0, 100) + "...";
+        }
+        System.err.printf("%s - %s - notification mail send to owner\n", subject, message);
     }
 }

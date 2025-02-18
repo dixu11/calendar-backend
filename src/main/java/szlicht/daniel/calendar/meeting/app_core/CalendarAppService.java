@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.appCore;
+package szlicht.daniel.calendar.meeting.app_core;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -6,9 +6,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.JavaUtils;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
-import szlicht.daniel.calendar.student.appCore.NewStudentEvent;
-import szlicht.daniel.calendar.student.appCore.Student;
-import szlicht.daniel.calendar.student.appCore.StudentRepository;
+import szlicht.daniel.calendar.common.spring.WarningLogger;
+import szlicht.daniel.calendar.meeting.infrastructure.GoogleCalendarRepository;
+import szlicht.daniel.calendar.student.app_core.NewStudentEvent;
+import szlicht.daniel.calendar.student.app_core.Student;
+import szlicht.daniel.calendar.student.app_core.StudentRang;
+import szlicht.daniel.calendar.student.app_core.StudentRepository;
 
 import java.util.Optional;
 import java.util.Set;
@@ -25,11 +28,12 @@ public class CalendarAppService {
     private WarningLogger warningLogger;
     private final ApplicationEventPublisher eventPublisher;
     private CalendarRepository calendarRepository;
+    private GoogleCalendarRepository googleCalendarRepository; //todo remove
 
     public CalendarAppService(PropositionsDomainService propositionsDomainService,
                               ArrangeMeetingDomainService arrangeMeetingDomainService, StudentRepository studentRepository,
                               MeetingsSender meetingsSender,
-                              WarningLogger warningLogger, ApplicationEventPublisher eventPublisher, CalendarRepository calendarRepository) {
+                              WarningLogger warningLogger, ApplicationEventPublisher eventPublisher, CalendarRepository calendarRepository, GoogleCalendarRepository googleCalendarRepository) {
         this.propositionsDomainService = propositionsDomainService;
         this.arrangeMeetingDomainService = arrangeMeetingDomainService;
         this.studentRepository = studentRepository;
@@ -37,6 +41,7 @@ public class CalendarAppService {
         this.warningLogger = warningLogger;
         this.eventPublisher = eventPublisher;
         this.calendarRepository = calendarRepository;
+        this.googleCalendarRepository = googleCalendarRepository;
     }
 
     @EventListener
@@ -66,7 +71,7 @@ public class CalendarAppService {
 
     private void arrangeManualMeeting(Meeting meeting) {
         String studentEmail = "";
-        if (meeting.getType() == MeetingType.RECURSIVE) { //todo not yet implemented
+        if (meeting.getType() == MeetingType.CYCLIC_MENTORING) {
             return;
         }
         if (!meeting.getDetails().getEmail().isBlank()) {
@@ -90,7 +95,7 @@ public class CalendarAppService {
         meeting.setId(null);
         calendarRepository.save(meeting);
         meetingsSender.notifyArrangementComplete(meeting);
-        studentRepository.addIfNotExists(Set.of(new Student(studentName, studentEmail)));
+        studentRepository.addIfNotExists(Set.of(new Student(studentName, studentEmail, StudentRang.HAD_MENTORING)));
     }
 
     public void arrangeMeeting(MeetingDto meetingDto){
@@ -107,7 +112,8 @@ public class CalendarAppService {
     private void arrangeFirstMeeting(MeetingDto meetingDto) {
         boolean success = arrange(meetingDto);
         if (success) {
-            eventPublisher.publishEvent(new NewStudentEvent(new Student(meetingDto.getStudentName(), meetingDto.getEmail())));
+            eventPublisher.publishEvent(new NewStudentEvent(
+                    new Student(meetingDto.getStudentName(), meetingDto.getEmail(),StudentRang.HAD_MENTORING)));
         }
     }
 

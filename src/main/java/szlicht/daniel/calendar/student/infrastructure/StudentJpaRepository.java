@@ -2,7 +2,7 @@ package szlicht.daniel.calendar.student.infrastructure;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import szlicht.daniel.calendar.student.appCore.Student;
+import szlicht.daniel.calendar.student.app_core.Student;
 
 import java.util.Optional;
 import java.util.Set;

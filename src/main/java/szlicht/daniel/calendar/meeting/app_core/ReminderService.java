@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.meeting.appCore;
+package szlicht.daniel.calendar.meeting.app_core;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Set;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
@@ -33,6 +32,9 @@ class ReminderService  {
         Set<Meeting> todayMeetings = calendarRepository.getTodayMeetings();
         for (Meeting todayMeeting : todayMeetings) {
             LocalDateTime notificationTime = todayMeeting.getEnd().minusMinutes(NOTIFY_MINUTES_BEFORE_MEETING_END);
+            if (todayMeeting.getType() == MeetingType.CYCLIC_MENTORING) {
+                continue;
+            }
             if (notificationTime.isBefore(LocalDateTime.now())) {
                 continue;
             }
@@ -42,7 +44,6 @@ class ReminderService  {
             if (!todayMeeting.isMentoring()) {
                 continue;
             }
-            System.out.println(ZoneId.systemDefault());
             taskScheduler.schedule(() -> calendarAppService.sendPropositions(
                             todayMeeting.getLengthMinutes(),
                             todayMeeting.getDetails().getEmail()),

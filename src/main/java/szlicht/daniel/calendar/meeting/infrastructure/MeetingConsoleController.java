@@ -4,8 +4,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import szlicht.daniel.calendar.meeting.appCore.CalendarAppService;
-import szlicht.daniel.calendar.meeting.appCore.MeetingDto;
+import szlicht.daniel.calendar.meeting.app_core.CalendarAppService;
+import szlicht.daniel.calendar.meeting.app_core.MeetingDto;
 
 import java.time.LocalDateTime;
 import java.util.Scanner;

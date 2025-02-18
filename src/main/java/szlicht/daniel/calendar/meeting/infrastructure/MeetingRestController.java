@@ -4,8 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import szlicht.daniel.calendar.meeting.appCore.CalendarAppService;
-import szlicht.daniel.calendar.meeting.appCore.CalendarOfflineException;
+import szlicht.daniel.calendar.meeting.app_core.CalendarAppService;
+import szlicht.daniel.calendar.meeting.app_core.CalendarOfflineException;
 
 
 @RestController

@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.student.appCore;
+package szlicht.daniel.calendar.student.app_core;
 
 public class NewStudentEvent {
     private Student student;

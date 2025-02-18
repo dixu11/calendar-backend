@@ -1,11 +1,15 @@
-package szlicht.daniel.calendar.meeting.appCore;
+package szlicht.daniel.calendar.meeting.app_core;
 
 import szlicht.daniel.calendar.common.calendar.GoogleCalendarColor;
 
 import java.util.Arrays;
 
 public enum MeetingType {
-    MENTORING(GoogleCalendarColor.PINK),RECURSIVE(GoogleCalendarColor.ORANGE),OTHER_MEETING(GoogleCalendarColor.RED);
+    MENTORING(GoogleCalendarColor.PINK),
+    CYCLIC_MENTORING(GoogleCalendarColor.ORANGE),
+    OTHER_MEETING(GoogleCalendarColor.RED),
+    ABANDONED_MENTORING(GoogleCalendarColor.PURPLE),
+    CANCELED_MENTORING(GoogleCalendarColor.GRAY);
 
     private GoogleCalendarColor color;
 

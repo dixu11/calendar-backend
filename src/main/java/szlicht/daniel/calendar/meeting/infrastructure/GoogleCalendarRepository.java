@@ -5,10 +5,10 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.Events;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.meeting.appCore.CalendarOfflineException;
-import szlicht.daniel.calendar.meeting.appCore.CalendarRepository;
-import szlicht.daniel.calendar.meeting.appCore.Meeting;
-import szlicht.daniel.calendar.meeting.appCore.MeetingType;
+import szlicht.daniel.calendar.meeting.app_core.CalendarOfflineException;
+import szlicht.daniel.calendar.meeting.app_core.CalendarRepository;
+import szlicht.daniel.calendar.meeting.app_core.Meeting;
+import szlicht.daniel.calendar.meeting.app_core.MeetingType;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -71,7 +71,7 @@ public class GoogleCalendarRepository implements CalendarRepository {
 
     @Override
     public void updateMeeting(Meeting meeting) { //currently updates only summary
-        Event event = findMeetingById(meeting.getId());
+        Event event = findEventById(meeting.getId());
         event.setSummary(meeting.getDetails().getSummary());
         try {
             calendar.events().update(CALENDAR_MEETINGS_ID, event.getId(), event).execute();
@@ -176,7 +176,7 @@ public class GoogleCalendarRepository implements CalendarRepository {
                 .setDetails(new Meeting.Details(summary,description, prividedDescription, email));
     }
 
-    private Event findMeetingById(String id) {
+    public Event findEventById(String id) {
         try {
             return calendar.events().get(CALENDAR_MEETINGS_ID, id).execute();
         } catch (IOException e) {
@@ -184,5 +184,4 @@ public class GoogleCalendarRepository implements CalendarRepository {
             throw new RuntimeException(e);
         }
     }
-
 }

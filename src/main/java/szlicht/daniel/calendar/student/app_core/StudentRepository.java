@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.student.appCore;
+package szlicht.daniel.calendar.student.app_core;
 
 import java.util.Optional;
 import java.util.Set;

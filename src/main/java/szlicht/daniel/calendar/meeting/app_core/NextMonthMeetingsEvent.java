@@ -1,6 +1,5 @@
-package szlicht.daniel.calendar.meeting.appCore;
+package szlicht.daniel.calendar.meeting.app_core;
 
-import java.util.List;
 import java.util.Set;
 
 public class NextMonthMeetingsEvent {

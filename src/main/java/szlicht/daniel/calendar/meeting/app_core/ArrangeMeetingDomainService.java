@@ -1,7 +1,8 @@
-package szlicht.daniel.calendar.meeting.appCore;
+package szlicht.daniel.calendar.meeting.app_core;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import szlicht.daniel.calendar.common.spring.WarningLogger;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

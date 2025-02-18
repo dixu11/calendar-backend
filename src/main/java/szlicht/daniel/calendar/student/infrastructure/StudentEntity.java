@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.student.infrastructure;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.PersistenceCreator;
+import szlicht.daniel.calendar.student.app_core.StudentRang;
 
 import java.util.Objects;
 
@@ -13,16 +14,17 @@ class StudentEntity {
     private int id;
     @Column(unique = true)
     private String email;
-    @Column(unique = true)
     private String name;
+    private StudentRang rang;
 
     @PersistenceCreator
     StudentEntity() {
     }
 
-    public StudentEntity(String name, String email) {
+    public StudentEntity(String name, String email, StudentRang rang) {
         this.name = name;
         this.email = email;
+        this.rang = rang;
     }
 
     @Override
