@@ -5,7 +5,7 @@ import szlicht.daniel.calendar.common.calendar.GoogleCalendarColor;
 import java.util.Arrays;
 
 public enum MeetingType {
-    MENTORING(GoogleCalendarColor.PINK),OTHER_MEETING(GoogleCalendarColor.DARK_BLUE);
+    MENTORING(GoogleCalendarColor.PINK),RECURSIVE(GoogleCalendarColor.ORANGE),OTHER_MEETING(GoogleCalendarColor.RED);
 
     private GoogleCalendarColor color;
 

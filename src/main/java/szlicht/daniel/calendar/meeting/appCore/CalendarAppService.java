@@ -66,6 +66,9 @@ public class CalendarAppService {
 
     private void arrangeManualMeeting(Meeting meeting) {
         String studentEmail = "";
+        if (meeting.getType() == MeetingType.RECURSIVE) { //todo not yet implemented
+            return;
+        }
         if (!meeting.getDetails().getEmail().isBlank()) {
             studentEmail = meeting.getDetails().getEmail();
         } else {

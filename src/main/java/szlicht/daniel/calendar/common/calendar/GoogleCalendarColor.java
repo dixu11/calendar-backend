@@ -1,17 +1,17 @@
 package szlicht.daniel.calendar.common.calendar;
 
 public enum GoogleCalendarColor {
-    LIGHT_BLUE("1"),       // Jasnoniebieski
-    LIGHT_GREEN("2"),      // Jasnozielony
-    PURPLE("3"), // purple
-    PINK("4"),             // pink
-    YELLOW("5"),           // yellow
-    DARK_BLUE("6"),        // Ciemnoniebieski
-    RED("7"),              // Czerwony
-    GRAY("8"),             // Szary
-    TEAL("9"),             // Niebieskozielony (Turkusowy)
-    LIGHT_GRAY("10"),      // Jasnoszary
-    DARK_GREEN("11");      // Ciemnozielony
+    LIGHT_BLUE("1"),
+    LIGHT_GREEN("2"),
+    PURPLE("3"),
+    PINK("4"),
+    YELLOW("5"),
+    ORANGE("6"),
+    BLUE("7"),
+    GRAY("8"),
+    DARK_BLUE("9"),
+    DARK_GREEN("10"),
+    RED("11");
 
     private final String colorId;
 
