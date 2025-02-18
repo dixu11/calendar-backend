@@ -15,6 +15,7 @@ public class StartMessageEntity {
     @Column(unique = true)
     private String email;
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String story;
     private LocalDateTime created;
 
