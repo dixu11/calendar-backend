@@ -37,9 +37,13 @@ public class GoogleCalendarRepository implements CalendarRepository {
 
     public void save(Meeting meeting) {
         Event event = toEvent(meeting);
+        Event created = save(event);
+        meeting.setId(created.getId());
+    }
+
+    public Event save(Event event) {
         try {
-            Event execute = calendar.events().insert(CALENDAR_MEETINGS_ID, event).execute();
-            meeting.setId(execute.getId());
+            return calendar.events().insert(CALENDAR_MEETINGS_ID, event).execute();
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
