@@ -56,24 +56,38 @@ public class CalendarAppService {
     }
 
     public void arrangeMeeting(MeetingDto meetingDto){
+        String studentName = formatStudentName(meetingDto.getStudentName());
+        meetingDto.setStudentName(studentName);
         Optional<Student> studentOptional = studentRepository.getByEmail(meetingDto.getEmail());
-        if (!studentOptional.isPresent()) {
+        if (studentOptional.isPresent()) {
+            arrangeNextMeeting(meetingDto);
+        }else{
             arrangeFirstMeeting(meetingDto);
         }
     }
 
     private void arrangeFirstMeeting(MeetingDto meetingDto) {
+        boolean success = arrange(meetingDto);
+        if (success) {
+            eventPublisher.publishEvent(new NewStudentEvent(new Student(meetingDto.getStudentName(), meetingDto.getEmail())));
+        }
+    }
+
+    private void arrangeNextMeeting(MeetingDto meetingDto) {
+        arrange(meetingDto);
+    }
+
+    private boolean arrange(MeetingDto meetingDto) {
         Meeting meeting = new Meeting(meetingDto.getStart(),meetingDto.getEnd());
-        String studentName = formatStudentName(meetingDto.getStudentName());
-        meeting.setDetails(new Meeting.Details(params.values().summaryPrefix() + studentName,
+        meeting.setDetails(new Meeting.Details(meetingDto.getStudentName()  + " " + params.values().summaryPrefix() + params.values().ownerName(),
                 "Spotkanie umówione automatycznie",
                 meetingDto.getProvidedDescription(), meetingDto.getEmail())
         );
         try {
-            arrangeMeetingDomainService.arrangeFirstMeeting(meeting);
+            arrangeMeetingDomainService.arrange(meeting);
             meetingsSender.notifyArrangementComplete(meeting);
             System.err.println(meeting.getDetails().getEmail() + " meeting proposition at: " + meeting.when() + " approved");
-            eventPublisher.publishEvent(new NewStudentEvent(new Student(studentName, meetingDto.getEmail())));
+            return true;
         } catch (CalendarOfflineException | MeetingCollisionException e) {
             System.err.println(meetingDto.getEmail() + " meeting proposition at: " + meeting.when() + " declined");
             meetingsSender.notifyArrangementFailed(meeting, e.getMessage());
@@ -83,6 +97,7 @@ public class CalendarAppService {
                     true);
             e.printStackTrace();
         }
+        return false;
     }
 
     private String formatStudentName(String name) {

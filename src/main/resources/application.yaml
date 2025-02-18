@@ -34,6 +34,7 @@ meeting:
     phone: ${PHONE_NUMBER}
   values:
     summary-prefix: "Mentoring IT z "
+    owner-name: "DS"
     zone: "Europe/Warsaw"
     hours:
       - 1.0

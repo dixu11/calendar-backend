@@ -2,13 +2,9 @@ package szlicht.daniel.calendar.meeting.appCore;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.student.appCore.NewStudentEvent;
-import szlicht.daniel.calendar.student.appCore.Student;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
-import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
 public class ArrangeMeetingDomainService {
@@ -31,9 +27,9 @@ public class ArrangeMeetingDomainService {
     }
 
     
-    public void arrangeFirstMeeting(Meeting meeting) {
+    public void arrange(Meeting meeting) {
         validate(meeting);
-        calendarRepository.saveFirst(meeting);
+        calendarRepository.save(meeting);
         warningLogger.notifyOwner("Umówił się: " + meeting.getDetails().getEmail() + " at "+ meeting.when(),
                 "Użytkownik dodał się do kalendarza",false);
         preventTooManyArrangments();
