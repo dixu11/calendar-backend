@@ -14,6 +14,7 @@ public class StartMessageEntity {
     private String name;
     @Column(unique = true)
     private String email;
+    @Lob
     private String story;
     private LocalDateTime created;
 
@@ -27,4 +28,6 @@ public class StartMessageEntity {
         this.story = story;
         this.created = created;
     }
+    
+    
 }
