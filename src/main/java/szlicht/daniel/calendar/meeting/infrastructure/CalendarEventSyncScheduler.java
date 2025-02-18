@@ -29,6 +29,6 @@ public class CalendarEventSyncScheduler {
                 new NextMonthMeetingsEvent(calendarRepository.getMonthFromNowMeetings()));
         runnable.run();
         taskScheduler.schedule(runnable,
-                new CronTrigger("0 0 8 * * ?", params.values().getZoneId()));
+                new CronTrigger("0 0 20 * * ?", params.values().getZoneId()));
     }
 }
