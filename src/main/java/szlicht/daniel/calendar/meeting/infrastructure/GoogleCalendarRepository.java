@@ -47,14 +47,14 @@ public class GoogleCalendarRepository implements CalendarRepository {
     }
 
     public Set<Meeting> getMonthFromNowMeetings() {
-        LocalDateTime from = tomorrowStart();
+        LocalDateTime from = tomorrowStart().minusDays(1);
         LocalDateTime to = nextMonthEnd();
         return getMeetings(from, to,List.of(CALENDAR_MEETINGS_ID));
     }
 
     @Override
     public Set<Meeting> getMonthFromNowEvents() {
-        LocalDateTime from = tomorrowStart();
+        LocalDateTime from = tomorrowStart().minusDays(1);
         LocalDateTime to = nextMonthEnd();
         return getMeetings(from, to,List.of(CALENDAR_MEETINGS_ID,CALENDAR_OTHER_ID));
     }

@@ -145,7 +145,9 @@ class MeetingsSender {
     }
 
     public void notifyArrangementFailed(Meeting meeting, String errorMessage) {
-        emailService.sendSimpleEmail(meeting.getDetails().getEmail(),"Nie mogę umówić Twojego spotkania.",
+        emailService.sendSimpleEmail(params.mail().owner(),"Nie mogę umówić Twojego spotkania na: "+meeting.when(),
+                errorMessage);
+        emailService.sendSimpleEmail(meeting.getDetails().getEmail(),"Nie mogę umówić Twojego spotkania na: "+meeting.when(),
                 errorMessage);
     }
 }

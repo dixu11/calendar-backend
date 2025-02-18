@@ -15,5 +15,4 @@ public class MeetingDto {
     private String providedDescription;
     private String email;
     private String studentName;
-
 }

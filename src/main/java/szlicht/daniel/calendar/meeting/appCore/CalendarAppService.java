@@ -65,18 +65,29 @@ public class CalendarAppService {
     }
 
     private void arrangeManualMeeting(Meeting meeting) {
-        System.out.println("preparing cleanup for meeting: " + meeting.getDetails().getSummary());
-        Optional<Student> studentOptional = studentRepository.getByName(meeting.getDetails().getSummary());
-        if (studentOptional.isPresent()) {
-            meeting.getDetails().setEmail(studentOptional.get().getEmail());
-            meeting.getDetails().setOwnerDescription("Manual meeting corrected by app");
-            meeting.getDetails().setSummary(formatSummary(studentOptional.get().getName()));
-            meeting.setType(MeetingType.MENTORING);
-            calendarRepository.removeMeetingById(meeting.getId());
-            MeetingDto meetingDto = meeting.toDto();
-            meetingDto.setStudentName(studentOptional.get().getName());
-            arrangeNextMeeting(meetingDto);
+        String studentEmail = "";
+        if (!meeting.getDetails().getEmail().isBlank()) {
+            studentEmail = meeting.getDetails().getEmail();
+        } else {
+            studentEmail = studentRepository.getByName(meeting.getDetails().getSummary()).map(Student::getEmail).orElse("");
         }
+        String studentName = formatStudentName(meeting.getDetails().getSummary());
+        if (studentEmail.isBlank()) {
+            return;
+        }
+        meeting.getDetails().setEmail(studentEmail);
+        meeting.getDetails().setOwnerDescription("Manual meeting corrected by app");
+        meeting.getDetails().setSummary(formatSummary(studentName));
+        meeting.setType(MeetingType.MENTORING);
+        System.out.println("Manual meeting corrected by app: "+ meeting.getDetails().getSummary() + " at " + meeting.when());
+        calendarRepository.removeMeetingById(meeting.getId());
+        warningLogger.notifyOwner("Event deleted at cleanup: " +meeting.getDetails().getSummary() + " at " + meeting.when(), "", false);
+        MeetingDto meetingDto = meeting.toDto();
+        meetingDto.setStudentName(studentName);
+        meeting.setId(null);
+        calendarRepository.save(meeting);
+        meetingsSender.notifyArrangementComplete(meeting);
+        studentRepository.addIfNotExists(Set.of(new Student(studentName, studentEmail)));
     }
 
     public void arrangeMeeting(MeetingDto meetingDto){
@@ -114,6 +125,7 @@ public class CalendarAppService {
             return true;
         } catch (CalendarOfflineException | MeetingCollisionException e) {
             System.err.println(meetingDto.getEmail() + " meeting proposition at: " + meeting.when() + " declined");
+            e.printStackTrace();
             meetingsSender.notifyArrangementFailed(meeting, e.getMessage());
         } catch (Exception e) {
             warningLogger.notifyOwner("Unexpected error",
