@@ -8,6 +8,58 @@ public class StartMentoringDialog extends DialogMail {
         return "Startujemy mentoring z programowania!";
     }
 
+    String getHead(){
+        String result = "";
+        result += " <meta charset=\"UTF-8\">";
+        result += " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
+        result += tag("title", getSubject());
+        result += getStyle();
+        return tag("head", result);
+    }
+
+    @Override
+    String getHtml() {
+        String result = "<!DOCTYPE html>\n";
+        String head = getHead();
+        String body = getBody();
+        return result + tag("html", head + body);
+    }
+
+    String getBody(){
+        String title = tag("h1", getSubject());
+        String intro = tag("p", "Dziękujemy za kontakt. Poniżej znajdziesz ważne informacje.");
+        String container = tag("div", title + intro, "container");
+        return tag("body", container + getSections());
+    }
+
+    String getSections() {
+        String pointsList = asList(
+                "Pierwszy punkt ważnej informacji",
+                "Drugi punkt z kolejną istotną kwestią",
+                "Trzeci punkt, który warto zapamiętać"
+        );
+        String importantPoints = section("Najważniejsze punkty:", pointsList);
+        String additionalInfo = section("Dodatkowe informacje", "<p>Jeśli masz jakiekolwiek pytania, śmiało do nas pisz. Jesteśmy tu, aby pomóc!</p>");
+        return importantPoints + additionalInfo;
+    }
+
+
+    String section(String title, String content) {
+        return tag("div", section(tag("h2", title) + content), "section");
+    }
+
+    String asList(String... items) {
+        return "<ul><li>" + String.join("</li><li>", items) + "</li></ul>";
+    }
+
+
+    String tag(String tag, String content, String... classes) {
+        String classAttr = (classes.length > 0) ? " class=\"" + String.join(" ", classes) + "\"" : "";
+        return "<" + tag + classAttr + ">" + content + "</" + tag + ">";
+    }
+
+
+
     String getStyle() {
         return """
                 <style>
@@ -55,53 +107,4 @@ public class StartMentoringDialog extends DialogMail {
                             </style>
                 """;
     }
-
-    String getHead(){
-        String result = "";
-        result += " <meta charset=\"UTF-8\">";
-        result += " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
-        result += tag("title", getSubject());
-        result += getStyle();
-        return tag("head", result);
-    }
-
-    @Override
-    String getHtml() {
-        String result = "<!DOCTYPE html>\n";
-        String head = getHead();
-        String body = getBody();
-        return result + tag("html", head + body);
-    }
-
-    String getBody(){
-        String title = tag("h1", getSubject());
-        String intro = tag("p", "Dziękujemy za kontakt. Poniżej znajdziesz ważne informacje.");
-        String container = tag("div", title + intro, "container");
-        return tag("body", container + getSections());
-    }
-
-    String getSections() {
-        return """
-                <div class=\"section\">
-                            <h2>Najważniejsze punkty:</h2>
-                            <ul>
-                                <li>Pierwszy punkt ważnej informacji</li>
-                                <li>Drugi punkt z kolejną istotną kwestią</li>
-                                <li>Trzeci punkt, który warto zapamiętać</li>
-                            </ul>
-                        </div>
-                
-                        <div class=\"section\">
-                            <h2>Dodatkowe informacje</h2>
-                            <p>Jeśli masz jakiekolwiek pytania, śmiało do nas pisz. Jesteśmy tu, aby pomóc!</p>
-                        </div>
-                """;
-    }
-
-    String tag(String tag, String content, String... classes) {
-        String classAttr = (classes.length > 0) ? " class=\"" + String.join(" ", classes) + "\"" : "";
-        return "<" + tag + classAttr + ">" + content + "</" + tag + ">";
-    }
-
-
 }

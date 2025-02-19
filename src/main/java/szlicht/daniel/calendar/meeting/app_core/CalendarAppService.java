@@ -13,6 +13,7 @@ import szlicht.daniel.calendar.student.app_core.Student;
 import szlicht.daniel.calendar.student.app_core.StudentRang;
 import szlicht.daniel.calendar.student.app_core.StudentRepository;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -79,27 +80,28 @@ public class CalendarAppService {
         } else {
             studentEmail = studentRepository.getByName(meeting.getDetails().getSummary()).map(Student::getEmail).orElse("");
         }
-        String studentName = formatStudentName(meeting.getDetails().getSummary());
+        String studentName = meeting.getDetails().getSummary();
+        Student student = new Student(studentName, studentEmail, StudentRang.HAD_MENTORING);
         if (studentEmail.isBlank()) {
             return;
         }
-        meeting.getDetails().setEmail(studentEmail);
+        meeting.getDetails().setEmail(student.getEmail());
         meeting.getDetails().setOwnerDescription("Manual meeting corrected by app");
-        meeting.getDetails().setSummary(formatSummary(studentName));
+        meeting.getDetails().setSummary(formatSummary(student.getName()));
         meeting.setType(MeetingType.MENTORING);
         System.out.println("Manual meeting corrected by app: "+ meeting.getDetails().getSummary() + " at " + meeting.when());
         calendarRepository.removeMeetingById(meeting.getId());
         warningLogger.notifyOwner("Event deleted at cleanup: " +meeting.getDetails().getSummary() + " at " + meeting.when(), "", false);
         MeetingDto meetingDto = meeting.toDto();
-        meetingDto.setStudentName(studentName);
+        meetingDto.setStudentName(student.getName());
         meeting.setId(null);
         calendarRepository.save(meeting);
         meetingsSender.notifyArrangementComplete(meeting);
-        studentRepository.addIfNotExists(Set.of(new Student(studentName, studentEmail, StudentRang.HAD_MENTORING)));
+        studentRepository.addIfNotExists(Collections.singleton(student));
     }
 
     public void arrangeMeeting(MeetingDto meetingDto){
-        String studentName = formatStudentName(meetingDto.getStudentName());
+        String studentName = Student.formatStudentName(meetingDto.getStudentName());
         meetingDto.setStudentName(studentName);
         Optional<Student> studentOptional = studentRepository.getByEmail(meetingDto.getEmail());
         if (studentOptional.isPresent()) {
@@ -143,14 +145,6 @@ public class CalendarAppService {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private String formatStudentName(String name) {
-        String[] split = name.split(" ");
-        if (split.length == 2 && split[1].length() > 3) {
-            name = split[0] + " " + split[1].substring(0, 3);
-        }
-        return name;
     }
 
     private String formatSummary(String studentName) {
