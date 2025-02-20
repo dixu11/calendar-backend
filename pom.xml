@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.2</version>
-		<relativePath/> <!-- lookup parent fromEmail repository -->
+		<relativePath/> <!-- lookup parent email repository -->
 	</parent>
 	<groupId>szlicht.daniel</groupId>
 	<artifactId>calendar</artifactId>

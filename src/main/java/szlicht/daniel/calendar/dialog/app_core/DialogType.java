@@ -6,12 +6,13 @@ import java.util.Optional;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 enum DialogType {
-PROPOSITIONS, ARRANGE, OTHER;
+PROPOSITIONS, ARRANGE, OFFER, OTHER;
 
     String getKeyword() {
        return switch (this) {
            case PROPOSITIONS -> params.keywords().propositions();
            case ARRANGE -> params.keywords().arrange();
+           case OFFER -> params.keywords().offer();
            case OTHER -> "NO KEYWORD FOR OTHER DIALOG TYPE";
         };
     }

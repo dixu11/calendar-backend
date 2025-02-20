@@ -2,7 +2,7 @@ package szlicht.daniel.calendar.meeting.app_core;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.spring.WarningLogger;
+import szlicht.daniel.calendar.common.spring.Logger;
 import szlicht.daniel.calendar.student.app_core.NewStudentEvent;
 import szlicht.daniel.calendar.student.app_core.Student;
 import szlicht.daniel.calendar.student.app_core.StudentRang;
@@ -20,20 +20,20 @@ public class CalendarAppService {
     private ArrangeMeetingDomainService arrangeMeetingDomainService;
 
     private StudentRepository studentRepository;
-    private WarningLogger warningLogger;
+    private Logger logger;
     private final ApplicationEventPublisher eventPublisher;
     private CalendarRepository calendarRepository;
 
     public CalendarAppService(PropositionsDomainService propositionsDomainService,
                               ArrangeMeetingDomainService arrangeMeetingDomainService,
                               StudentRepository studentRepository,
-                              WarningLogger warningLogger,
+                              Logger logger,
                               ApplicationEventPublisher eventPublisher,
                               CalendarRepository calendarRepository) {
         this.propositionsDomainService = propositionsDomainService;
         this.arrangeMeetingDomainService = arrangeMeetingDomainService;
         this.studentRepository = studentRepository;
-        this.warningLogger = warningLogger;
+        this.logger = logger;
         this.eventPublisher = eventPublisher;
         this.calendarRepository = calendarRepository;
     }
@@ -63,7 +63,7 @@ public class CalendarAppService {
         meeting.setType(MeetingType.MENTORING);
         System.out.println("Manual meeting corrected by app: " + meeting.getDetails().getSummary() + " at " + meeting.when());
         calendarRepository.removeMeetingById(meeting.getId());
-        warningLogger.notifyOwner("Event deleted at cleanup: " + meeting.getDetails().getSummary() + " at " + meeting.when(), "", false);
+        logger.notifyOwner("Event deleted at cleanup: " + meeting.getDetails().getSummary() + " at " + meeting.when(), "", false);
         MeetingDto meetingDto = meeting.toDto();
         meetingDto.setStudentName(student.getName());
         meeting.setId(null);

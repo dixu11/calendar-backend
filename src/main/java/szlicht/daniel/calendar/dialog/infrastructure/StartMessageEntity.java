@@ -10,7 +10,6 @@ public class StartMessageEntity {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
-    private String nick;
     private String name;
     @Column(unique = true)
     private String email;
@@ -22,8 +21,7 @@ public class StartMessageEntity {
     public StartMessageEntity() {
     }
 
-    public StartMessageEntity(String nick, String name, String email, String story, LocalDateTime created) {
-        this.nick = nick;
+    public StartMessageEntity(String name, String email, String story, LocalDateTime created) {
         this.name = name;
         this.email = email;
         this.story = story;

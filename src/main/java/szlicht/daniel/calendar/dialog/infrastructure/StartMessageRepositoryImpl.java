@@ -15,7 +15,12 @@ public class StartMessageRepositoryImpl implements StartMessageRepository {
     }
     @Override
     public void save(StudentStartMessageDto message) {
-        startMessageJpaRepository.save(new StartMessageEntity(message.getNick(), message.getName(),
+        startMessageJpaRepository.save(new StartMessageEntity(message.getName(),
                 message.getEmail(), message.getStory(), LocalDateTime.now()));
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return startMessageJpaRepository.existsByEmail(email);
     }
 }

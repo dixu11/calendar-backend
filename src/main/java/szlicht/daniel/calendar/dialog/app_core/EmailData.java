@@ -12,6 +12,6 @@ public class EmailData {
     private Integer minutes;
     private String email;
     private String name;
-    private String story;
     private MeetingDto meetingDto;
+    private StudentStartMessageDto studentStartMessageDto;
 }

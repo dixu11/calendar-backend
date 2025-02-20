@@ -108,7 +108,6 @@ class MeetingsSender {
             propositions.append(line)
                     .append("  ")
                     .append(formatMailtoProposition(meeting));
-            System.out.println(line);
         }
         propositions.append("</pre>");
         return propositions.toString();

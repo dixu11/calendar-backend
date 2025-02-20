@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.JavaUtils;
 import szlicht.daniel.calendar.common.mail.EmailService;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
-import szlicht.daniel.calendar.common.spring.WarningLogger;
+import szlicht.daniel.calendar.common.spring.Logger;
 import szlicht.daniel.calendar.meeting.app_core.*;
 import szlicht.daniel.calendar.student.app_core.NewStudentEvent;
 import szlicht.daniel.calendar.student.app_core.Student;
@@ -22,7 +22,7 @@ public class DialogAppService {
     private MeetingsSender meetingsSender;
     private CalendarAppService calendarAppService;
     private EmailService emailService;
-    private WarningLogger warningLogger;
+    private Logger logger;
 
 
     public DialogAppService(StartMessageRepository startMessageRepository,
@@ -30,13 +30,13 @@ public class DialogAppService {
                             MeetingsSender meetingsSender,
                             CalendarAppService calendarAppService,
                             EmailService emailService,
-                            WarningLogger warningLogger) {
+                            Logger logger) {
         this.startMessageRepository = startMessageRepository;
         this.publisher = publisher;
         this.meetingsSender = meetingsSender;
         this.calendarAppService = calendarAppService;
         this.emailService = emailService;
-        this.warningLogger = warningLogger;
+        this.logger = logger;
     }
 
     @EventListener
@@ -66,9 +66,13 @@ public class DialogAppService {
             case ARRANGE:
                 startArrangeScenario(emailData.getMeetingDto());
                 break;
+            case OFFER:
+                startMentoringOfferScenario(emailData.getStudentStartMessageDto());
+                break;
             default:
                 System.out.printf("(%s)%s don't mach to any patter so it's probably spam -> ignore\n%n",
-                        rawEmail.fromEmail(), rawEmail.subject());
+                        rawEmail.email(), rawEmail.subject());
+                logger.notifyOwner("suspicious email: " + rawEmail.email() + " " + rawEmail.subject(), rawEmail.content(), false);
         }
     }
 
@@ -82,7 +86,7 @@ public class DialogAppService {
             e.printStackTrace();
             meetingsSender.notifyArrangementFailed(meetingDto, e.getMessage());
         } catch (Exception e) {
-            warningLogger.notifyOwner("Unexpected error",
+            logger.notifyOwner("Unexpected error",
                     e.getMessage() + " " + JavaUtils.getStackTrace(e),
                     true);
             e.printStackTrace();
@@ -99,11 +103,15 @@ public class DialogAppService {
     }
 
     public void startMentoringOfferScenario(StudentStartMessageDto message) {
-        publisher.publishEvent(new NewStudentEvent(
-                new Student(message.getName(), message.getEmail(), StudentRang.ASKED)));
-        startMessageRepository.save(message);
         HtmlDialog dialog = new StartMentoringHtmlDialog();
         emailService.sendHtmlEmail(message.getEmail(), dialog.getSubject(), dialog.getHtml());
+        if (!startMessageRepository.existsByEmail(message.getEmail())) {
+            startMessageRepository.save(message);
+            publisher.publishEvent(new NewStudentEvent(
+                    new Student(message.getName(), message.getEmail(), StudentRang.ASKED)));
+        }
+        logger.notifyOwner("Mentoring offer sent to "+ message.getName(), "Mail: " +
+                message.getEmail() + " story: " +message.getStory(), false);
     }
 
 

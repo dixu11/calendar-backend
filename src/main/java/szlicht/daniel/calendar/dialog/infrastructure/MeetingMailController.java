@@ -30,7 +30,7 @@ class MeetingMailController implements MailResponder {
     public void respondToMail(IMAPMessage message) {
         try {
             System.out.println("New mail received! "
-                    + message.getSubject() + " fromEmail: "
+                    + message.getSubject() + " email: "
                     + message.getSender());
             List<String> elements = extractSenderNameAndEmail(message.getSender().toString());
             String name = elements.get(0);

@@ -6,11 +6,11 @@ import szlicht.daniel.calendar.common.mail.EmailService;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
-class EmailWarningLogger implements WarningLogger {
+class EmailLogger implements Logger {
 
     private final EmailService emailService;
 
-    public EmailWarningLogger(EmailService emailService) {
+    public EmailLogger(EmailService emailService) {
         this.emailService = emailService;
     }
 

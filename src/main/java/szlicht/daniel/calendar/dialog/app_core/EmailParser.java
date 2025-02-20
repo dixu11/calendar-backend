@@ -24,7 +24,9 @@ class EmailParser {
         switch (dialogType) {
             case PROPOSITIONS -> includePropositionsData();
             case ARRANGE -> includeArrangeData();
-            case OTHER -> {}
+            case OFFER -> includeOfferData();
+            case OTHER -> {
+            }
         }
         dataBuilder.dialogType(dialogType);
         return dataBuilder.build();
@@ -41,15 +43,15 @@ class EmailParser {
                 .filter(line -> !line.isEmpty())
                 .toList();
         LocalDateTime start = LocalDateTime.parse(lines.get(0).split("#")[1]);
-       Integer minutes = Integer.parseInt(lines.get(1).split("#")[1]);
+        Integer minutes = Integer.parseInt(lines.get(1).split("#")[1]);
         LocalDateTime end = start.plusMinutes(minutes);
         String description = extractProvidedDescriptions(lines);
 
         MeetingDto meetingDto = MeetingDto.builder()
                 .start(start)
                 .end(end)
-                .email(rawEmail.fromEmail())
-                .studentName(rawEmail.fromName())
+                .email(rawEmail.email())
+                .studentName(rawEmail.name())
                 .providedDescription(description)
                 .build();
         dataBuilder.meetingDto(meetingDto);
@@ -60,6 +62,15 @@ class EmailParser {
         if (minutes != null) {
             dataBuilder.minutes(minutes);
         }
+    }
+
+    private void includeOfferData() {
+        StudentStartMessageDto message = StudentStartMessageDto.builder()
+                .name(rawEmail.name())
+                .email(rawEmail.email())
+                .story(rawEmail.content())
+                .build();
+        dataBuilder.studentStartMessageDto(message);
     }
 
     private String extractProvidedDescriptions(List<String> allLines) {

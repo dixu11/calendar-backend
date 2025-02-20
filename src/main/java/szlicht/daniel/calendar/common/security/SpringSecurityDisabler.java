@@ -5,22 +5,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import szlicht.daniel.calendar.common.spring.WarningLogger;
+import szlicht.daniel.calendar.common.spring.Logger;
 
 @Configuration //comment to disable
 public class SpringSecurityDisabler {
     private int counter = 0;
-    private WarningLogger warningLogger;
+    private Logger logger;
 
-    public SpringSecurityDisabler(WarningLogger warningLogger) {
-        this.warningLogger = warningLogger;
+    public SpringSecurityDisabler(Logger logger) {
+        this.logger = logger;
     }
 
     @Bean
     SecurityFilterChain configureChain(HttpSecurity http) throws Exception {
         counter++;
         if (counter > 20) {
-            warningLogger.notifyOwner("so many new students? Probably attack. Disabling app", "", true);
+            logger.notifyOwner("so many new students? Probably attack. Disabling app", "", true);
         }
         return http
                 .csrf(AbstractHttpConfigurer::disable)

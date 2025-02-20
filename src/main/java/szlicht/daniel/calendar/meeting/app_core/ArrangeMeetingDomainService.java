@@ -2,7 +2,7 @@ package szlicht.daniel.calendar.meeting.app_core;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.spring.WarningLogger;
+import szlicht.daniel.calendar.common.spring.Logger;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -16,22 +16,22 @@ public class ArrangeMeetingDomainService {
 
     private final PropositionsDomainService propositionsDomainService;
     private final CalendarRepository calendarRepository;
-    private final WarningLogger warningLogger;
+    private final Logger logger;
     private boolean canArrange = true;
     private int arrangedLastHour;
     private LocalDateTime arrangeCounterLastRestart = LocalDateTime.now();
 
-    public ArrangeMeetingDomainService(PropositionsDomainService propositionsDomainService, CalendarRepository calendarRepository, WarningLogger warningLogger, ApplicationEventPublisher eventPublisher) {
+    public ArrangeMeetingDomainService(PropositionsDomainService propositionsDomainService, CalendarRepository calendarRepository, Logger logger, ApplicationEventPublisher eventPublisher) {
         this.propositionsDomainService = propositionsDomainService;
         this.calendarRepository = calendarRepository;
-        this.warningLogger = warningLogger;
+        this.logger = logger;
     }
 
     
     public void arrange(Meeting meeting) {
         validate(meeting);
         calendarRepository.save(meeting);
-        warningLogger.notifyOwner("Umówił się: " + meeting.getDetails().getEmail() + " at "+ meeting.when(),
+        logger.notifyOwner("Umówił się: " + meeting.getDetails().getEmail() + " at "+ meeting.when(),
                 "Użytkownik dodał się do kalendarza",false);
         preventTooManyArrangments();
     }
@@ -58,12 +58,12 @@ public class ArrangeMeetingDomainService {
             canArrange = false;
             String subject = "Max arrangements in hour reached";
             String message = "Performing arrangement system shutdown";
-            warningLogger.notifyOwner(subject, message, true);
+            logger.notifyOwner(subject, message, true);
         }
         if (arrangedLastHour >= WARNING_WHEN_ARRANGED) {
             String subject = "Big number of arrangements last hour:" + arrangedLastHour;
             String message = "have a nice day!";
-            warningLogger.notifyOwner(subject, message, false);
+            logger.notifyOwner(subject, message, false);
         }
     }
 }
