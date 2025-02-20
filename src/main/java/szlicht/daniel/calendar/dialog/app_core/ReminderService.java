@@ -1,9 +1,12 @@
-package szlicht.daniel.calendar.meeting.app_core;
+package szlicht.daniel.calendar.dialog.app_core;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
+import szlicht.daniel.calendar.meeting.app_core.CalendarRepository;
+import szlicht.daniel.calendar.meeting.app_core.Meeting;
+import szlicht.daniel.calendar.meeting.app_core.MeetingType;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -16,15 +19,13 @@ class ReminderService  {
     private static final int NOTIFY_MINUTES_BEFORE_MEETING_END = 15;
 
     private final TaskScheduler taskScheduler;
-    private final PropositionsDomainService propositionsDomainService;
-    private final CalendarAppService calendarAppService;
     private final CalendarRepository calendarRepository;
+    private final DialogAppService dialogAppService;
 
-    ReminderService(TaskScheduler taskScheduler, PropositionsDomainService propositionsDomainService, CalendarAppService calendarAppService, CalendarRepository calendarRepository) {
+    ReminderService(TaskScheduler taskScheduler, CalendarRepository calendarRepository, DialogAppService dialogAppService) {
         this.taskScheduler = taskScheduler;
-        this.propositionsDomainService = propositionsDomainService;
-        this.calendarAppService = calendarAppService;
         this.calendarRepository = calendarRepository;
+        this.dialogAppService = dialogAppService;
     }
 
     @EventListener
@@ -44,7 +45,7 @@ class ReminderService  {
             if (!todayMeeting.isMentoring()) {
                 continue;
             }
-            taskScheduler.schedule(() -> calendarAppService.getPropositions(
+            taskScheduler.schedule(() -> dialogAppService.startNextPropositionsScenario(
                             todayMeeting.getLengthMinutes(),
                             todayMeeting.getDetails().getEmail()),
                     notificationTime.atZone(params.values().getZoneId()).toInstant());
