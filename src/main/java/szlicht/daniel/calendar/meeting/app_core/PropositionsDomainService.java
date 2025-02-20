@@ -11,11 +11,11 @@ import static szlicht.daniel.calendar.common.java.LocalDateUtils.tomorrowStart;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
-class PropositionsDomainService {
+public class PropositionsDomainService {
 
     private final CalendarRepository calendarRepository;
 
-    PropositionsDomainService(CalendarRepository calendarRepository) {
+    public PropositionsDomainService(CalendarRepository calendarRepository) {
         this.calendarRepository = calendarRepository;
     }
 
