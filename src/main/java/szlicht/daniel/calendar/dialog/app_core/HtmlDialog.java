@@ -1,6 +1,6 @@
-package szlicht.daniel.calendar.mail_dialog.app_core;
+package szlicht.daniel.calendar.dialog.app_core;
 
-public abstract class DialogMail {
+public abstract class HtmlDialog {
 
     abstract String getSubject();
     abstract String getHtml();

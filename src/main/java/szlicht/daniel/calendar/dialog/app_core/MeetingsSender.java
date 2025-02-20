@@ -1,8 +1,12 @@
-package szlicht.daniel.calendar.meeting.app_core;
+package szlicht.daniel.calendar.dialog.app_core;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;
+import szlicht.daniel.calendar.meeting.app_core.Meeting;
+import szlicht.daniel.calendar.meeting.app_core.MeetingDto;
+import szlicht.daniel.calendar.meeting.app_core.Propositions;
 
+import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
@@ -144,10 +148,10 @@ class MeetingsSender {
                 body);
     }
 
-    public void notifyArrangementFailed(Meeting meeting, String errorMessage) {
-        emailService.sendSimpleEmail(params.mail().owner(),"Nie mogę umówić Twojego spotkania na: "+meeting.when(),
+    public void notifyArrangementFailed(MeetingDto meetingDto, String errorMessage) {
+        emailService.sendSimpleEmail(params.mail().owner(),"Nie mogę umówić Twojego spotkania na: "+meetingDto.getStart(),
                 errorMessage);
-        emailService.sendSimpleEmail(meeting.getDetails().getEmail(),"Nie mogę umówić Twojego spotkania na: "+meeting.when(),
+        emailService.sendSimpleEmail(meetingDto.getEmail(),"Nie mogę umówić Twojego spotkania na: "+meetingDto.getStart(),
                 errorMessage);
     }
 }

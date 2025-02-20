@@ -1,8 +1,8 @@
-package szlicht.daniel.calendar.mail_dialog.infrastructure;
+package szlicht.daniel.calendar.dialog.infrastructure;
 
 import org.springframework.stereotype.Repository;
-import szlicht.daniel.calendar.mail_dialog.app_core.StartMessageRepository;
-import szlicht.daniel.calendar.mail_dialog.app_core.StudentStartMessageDto;
+import szlicht.daniel.calendar.dialog.app_core.StartMessageRepository;
+import szlicht.daniel.calendar.dialog.app_core.StudentStartMessageDto;
 
 import java.time.LocalDateTime;
 

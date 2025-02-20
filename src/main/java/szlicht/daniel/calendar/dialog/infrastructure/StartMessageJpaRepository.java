@@ -1,4 +1,4 @@
-package szlicht.daniel.calendar.mail_dialog.infrastructure;
+package szlicht.daniel.calendar.dialog.infrastructure;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

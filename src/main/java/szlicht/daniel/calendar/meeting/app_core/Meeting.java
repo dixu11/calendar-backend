@@ -1,7 +1,6 @@
 package szlicht.daniel.calendar.meeting.app_core;
 
 import szlicht.daniel.calendar.common.java.LocalDateUtils;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;

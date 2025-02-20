@@ -52,15 +52,6 @@ meeting:
         sunday:
           end: "14:45"
   keywords:
-    propositions:
-      - terminy
-      - propozycje
-      - propositions
-      - mentoring
-      - spotkania
-      - kalendarz
-      - calendar
-    arrange:
-      - meeting
-      - um�w
+    propositions: "terminy"
+    arrange: "spotkanie"
     description: "Moje uwagi:"

@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.nextMonday;
 
-class Propositions {
+public class Propositions {
     private List<Meeting> meetings;
     private double hours;
 
@@ -23,16 +23,16 @@ class Propositions {
         return hours;
     }
 
-    List<Meeting> getFirstWeek() {
+    public List<Meeting> getFirstWeek() {
         return getBetweenExclude(LocalDate.now().minusDays(1), nextMonday(LocalDate.now()));
     }
 
-    List<Meeting> getNextWeek() {
+    public List<Meeting> getNextWeek() {
         return getBetweenExclude(nextMonday(LocalDate.now()).minusDays(1),
                 nextMonday(nextMonday(LocalDate.now())));
     }
 
-    List<Meeting> getAfterNextWeek(){
+    public List<Meeting> getAfterNextWeek(){
         return getBetweenExclude(nextMonday(nextMonday(LocalDate.now())).minusDays(1),
                 LocalDate.now().plusYears(100));
     }

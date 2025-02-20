@@ -1,10 +1,10 @@
-package szlicht.daniel.calendar.meeting.infrastructure;
+package szlicht.daniel.calendar.dialog.infrastructure;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import szlicht.daniel.calendar.meeting.app_core.CalendarAppService;
+import szlicht.daniel.calendar.dialog.app_core.DialogAppService;
 import szlicht.daniel.calendar.meeting.app_core.MeetingDto;
 
 import java.time.LocalDateTime;
@@ -12,12 +12,12 @@ import java.util.Scanner;
 
 @Component
 @Profile("dev")
-class MeetingConsoleController implements ApplicationListener<ApplicationReadyEvent> {
+class ConsoleController implements ApplicationListener<ApplicationReadyEvent> {
 
-    private CalendarAppService calendarAppService;
+    private final DialogAppService dialogAppService;
 
-    MeetingConsoleController(CalendarAppService calendarAppService) {
-        this.calendarAppService = calendarAppService;
+    ConsoleController(DialogAppService dialogAppService) {
+        this.dialogAppService = dialogAppService;
     }
 
     @Override
@@ -51,13 +51,13 @@ class MeetingConsoleController implements ApplicationListener<ApplicationReadyEv
                 .providedDescription("")
                 .email(input[3])
                 .build();
-        calendarAppService.arrangeMeeting(meetingDto);
+        dialogAppService.startArrangeScenario(meetingDto);
     }
 
     private void sendPropositions(String[] input) {
         String mail = input[0];
         int minutes = (int) (Double.parseDouble(input[1]) * 60);
-        calendarAppService.sendPropositions(minutes, mail);
+        dialogAppService.startNextPropositionsScenario(minutes, mail);
         System.out.println("Wysłano!");
     }
 }

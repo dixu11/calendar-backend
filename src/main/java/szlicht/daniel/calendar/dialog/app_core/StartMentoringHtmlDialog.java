@@ -1,6 +1,6 @@
-package szlicht.daniel.calendar.mail_dialog.app_core;
+package szlicht.daniel.calendar.dialog.app_core;
 
-public class StartMentoringDialog extends DialogMail {
+public class StartMentoringHtmlDialog extends HtmlDialog {
 
 
     @Override

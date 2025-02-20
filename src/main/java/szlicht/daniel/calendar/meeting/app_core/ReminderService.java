@@ -44,7 +44,7 @@ class ReminderService  {
             if (!todayMeeting.isMentoring()) {
                 continue;
             }
-            taskScheduler.schedule(() -> calendarAppService.sendPropositions(
+            taskScheduler.schedule(() -> calendarAppService.getPropositions(
                             todayMeeting.getLengthMinutes(),
                             todayMeeting.getDetails().getEmail()),
                     notificationTime.atZone(params.values().getZoneId()).toInstant());
