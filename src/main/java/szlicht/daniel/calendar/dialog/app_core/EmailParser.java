@@ -26,6 +26,7 @@ class EmailParser {
             case ARRANGE -> includeArrangeData();
             case OTHER -> {}
         }
+        dataBuilder.dialogType(dialogType);
         return dataBuilder.build();
     }
 
