@@ -52,17 +52,15 @@ public class GoogleCalendarTokenCreator {
                 .setCallbackPath("/oauth2/callback")
                 .build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
-
-//        credential.refreshToken();
         OauthToken token = new OauthToken();
         token.setUserId(accountMail);
         token.setRefreshToken(credential.getRefreshToken());
-        System.out.println(credential.getRefreshToken());
         token.setAccessToken(credential.getAccessToken());
         token.setAccessTokenExpiresAt(Instant.now().getEpochSecond() + credential.getExpiresInSeconds());
         System.out.println("expires in:");
         System.out.println(Instant.now().until(Instant.ofEpochSecond(token.getAccessTokenExpiresAt()), ChronoUnit.MINUTES));
         System.out.println("minutes");
+        oauthTokenRepository.deleteAll();
         oauthTokenRepository.save(token);
         return credential;
     }
