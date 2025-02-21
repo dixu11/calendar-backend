@@ -76,7 +76,7 @@ public class StartMentoringHtmlDialog extends HtmlDialog {
     }
 
     private String asMailtoLi(int option, String label) {
-        return mailto(params.keywords().firstLesson(), ""+ option, tag("li", label), params.mail().bot());
+        return mailto(params.keywords().soloMentoring(), ""+ option, tag("li", label), params.mail().bot());
     }
 
 }

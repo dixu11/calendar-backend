@@ -42,22 +42,14 @@ class MeetingsSender {
         }
         result += "<br>";
         result += "<br>";
-        result += "Ten tydzień:";
-        List<Meeting> firstWeekMeetings = propositions.getFirstWeek();
-        result += formatPropositions(firstWeekMeetings);
-        result += "Za tydzień:";
-        List<Meeting> nextWeek = propositions.getNextWeek();
-        result += formatPropositions(nextWeek);
-        result += "Kolejne tygodnie:";
-        List<Meeting> followingWeeks = propositions.getAfterNextWeek();
-        result += formatPropositions(followingWeeks);
+        result += getFormatedPropositions(propositions);
         result += "<br>";
         result += "Aby wybrać <b>inną długość</b> kliknij i wyślij mail:";
         result += "<br>";
         result += "Dostępne długości lekcji: " + formatMailtoHours();
         result += "<br>";
         result += String.format("Jeśli <b>żaden</b> z terminów Ci nie podpasował");
-        result +=  " a zależy Ci na spotkaniu <b>napisz</b> kiedy jesteś dostępny/a na:";
+        result += " a zależy Ci na spotkaniu <b>napisz</b> kiedy jesteś dostępny/a na:";
         result += "<br>";
         result += params.mail().owner();
         result += "<br>";
@@ -72,6 +64,20 @@ class MeetingsSender {
         result += "<br>";
         result += "Jeśli znajdziesz <b>błędy</b> lub masz jakieś <b>uwagi i pomysły</b> - koniecznie mi o tym powiedz!";
         result += "</center>";
+        return result;
+    }
+
+    public String getFormatedPropositions(Propositions propositions) {
+        String result = "";
+        result += "Ten tydzień:";
+        List<Meeting> firstWeekMeetings = propositions.getFirstWeek();
+        result += formatPropositions(firstWeekMeetings);
+        result += "Za tydzień:";
+        List<Meeting> nextWeek = propositions.getNextWeek();
+        result += formatPropositions(nextWeek);
+        result += "Kolejne tygodnie:";
+        List<Meeting> followingWeeks = propositions.getAfterNextWeek();
+        result += formatPropositions(followingWeeks);
         return result;
     }
 
@@ -149,9 +155,9 @@ class MeetingsSender {
     }
 
     public void notifyArrangementFailed(MeetingDto meetingDto, String errorMessage) {
-        emailService.sendSimpleEmail(params.mail().owner(),"Nie mogę umówić Twojego spotkania na: "+meetingDto.getStart(),
+        emailService.sendSimpleEmail(params.mail().owner(), "Nie mogę umówić Twojego spotkania na: " + meetingDto.getStart(),
                 errorMessage);
-        emailService.sendSimpleEmail(meetingDto.getEmail(),"Nie mogę umówić Twojego spotkania na: "+meetingDto.getStart(),
+        emailService.sendSimpleEmail(meetingDto.getEmail(), "Nie mogę umówić Twojego spotkania na: " + meetingDto.getStart(),
                 errorMessage);
     }
 }

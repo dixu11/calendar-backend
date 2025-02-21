@@ -17,8 +17,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
@@ -65,12 +64,12 @@ class DialogAppServiceTest {
     }
 
     private void initParams() {
-        MeetingParams meetingParams = new MeetingParams(new MeetingParams.Mail("","me@gmail.com",""),
-                new MeetingParams.Values(90,"Europe/Warsaw", List.of(1.,1.5,2.,2.5,3.),"Mentoring IT z ","DS",
-                        new MeetingParams.Values.WorkHours(LocalTime.of(11,15),LocalTime.of(15,45),
+        MeetingParams meetingParams = new MeetingParams(new MeetingParams.Mail("", "me@gmail.com", ""),
+                new MeetingParams.Values(90, "Europe/Warsaw", List.of(1., 1.5, 2., 2.5, 3.), "Mentoring IT z ", "DS",
+                        new MeetingParams.Values.WorkHours(LocalTime.of(11, 15), LocalTime.of(15, 45),
                                 new HashMap<>())),
-                new MeetingParams.Keywords("Moje uwagi:","terminy","mentoring","spotkanie","terminy 1")
-                );
+                new MeetingParams.Keywords("Moje uwagi:", "terminy", "mentoring", "spotkanie", "indywidualne lekcje")
+        );
         params = meetingParams;
     }
 
@@ -81,10 +80,10 @@ class DialogAppServiceTest {
 
     @Test
     public void createCorrectPropositions() {
-        dialogAppService.processNewEmail(new RawEmail(EMAIL,NAME,"terminy 1",""));
+        dialogAppService.processNewEmail(new RawEmail(EMAIL, NAME, "terminy 1", ""));
         verify(emailService).sendHtmlEmail(
                 Mockito.eq(EMAIL),
-                Mockito.any()
+                any()
                 , contains("pon.  24.02  14:45 - 15:45")
         );
     }
@@ -97,7 +96,7 @@ class DialogAppServiceTest {
         verify(logger).notifyOwner(
                 contains(name),
                 argThat(arg -> arg.contains(story) && arg.contains(EMAIL)),
-                Mockito.any(boolean.class));
+                any(boolean.class));
     }
 
     @Test
@@ -106,8 +105,8 @@ class DialogAppServiceTest {
         String name = "<NAME>";
         dialogAppService.startMentoringOfferScenario(new StudentStartMessageDto(name, EMAIL, story));
         verify(emailService).sendHtmlEmail(
-                Mockito.eq(EMAIL),
-                Mockito.any()
+                eq(EMAIL),
+                any()
                 , argThat(arg -> arg.contains("Uczę się absolutnie od zera, szukam kompleksowego " +
                         "wsparcia i pomocy przy wyznaczeniu ścieżki.") && arg.contains("Prawdopodobnie nikt w polsce nie" +
                         " ma tak dużego doświadczenia w nauczaniu programowania, " +
@@ -123,8 +122,27 @@ class DialogAppServiceTest {
         verify(logger).notifyOwner(
                 contains(EMAIL),
                 contains(content),
-                Mockito.any(boolean.class));
+                any(boolean.class));
         verifyNoInteractions(emailService);
+    }
+
+    @Test
+    public void reactToSoloMentoringRequest() {
+        String subject = params.keywords().soloMentoring();
+        String content = "2";
+        dialogAppService.processNewEmail(new RawEmail(EMAIL, NAME, subject, content));
+        verify(logger).notifyOwner(
+                argThat(arg -> arg.contains(EMAIL) && arg.contains(NAME)),
+                contains(content),
+                any(boolean.class));
+        verify(emailService).sendHtmlEmail(
+                eq(EMAIL),
+                any()
+                , argThat(arg -> arg.contains("pon.  24.02  14:45 - 15:45")
+                        && arg.contains("200zł")
+                        && arg.contains("55")
+                        && arg.contains("sprawdź tańsze opcje"))
+        );
     }
 
 }

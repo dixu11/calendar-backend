@@ -70,10 +70,30 @@ public class DialogAppService {
             case OFFER:
                 startMentoringOfferScenario(emailData.getStudentStartMessageDto());
                 break;
+            case SOLO_MENTORING:
+                startSoloMentoringScenario(emailData);
+                break;
             default:
                 System.out.printf("(%s)%s don't mach to any patter so it's probably spam -> ignore\n%n",
                         rawEmail.email(), rawEmail.subject());
                 logger.notifyOwner("suspicious email: " + rawEmail.email() + " " + rawEmail.subject(), rawEmail.content(), false);
+        }
+    }
+
+    private void startSoloMentoringScenario(EmailData emailData) {
+        HtmlDialog htmlDialog = new SoloMentoringHtmlDialog(
+                meetingsSender.getFormatedPropositions(calendarAppService.getPropositions(emailData.getMinutes())));
+        emailService.sendHtmlEmail(emailData.getEmail(), htmlDialog.getSubject(), htmlDialog.getHtml());
+        logger.notifyOwner("Solo mentoring offer sent to "+ emailData.getName() + " mail:" + emailData.getEmail(),
+                "response to decision: "+ emailData.getContent() , false); //todo simplify and standardize
+    }
+
+    public void startNextPropositionsScenario(Integer minutes, String to) {
+        try {
+            Propositions propositions = calendarAppService.getPropositions(minutes);
+            meetingsSender.sendPropositions(propositions, to);
+        } catch (CalendarOfflineException e) {
+            System.err.println("calendar offline");
         }
     }
 
@@ -94,15 +114,6 @@ public class DialogAppService {
         }
     }
 
-    public void startNextPropositionsScenario(Integer minutes, String to) {
-        try {
-            Propositions propositions = calendarAppService.getPropositions(minutes);
-            meetingsSender.sendPropositions(propositions, to);
-        } catch (CalendarOfflineException e) {
-            System.err.println("calendar offline");
-        }
-    }
-
     public void startMentoringOfferScenario(StudentStartMessageDto message) {
         HtmlDialog dialog = new StartMentoringHtmlDialog();
         emailService.sendHtmlEmail(message.getEmail(), dialog.getSubject(), dialog.getHtml());
@@ -114,6 +125,4 @@ public class DialogAppService {
         logger.notifyOwner("Mentoring offer sent to "+ message.getName(), "Mail: " +
                 message.getEmail() + " story: " +message.getStory(), false);
     }
-
-
 }

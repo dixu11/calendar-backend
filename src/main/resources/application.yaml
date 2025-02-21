@@ -50,7 +50,7 @@ meeting:
           end: "14:45"
   keywords:
     propositions: "terminy"
-    first-lesson: "terminy 1"
     arrange: "spotkanie"
+    solo-mentoring: "indywidualne lekcje"
     offer: "mentoring"
     description: "Moje uwagi:"
