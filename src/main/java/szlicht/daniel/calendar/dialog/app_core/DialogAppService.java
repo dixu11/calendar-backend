@@ -42,7 +42,8 @@ public class DialogAppService {
     @EventListener
     @Async
     public void sendTestEmailToOwner(AppStartedEvent e) {
-        startNextPropositionsScenario(60, params.mail().owner());
+//        startNextPropositionsScenario(60, params.mail().owner());
+        startMentoringOfferScenario(new StudentStartMessageDto("<STUDENT NAME>", params.mail().owner(), "test"));
     }
 
     @EventListener

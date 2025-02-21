@@ -62,6 +62,8 @@ class EmailParser {
         if (minutes != null) {
             dataBuilder.minutes(minutes);
         }
+        dataBuilder.name(rawEmail.name());
+        dataBuilder.email(rawEmail.email());
     }
 
     private void includeOfferData() {

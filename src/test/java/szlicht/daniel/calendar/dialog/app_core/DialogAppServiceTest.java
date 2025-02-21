@@ -25,6 +25,7 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 class DialogAppServiceTest {
     private static final String EMAIL = "jan.kowalski@gmail.com";
+    private static final String NAME = "Jan Kowalski";
 
     @Mock
     private StartMessageRepository startMessageRepository;
@@ -68,7 +69,7 @@ class DialogAppServiceTest {
                 new MeetingParams.Values(90,"Europe/Warsaw", List.of(1.,1.5,2.,2.5,3.),"Mentoring IT z ","DS",
                         new MeetingParams.Values.WorkHours(LocalTime.of(11,15),LocalTime.of(15,45),
                                 new HashMap<>())),
-                new MeetingParams.Keywords("Moje uwagi:","terminy","mentoring","spotkanie")
+                new MeetingParams.Keywords("Moje uwagi:","terminy","mentoring","spotkanie","terminy 1")
                 );
         params = meetingParams;
     }
@@ -80,11 +81,11 @@ class DialogAppServiceTest {
 
     @Test
     public void createCorrectPropositions() {
-        dialogAppService.startNextPropositionsScenario(90, EMAIL);
+        dialogAppService.processNewEmail(new RawEmail(EMAIL,NAME,"terminy 1",""));
         verify(emailService).sendHtmlEmail(
                 Mockito.eq(EMAIL),
                 Mockito.any()
-                , contains("pon.  24.02  14:15 - 15:45")
+                , contains("pon.  24.02  14:45 - 15:45")
         );
     }
 

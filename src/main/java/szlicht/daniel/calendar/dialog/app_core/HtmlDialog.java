@@ -1,5 +1,7 @@
 package szlicht.daniel.calendar.dialog.app_core;
 
+import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
+
 public abstract class HtmlDialog {
 
     abstract String getSubject();
@@ -63,6 +65,9 @@ public abstract class HtmlDialog {
                                     padding: 10px;
                                     border-radius: 4px;
                                     list-style-type: none;
+                                }
+                                a {
+                                    text-decoration: none;
                                 }
                             </style>
                 """;

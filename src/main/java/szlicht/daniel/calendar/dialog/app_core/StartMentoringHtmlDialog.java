@@ -1,5 +1,8 @@
 package szlicht.daniel.calendar.dialog.app_core;
 
+import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
+
 public class StartMentoringHtmlDialog extends HtmlDialog {
 
 
@@ -51,9 +54,29 @@ public class StartMentoringHtmlDialog extends HtmlDialog {
                 "Mam bardzo ograniczony budżet i szukam najtańszej opcji",
                 "Szukam czegoś innego"
         );
+
+        String howToStartList2 = "";
+        howToStartList2 += asMailtoLi(1, "Uczę się absolutnie od zera, szukam kompleksowego wsparcia i pomocy przy wyznaczeniu ścieżki.");
+        howToStartList2 += asMailtoLi(2, "Już coś ogarniam i piszę własne projekty. Interesuje mnie któraś z wymienionych technologii: java, python, android, gamedev, kotlin");
+        howToStartList2 += asMailtoLi(3, "Interesuje mnie python ale jestem już dość zaawansowany i chcę nauczyć się data sience / machine learningu");
+        howToStartList2 += asMailtoLi(4, "Interesują mnie inne, nie wymienione technologie np. C++, C#, React/Angular, devops, bazy danych");
+        howToStartList2 += asMailtoLi(5, "Mam bardzo konkretny projekt który chcę wprawić w życie, nie ważne jakich technologii będę musiał nauczyć się po drodze");
+        howToStartList2 += asMailtoLi(6, "Mam problem ze znalezieniem pracy a już jestem na nią gotowy, potrzebuję pomocy przy ocenie mojego projektu portfolio, poprawie CV, " +
+                "zaplanowaniu strategii szukania pracy i kolejnych kroków oraz próbna rozmowa rekrutacyjna");
+        howToStartList2 += asMailtoLi(7, "Czuję że tracę zapał do programowania, jestem pełen obaw, nie wiem jak zorganizować naukę, boję się czy to ma w ogóle sens, " +
+                "mam wrażenie że bardziej niż techniczne potrzebne mi wsparcie strategiczne i emocjonalne");
+        howToStartList2 += asMailtoLi(8, "Mam bardzo ograniczony budżet i szukam najtańszej opcji");
+        howToStartList2 += asMailtoLi(9, "Szukam czegoś innego");
+        howToStartList2 = tag("ul", howToStartList2);
+
+
         String whyMe = section("Czym wyróżnia się mój mentoring?", whyMeList);
-        String howToStart = section("Jak zacząć? Kliknij wybraną opcję i wyślij email!", howToStartList);
+        String howToStart = section("Jak zacząć? Kliknij wybraną opcję i wyślij email!", howToStartList2);
         return howItWorks + whyMe + howToStart;
+    }
+
+    private String asMailtoLi(int option, String label) {
+        return mailto(params.keywords().firstLesson(), ""+ option, tag("li", label), params.mail().bot());
     }
 
 }

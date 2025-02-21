@@ -66,7 +66,8 @@ public record MeetingParams(
             String description,
             String propositions,
             String offer,
-            String arrange
+            String arrange,
+            String firstLesson
     ) {
     }
 }

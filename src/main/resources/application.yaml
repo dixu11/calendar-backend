@@ -28,7 +28,6 @@ spring:
 meeting:
   mail:
     owner: ${MY_EMAIL}
-    bot: ${BOT_MAIL}
     phone: ${PHONE_NUMBER}
   values:
     summary-prefix: "Mentoring IT z "
@@ -51,6 +50,7 @@ meeting:
           end: "14:45"
   keywords:
     propositions: "terminy"
+    first-lesson: "terminy 1"
     arrange: "spotkanie"
     offer: "mentoring"
     description: "Moje uwagi:"
