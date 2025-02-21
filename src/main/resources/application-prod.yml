@@ -1,0 +1,7 @@
+spring:
+  mail:
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+meeting:
+  mail:
+    bot: ${EMAIL_USERNAME}
