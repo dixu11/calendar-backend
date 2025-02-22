@@ -4,7 +4,8 @@ public class SoloMentoringHtmlDialog extends HtmlDialog {
 
     private String formatedPropositions;
 
-    public SoloMentoringHtmlDialog(String formatedPropositions) {
+    public SoloMentoringHtmlDialog(String email,String formatedPropositions) {
+        super(email);
         this.formatedPropositions = formatedPropositions;
     }
 

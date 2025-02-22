@@ -7,4 +7,5 @@ public interface StudentRepository {
     Optional<Student> getByName(String name);
     void saveOrUpdate(Student student);
     boolean save(Student student);
+    boolean existsByEmail(String email);
 }

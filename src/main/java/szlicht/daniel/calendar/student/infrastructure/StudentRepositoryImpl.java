@@ -1,5 +1,6 @@
 package szlicht.daniel.calendar.student.infrastructure;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.student.app_core.Student;
 import szlicht.daniel.calendar.student.app_core.StudentRepository;
@@ -15,18 +16,21 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
+    @Transactional
     public Optional<Student> getByEmail(String email) {
         return studentJpaRepository.getByEmail(email)
                 .map(StudentEntity::toStudent);
     }
 
     @Override
+    @Transactional
     public Optional<Student> getByName(String name) {
         return studentJpaRepository.getByName(name)
                 .map(StudentEntity::toStudent);
     }
 
     @Override
+    @Transactional
     public void saveOrUpdate(Student student) {
         StudentEntity studentEntity = new StudentEntity(student);
         Optional<StudentEntity> existingEntity = studentJpaRepository.getByEmail(student.getEmail());
@@ -34,11 +38,17 @@ public class StudentRepositoryImpl implements StudentRepository {
         studentJpaRepository.save(studentEntity);
     }
 
+    @Transactional
     public boolean save(Student student) {
         if (studentJpaRepository.existsByEmail(student.getEmail())) {
             return false;
         }
         studentJpaRepository.save(new StudentEntity(student));
         return true;
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return studentJpaRepository.existsByEmail(email);
     }
 }

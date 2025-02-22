@@ -31,8 +31,6 @@ class DialogAppServiceTest {
     private static final String SHORT_NAME = "Jan Kow";
 
     @Mock
-    private StartMessageRepository startMessageRepository;
-    @Mock
     private ApplicationEventPublisher publisher;
     private MeetingsSender meetingsSender;
     @Mock
@@ -59,10 +57,10 @@ class DialogAppServiceTest {
         ArrangeMeetingDomainService arrangeMeetingDomainService = new ArrangeMeetingDomainService(propositionsDomainService, calendarRepository, logger, publisher);
         CalendarAppService calendarAppService = new CalendarAppService(propositionsDomainService, arrangeMeetingDomainService, studentRepository, logger, publisher, calendarRepository);
         dialogAppService = new DialogAppService(
-                startMessageRepository,
                 publisher,
                 meetingsSender,
                 calendarAppService,
+                studentRepository,
                 emailService,
                 logger
         );
@@ -77,11 +75,6 @@ class DialogAppServiceTest {
                 new MeetingParams.Keywords("Moje uwagi:", "terminy", "mentoring", "spotkanie", "indywidualne lekcje")
         );
         params = meetingParams;
-    }
-
-    @Test
-    public void testInitiation() {
-        System.out.println("Context loads");
     }
 
     @Test
@@ -171,10 +164,8 @@ class DialogAppServiceTest {
         MeetingDto firstMeeting = MeetingDto.builder()
                 .email(EMAIL)
                 .studentName(NAME)
-                .type(MeetingType.MENTORING)
                 .start(LocalDateTime.parse("2025-02-24T14:45"))
                 .end(LocalDateTime.parse("2025-02-24T15:45"))
-                .noCollisions(false)
                 .build();
 
         dialogAppService.startArrangeScenario(firstMeeting);
@@ -182,6 +173,15 @@ class DialogAppServiceTest {
                 contains("Umówił się: jan.kowalski@gmail.com at 24.02 14:45-15:45"),
                 any(),
                 any(boolean.class)
+        );
+        verify(emailService).sendHtmlEmail(
+                eq(EMAIL),
+                any(),
+                argThat(arg -> arg.contains("AnyDesk")
+                        && arg.contains("14:45")
+                        && arg.contains("55")
+                        && arg.contains("Skype")
+                )
         );
     }
 

@@ -64,7 +64,7 @@ public class CalendarAppService {
             throw new NotImplementedException("Cyclic meeting not supported " + meetingDto.getSummary() + meetingDto.getStart() );
         }
         if (meetingDto.getEmail() == null || meetingDto.getEmail().isBlank()) {
-            meetingDto.setEmail(studentRepository.getByName(meetingDto.getStudentName()).map(Student::getEmail)
+            meetingDto.setEmail(studentRepository.getByName(meetingDto.getSummary()).map(Student::getEmail)
                     .orElseThrow(()-> new IllegalArgumentException("Manual meeting without email not supported")));
         }
         meetingDto.setId(null);
@@ -82,14 +82,15 @@ public class CalendarAppService {
             student = new Student(0,meetingDto.getStudentName(), meetingDto.getEmail(), StudentRang.ASKED,"");
             eventPublisher.publishEvent(new NewStudentEvent(student));
         }
-        if (student.getRank() == StudentRang.ASKED) {
-            meetingDto.setType(MeetingType.FIRST_MENTORING);
-        }
+
         Meeting meeting = new Meeting(meetingDto.getStart(), meetingDto.getEnd());
         meeting.setDetails(new Meeting.Details(formatSummary(student.getName()),
                 "Spotkanie umówione automatycznie",
                 meetingDto.getProvidedDescription(), meetingDto.getEmail())
         ).setNoCollisions(meetingDto.isNoCollisions());
+        if (student.getRank() == StudentRang.ASKED) {
+            meeting.setType(MeetingType.FIRST_MENTORING);
+        }
         arrangeMeetingDomainService.arrange(meeting);
         eventPublisher.publishEvent(new NewMeetingEvent(meeting, student));
         return meeting;

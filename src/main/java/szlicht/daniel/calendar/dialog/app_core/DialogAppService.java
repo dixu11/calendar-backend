@@ -13,29 +13,29 @@ import szlicht.daniel.calendar.meeting.app_core.*;
 import szlicht.daniel.calendar.student.app_core.NewStudentEvent;
 import szlicht.daniel.calendar.student.app_core.Student;
 import szlicht.daniel.calendar.student.app_core.StudentRang;
+import szlicht.daniel.calendar.student.app_core.StudentRepository;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
 public class DialogAppService {
-    private StartMessageRepository startMessageRepository;
     private ApplicationEventPublisher publisher;
     private MeetingsSender meetingsSender;
     private CalendarAppService calendarAppService;
+    private StudentRepository studentRepository;
     private EmailService emailService;
     private Logger logger;
 
 
-    public DialogAppService(StartMessageRepository startMessageRepository,
-                            ApplicationEventPublisher publisher,
+    public DialogAppService(ApplicationEventPublisher publisher,
                             MeetingsSender meetingsSender,
-                            CalendarAppService calendarAppService,
+                            CalendarAppService calendarAppService, StudentRepository studentRepository,
                             EmailService emailService,
                             Logger logger) {
-        this.startMessageRepository = startMessageRepository;
         this.publisher = publisher;
         this.meetingsSender = meetingsSender;
         this.calendarAppService = calendarAppService;
+        this.studentRepository = studentRepository;
         this.emailService = emailService;
         this.logger = logger;
     }
@@ -44,7 +44,7 @@ public class DialogAppService {
     @Async
     public void sendTestEmailToOwner(AppStartedEvent e) {
         startNextPropositionsScenario(60, params.mail().owner());
-        startMentoringOfferScenario(new StudentStartMessageDto("<STUDENT NAME>", params.mail().owner(), "test"));
+        startMentoringOfferScenario(new StudentStartMessageDto("Owner Name", params.mail().owner(), "test"));
     }
 
     @EventListener
@@ -77,9 +77,8 @@ public class DialogAppService {
     }
 
     private void startSoloMentoringScenario(EmailData emailData) {
-        HtmlDialog htmlDialog = new SoloMentoringHtmlDialog(
-                meetingsSender.getFormatedPropositions(calendarAppService.getPropositions(emailData.getMinutes())));
-        emailService.sendHtmlEmail(emailData.getEmail(), htmlDialog.getSubject(), htmlDialog.getHtml());
+        sendDialog(new SoloMentoringHtmlDialog(emailData.getEmail(),
+                meetingsSender.getFormatedPropositions(calendarAppService.getPropositions(emailData.getMinutes()))));
         logger.notifyOwner("Solo mentoring offer sent to "+ emailData.getName() + " mail:" + emailData.getEmail(),
                 "response to decision: "+ emailData.getContent() , false); //todo simplify and standardize
     }
@@ -96,7 +95,11 @@ public class DialogAppService {
     public void startArrangeScenario(MeetingDto meetingDto) {
         try {
             Meeting meeting = calendarAppService.arrangeMeeting(meetingDto);
-            meetingsSender.notifyArrangementComplete(meeting);
+            if (meeting.getType() == MeetingType.MENTORING) {
+                meetingsSender.notifyArrangementComplete(meeting);
+            } else {
+                sendDialog(new FirstMentoringHtmlDialog(meetingDto.getEmail(),meeting));
+            }
             System.err.println(meeting.getDetails().getEmail() + " meeting proposition at: " + meeting.when() + " approved");
         } catch (CalendarOfflineException | MeetingCollisionException e) {
             System.err.println(meetingDto.getEmail() + " meeting proposition at: " + meetingDto.getStart() + " declined");
@@ -113,14 +116,16 @@ public class DialogAppService {
     }
 
     public void startMentoringOfferScenario(StudentStartMessageDto message) {
-        HtmlDialog dialog = new StartMentoringHtmlDialog();
-        emailService.sendHtmlEmail(message.getEmail(), dialog.getSubject(), dialog.getHtml());
-        if (!startMessageRepository.existsByEmail(message.getEmail())) {
-            startMessageRepository.save(message);
+        sendDialog(new StartMentoringHtmlDialog(message.getEmail()));
+        if (!studentRepository.existsByEmail(message.getEmail())) {
             publisher.publishEvent(new NewStudentEvent(
                     new Student(0,message.getName(), message.getEmail(), StudentRang.ASKED,message.getStory())));
         }
         logger.notifyOwner("Mentoring offer sent to "+ message.getName(), "Mail: " +
                 message.getEmail() + " story: " +message.getStory(), false);
+    }
+
+    private void sendDialog(HtmlDialog dialog) {
+        emailService.sendHtmlEmail(dialog.getEmail(), dialog.getSubject(), dialog.getHtml());
     }
 }

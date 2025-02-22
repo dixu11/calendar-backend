@@ -4,6 +4,12 @@ import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
 
 public abstract class HtmlDialog {
 
+    private String email;
+
+    public HtmlDialog(String email) {
+        this.email = email;
+    }
+
     abstract String getSubject();
 
     String getHtml() {
@@ -13,7 +19,7 @@ public abstract class HtmlDialog {
         return result + tag("html", head + body);
     }
 
-    String getHead(){
+    String getHead() {
         String result = "";
         result += " <meta charset=\"UTF-8\">";
         result += " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
@@ -73,7 +79,7 @@ public abstract class HtmlDialog {
                 """;
     }
 
-    String getBody(){
+    String getBody() {
         String title = tag("h1", getTitle());
         String intro = tag("p", getIntro());
         String container = tag("div", title + intro, "container");
@@ -84,7 +90,7 @@ public abstract class HtmlDialog {
 
     abstract String getIntro();
 
-  abstract   String getSections();
+    abstract String getSections();
 
     String section(String title, String content) {
         return tag("div", section(tag("h2", title) + content), "section");
@@ -101,5 +107,17 @@ public abstract class HtmlDialog {
     String tag(String tag, String content, String... classes) {
         String classAttr = (classes.length > 0) ? " class=\"" + String.join(" ", classes) + "\"" : "";
         return "<" + tag + classAttr + ">" + content + "</" + tag + ">";
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    String link(String text, String href) {
+        return "<a href='" + href + "'>" + text + "</a>";
+    }
+
+    String link(String href) {
+        return link(href, href);
     }
 }
