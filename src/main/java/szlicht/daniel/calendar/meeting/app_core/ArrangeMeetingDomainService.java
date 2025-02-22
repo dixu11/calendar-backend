@@ -26,7 +26,6 @@ public class ArrangeMeetingDomainService {
         this.calendarRepository = calendarRepository;
         this.logger = logger;
     }
-
     
     public void arrange(Meeting meeting) {
         validate(meeting);
@@ -37,6 +36,9 @@ public class ArrangeMeetingDomainService {
     }
 
     private void validate(Meeting meeting) {
+        if (meeting.isNoCollision()) {
+            return;
+        }
         if (!canArrange) {
             throw new CalendarOfflineException("Nie mogę umówić Twojego spotkania. " +
                     "Serwis chwilowo niedostępny, spróbuj za kilka godzin.");

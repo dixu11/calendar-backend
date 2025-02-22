@@ -5,11 +5,11 @@ import java.util.Arrays;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 enum DialogType {
-SOLO_MENTORING,PROPOSITIONS, ARRANGE, OFFER, OTHER;
+    SOLO_MENTORING_OFFER,PROPOSITIONS, ARRANGE, OFFER, OTHER;
 
     String getKeyword() {
        return switch (this) {
-           case SOLO_MENTORING -> params.keywords().soloMentoring();
+           case SOLO_MENTORING_OFFER -> params.keywords().soloMentoring();
            case PROPOSITIONS -> params.keywords().propositions();
            case ARRANGE -> params.keywords().arrange();
            case OFFER -> params.keywords().offer();

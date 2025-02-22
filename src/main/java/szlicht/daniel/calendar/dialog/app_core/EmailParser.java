@@ -22,7 +22,7 @@ class EmailParser {
     EmailData parseEmail() {
         DialogType dialogType = DialogType.getByKeyword(rawEmail.subject());
         switch (dialogType) {
-            case SOLO_MENTORING -> includeSoloMentoringData();
+            case SOLO_MENTORING_OFFER -> includeSoloMentoringData();
             case PROPOSITIONS -> includePropositionsData();
             case ARRANGE -> includeArrangeData();
             case OFFER -> includeOfferData();

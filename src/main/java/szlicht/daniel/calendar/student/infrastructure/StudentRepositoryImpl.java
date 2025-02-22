@@ -21,18 +21,25 @@ public class StudentRepositoryImpl implements StudentRepository {
         Set<String> existingMails = studentJpaRepository.findAllEmails();
         Set<StudentEntity> result = students.stream()
                 .filter(student -> !existingMails.contains(student.getEmail()))
-                .map(student -> new StudentEntity(student.getName(),student.getEmail(),student.getRank()))
+                .map(StudentEntity::new)
                 .collect(Collectors.toSet());
         studentJpaRepository.saveAll(result);
     }
 
     @Override
     public Optional<Student> getByEmail(String email) {
-        return studentJpaRepository.getByEmail(email);
+        return studentJpaRepository.getByEmail(email)
+                .map(StudentEntity::toStudent);
     }
 
     @Override
     public Optional<Student> getByName(String name) {
-        return studentJpaRepository.getByName(name);
+        return studentJpaRepository.getByName(name)
+                .map(StudentEntity::toStudent);
+    }
+
+    @Override
+    public void save(Student student) {
+        studentJpaRepository.save(new StudentEntity(student));
     }
 }

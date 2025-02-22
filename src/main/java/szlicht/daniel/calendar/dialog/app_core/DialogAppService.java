@@ -5,6 +5,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.java.JavaUtils;
+import szlicht.daniel.calendar.common.java.NotImplementedException;
 import szlicht.daniel.calendar.common.mail.EmailService;
 import szlicht.daniel.calendar.common.spring.AppStartedEvent;
 import szlicht.daniel.calendar.common.spring.Logger;
@@ -42,7 +43,7 @@ public class DialogAppService {
     @EventListener
     @Async
     public void sendTestEmailToOwner(AppStartedEvent e) {
-//        startNextPropositionsScenario(60, params.mail().owner());
+        startNextPropositionsScenario(60, params.mail().owner());
         startMentoringOfferScenario(new StudentStartMessageDto("<STUDENT NAME>", params.mail().owner(), "test"));
     }
 
@@ -50,12 +51,7 @@ public class DialogAppService {
     void arrangeManualMeeting(NextMonthMeetingsEvent event) {
         event.getMeetings().stream()
                 .filter(Meeting::isManual)
-                .forEach(meeting -> {
-                    boolean success = calendarAppService.arrangeManualMeeting(meeting);
-                    if (success) {
-                        meetingsSender.notifyArrangementComplete(meeting);
-                    }
-                });
+                .forEach(meeting -> startArrangeScenario(meeting.toDto()));
     }
 
     public void processNewEmail(RawEmail rawEmail) {
@@ -70,7 +66,7 @@ public class DialogAppService {
             case OFFER:
                 startMentoringOfferScenario(emailData.getStudentStartMessageDto());
                 break;
-            case SOLO_MENTORING:
+            case SOLO_MENTORING_OFFER:
                 startSoloMentoringScenario(emailData);
                 break;
             default:
@@ -106,6 +102,8 @@ public class DialogAppService {
             System.err.println(meetingDto.getEmail() + " meeting proposition at: " + meetingDto.getStart() + " declined");
             e.printStackTrace();
             meetingsSender.notifyArrangementFailed(meetingDto, e.getMessage());
+        } catch (NotImplementedException e) {
+            System.err.println(e.getMessage());
         } catch (Exception e) {
             logger.notifyOwner("Unexpected error",
                     e.getMessage() + " " + JavaUtils.getStackTrace(e),
@@ -120,7 +118,7 @@ public class DialogAppService {
         if (!startMessageRepository.existsByEmail(message.getEmail())) {
             startMessageRepository.save(message);
             publisher.publishEvent(new NewStudentEvent(
-                    new Student(message.getName(), message.getEmail(), StudentRang.ASKED)));
+                    new Student(0,message.getName(), message.getEmail(), StudentRang.ASKED)));
         }
         logger.notifyOwner("Mentoring offer sent to "+ message.getName(), "Mail: " +
                 message.getEmail() + " story: " +message.getStory(), false);

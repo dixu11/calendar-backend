@@ -15,6 +15,7 @@ public class Meeting implements Comparable<Meeting> {
     private LocalDateTime end;
     private MeetingType type = MeetingType.MENTORING;
     private Details details = null;
+    private boolean noCollisions = false;
 
 
     public Meeting(LocalDateTime start, LocalDateTime end) {
@@ -38,14 +39,10 @@ public class Meeting implements Comparable<Meeting> {
         return new Meeting(meetingAfter, minutes);
     }
 
-    public LocalDateTime getStart() {
-        return start;
+    public boolean isManual() {
+        return !details.summary.toLowerCase()
+                .contains(params.values().summaryPrefix().toLowerCase());
     }
-
-    public LocalDateTime getEnd() {
-        return end;
-    }
-
 
     boolean collideWith(Meeting otherMeeting) {
         LocalDateTime thisEndWithBuffer = getEndPlusBuffer();
@@ -75,9 +72,17 @@ public class Meeting implements Comparable<Meeting> {
     }
 
 
+    public String when() {
+        return LocalDateUtils.simpleDateTime(start) + "-" + LocalDateUtils.simpleTime(end);
+    }
+
     private void moveBy(int minutes) {
         start = start.plusMinutes(minutes);
         end = end.plusMinutes(minutes);
+    }
+
+    public MeetingDto toDto() {
+        return new MeetingDto(start,end,type,id, details.summary, details.ownerDescription,details.email,"",noCollisions);
     }
 
     public Meeting setDetails(Details details) {
@@ -85,34 +90,17 @@ public class Meeting implements Comparable<Meeting> {
         return this;
     }
 
-    public String when() {
-        return LocalDateUtils.simpleDateTime(start) + "-" + LocalDateUtils.simpleTime(end);
+    public Meeting setNoCollisions(boolean noCollisions) {
+        this.noCollisions = noCollisions;
+        return this;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Meeting meeting = (Meeting) o;
-        return Objects.equals(start, meeting.start) && Objects.equals(end, meeting.end);
+    public LocalDateTime getStart() {
+        return start;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(start, end);
-    }
-
-    @Override
-    public String toString() {
-        return "Meeting{" +
-                "start=" + start +
-                ", end=" + end +
-                '}';
-    }
-
-    @Override
-    public int compareTo(Meeting o) {
-        return start.compareTo(o.start);
+    public LocalDateTime getEnd() {
+        return end;
     }
 
     public String getDescription() {
@@ -141,13 +129,35 @@ public class Meeting implements Comparable<Meeting> {
         return id;
     }
 
-    public boolean isManual() {
-        return !details.summary.toLowerCase()
-                .contains(params.values().summaryPrefix().toLowerCase());
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Meeting meeting = (Meeting) o;
+        return Objects.equals(start, meeting.start) && Objects.equals(end, meeting.end);
     }
 
-    public MeetingDto toDto() {
-        return new MeetingDto(start,end,type, details.summary, details.ownerDescription,details.email,"");
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end);
+    }
+
+    @Override
+    public String toString() {
+        return "Meeting{" +
+                "start=" + start +
+                ", end=" + end +
+                '}';
+    }
+
+    @Override
+    public int compareTo(Meeting o) {
+        return start.compareTo(o.start);
+    }
+
+    public boolean isNoCollision() {
+        return noCollisions;
     }
 
 

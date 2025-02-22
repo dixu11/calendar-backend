@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.student.infrastructure;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.PersistenceCreator;
+import szlicht.daniel.calendar.student.app_core.Student;
 import szlicht.daniel.calendar.student.app_core.StudentRang;
 
 import java.util.Objects;
@@ -15,10 +16,19 @@ class StudentEntity {
     @Column(unique = true)
     private String email;
     private String name;
+    private String nick;
     private StudentRang rang;
 
     @PersistenceCreator
     StudentEntity() {
+    }
+
+    public StudentEntity(Student student) {
+        this.id = student.getId();
+        this.name = student.getName();
+        this.nick = student.getNick();
+        this.email = student.getEmail();
+        this.rang = student.getRank();
     }
 
     public StudentEntity(String name, String email, StudentRang rang) {
@@ -38,5 +48,9 @@ class StudentEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(email);
+    }
+
+    public Student toStudent() {
+        return new Student(id,name,email,rang);
     }
 }

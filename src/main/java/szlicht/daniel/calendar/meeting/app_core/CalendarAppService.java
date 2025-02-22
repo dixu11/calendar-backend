@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.meeting.app_core;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import szlicht.daniel.calendar.common.java.NotImplementedException;
 import szlicht.daniel.calendar.common.spring.Logger;
 import szlicht.daniel.calendar.student.app_core.NewStudentEvent;
 import szlicht.daniel.calendar.student.app_core.Student;
@@ -16,13 +17,12 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
 public class CalendarAppService {
-    private PropositionsDomainService propositionsDomainService;
-    private ArrangeMeetingDomainService arrangeMeetingDomainService;
-
-    private StudentRepository studentRepository;
-    private Logger logger;
+    private final PropositionsDomainService propositionsDomainService;
+    private final ArrangeMeetingDomainService arrangeMeetingDomainService;
+    private final StudentRepository studentRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private CalendarRepository calendarRepository;
+    private final CalendarRepository calendarRepository;
+    private final Logger logger;
 
     public CalendarAppService(PropositionsDomainService propositionsDomainService,
                               ArrangeMeetingDomainService arrangeMeetingDomainService,
@@ -42,67 +42,56 @@ public class CalendarAppService {
         return propositionsDomainService.createMeetingPropositions(minutes);
     }
 
-    public boolean arrangeManualMeeting(Meeting meeting) {
-        String studentEmail = "";
-        if (meeting.getType() == MeetingType.CYCLIC_MENTORING) {
-            return false;
-        }
-        if (!meeting.getDetails().getEmail().isBlank()) {
-            studentEmail = meeting.getDetails().getEmail();
-        } else {
-            studentEmail = studentRepository.getByName(meeting.getDetails().getSummary()).map(Student::getEmail).orElse("");
-        }
-        String studentName = meeting.getDetails().getSummary();
-        Student student = new Student(studentName, studentEmail, StudentRang.HAD_MENTORING);
-        if (studentEmail.isBlank()) {
-            return false;
-        }
-        meeting.getDetails().setEmail(student.getEmail());
-        meeting.getDetails().setOwnerDescription("Manual meeting corrected by app");
-        meeting.getDetails().setSummary(formatSummary(student.getName()));
-        meeting.setType(MeetingType.MENTORING);
-        System.out.println("Manual meeting corrected by app: " + meeting.getDetails().getSummary() + " at " + meeting.when());
-        calendarRepository.removeMeetingById(meeting.getId());
-        logger.notifyOwner("Event deleted at cleanup: " + meeting.getDetails().getSummary() + " at " + meeting.when(), "", false);
-        MeetingDto meetingDto = meeting.toDto();
-        meetingDto.setStudentName(student.getName());
-        meeting.setId(null);
-        calendarRepository.save(meeting);
-        studentRepository.addIfNotExists(Collections.singleton(student));
-        return true;
-    }
-
     public Meeting arrangeMeeting(MeetingDto meetingDto) {
-        String studentName = Student.formatStudentName(meetingDto.getStudentName());
-        meetingDto.setStudentName(studentName);
-        Optional<Student> studentOptional = studentRepository.getByEmail(meetingDto.getEmail());
-        Meeting meeting;
-        if (studentOptional.isPresent()) {
-           meeting = arrangeNextMeeting(meetingDto);
-        } else {
-           meeting = arrangeFirstMeeting(meetingDto);
+        if (meetingDto.getId() != null) {
+            return arrangeManualMeeting(meetingDto);
         }
-        return meeting;
+        return arrange(meetingDto);
     }
 
-    private Meeting arrangeFirstMeeting(MeetingDto meetingDto) {
+    private Meeting arrangeManualMeeting(MeetingDto meetingDto) {
+        String oldVersionId = meetingDto.getId();
+        prepareManualMeeting(meetingDto);
         Meeting meeting = arrange(meetingDto);
-        eventPublisher.publishEvent(new NewStudentEvent(
-                new Student(meetingDto.getStudentName(), meetingDto.getEmail(), StudentRang.HAD_MENTORING)));
+        calendarRepository.removeMeetingById(oldVersionId);
+        logger.notifyOwner("Event deleted at cleanup: " + meeting.getDetails().getSummary() +
+                " at " + meeting.when(), "", false);
         return meeting;
     }
 
-    private Meeting arrangeNextMeeting(MeetingDto meetingDto) {
-       return arrange(meetingDto);
+    private void prepareManualMeeting(MeetingDto meetingDto) {
+        if (meetingDto.getType() == MeetingType.CYCLIC_MENTORING) {
+            throw new NotImplementedException("Cyclic meeting not supported " + meetingDto.getSummary() + meetingDto.getStart() );
+        }
+        if (meetingDto.getEmail() == null || meetingDto.getEmail().isBlank()) {
+            meetingDto.setEmail(studentRepository.getByName(meetingDto.getStudentName()).map(Student::getEmail)
+                    .orElseThrow(()-> new IllegalArgumentException("Manual meeting without email not supported")));
+        }
+        meetingDto.setId(null);
+        meetingDto.setProvidedDescription("Manual meeting corrected by app");
+        meetingDto.setNoCollisions(true);
+        meetingDto.setType(MeetingType.MENTORING);
     }
 
     private Meeting arrange(MeetingDto meetingDto) {
+       //todo for future when first lessons finished
+       /* Student student = studentRepository.getByEmail(meetingDto.getEmail()).orElseThrow(
+                () -> new IllegalArgumentException("Student not found: " + meetingDto.getStudentName() + " " + meetingDto.getEmail()));*/
+        Student student = studentRepository.getByEmail(meetingDto.getEmail()).orElse(null);
+        if (student == null) {
+            student = new Student(0,meetingDto.getStudentName(), meetingDto.getEmail(), StudentRang.ASKED);
+            eventPublisher.publishEvent(new NewStudentEvent(student));
+        }
+        if (student.getRank() == StudentRang.ASKED) {
+            meetingDto.setType(MeetingType.FIRST_MENTORING);
+        }
         Meeting meeting = new Meeting(meetingDto.getStart(), meetingDto.getEnd());
-        meeting.setDetails(new Meeting.Details(formatSummary(meetingDto.getStudentName()),
+        meeting.setDetails(new Meeting.Details(formatSummary(student.getName()),
                 "Spotkanie umówione automatycznie",
                 meetingDto.getProvidedDescription(), meetingDto.getEmail())
-        );
+        ).setNoCollisions(meetingDto.isNoCollisions());
         arrangeMeetingDomainService.arrange(meeting);
+        eventPublisher.publishEvent(new NewMeetingEvent(meeting, student));
         return meeting;
     }
 

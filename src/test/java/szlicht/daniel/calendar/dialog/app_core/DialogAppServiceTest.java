@@ -2,29 +2,35 @@ package szlicht.daniel.calendar.dialog.app_core;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.verification.VerificationMode;
 import org.springframework.context.ApplicationEventPublisher;
 import szlicht.daniel.calendar.common.mail.EmailService;
-import szlicht.daniel.calendar.common.spring.ParamsProvider;
 import szlicht.daniel.calendar.common.spring.Logger;
 import szlicht.daniel.calendar.meeting.app_core.*;
+import szlicht.daniel.calendar.student.app_core.Student;
+import szlicht.daniel.calendar.student.app_core.StudentRang;
 import szlicht.daniel.calendar.student.app_core.StudentRepository;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 class DialogAppServiceTest {
     private static final String EMAIL = "jan.kowalski@gmail.com";
     private static final String NAME = "Jan Kowalski";
+    private static final String SHORT_NAME = "Jan Kow";
 
     @Mock
     private StartMessageRepository startMessageRepository;
@@ -143,6 +149,80 @@ class DialogAppServiceTest {
                         && arg.contains("55")
                         && arg.contains("sprawdź tańsze opcje"))
         );
+    }
+
+    //arrangements
+    @Test
+    public void arrangeFirstMeeting() {
+        putThisStudentToDb(StudentRang.ASKED);
+        MeetingDto firstMeeting = MeetingDto.builder()
+                .email(EMAIL)
+                .studentName(NAME)
+                .type(MeetingType.MENTORING)
+                .start(LocalDateTime.parse("2025-02-24T14:45"))
+                .end(LocalDateTime.parse("2025-02-24T15:45"))
+                .noCollisions(false)
+                .build();
+
+        dialogAppService.startArrangeScenario(firstMeeting);
+        verify(logger).notifyOwner(
+                contains("Umówił się: jan.kowalski@gmail.com at 24.02 14:45-15:45"),
+                any(),
+                any(boolean.class)
+        );
+    }
+
+    private void putThisStudentToDb(StudentRang studentRang) {
+        when(studentRepository.getByEmail(EMAIL))
+                .thenReturn(Optional.of(new Student(NAME, EMAIL, studentRang)));
+    }
+
+    @Test
+    public void arrangeNextMeeting() {
+        putThisStudentToDb(StudentRang.HAD_MENTORING);
+        MeetingDto meeting = MeetingDto.builder()
+                .email(EMAIL)
+                .start(LocalDateTime.parse("2025-02-24T14:45"))
+                .end(LocalDateTime.parse("2025-02-24T15:45"))
+                .build();
+
+        dialogAppService.startArrangeScenario(meeting);
+        verify(logger).notifyOwner(
+                contains("Umówił się: jan.kowalski@gmail.com at 24.02 14:45-15:45"),
+                any(),
+                any(boolean.class)
+        );
+    }
+
+    @Test
+    public void arrangeManualFirstMeetingWithMail() {
+        String id = "123";
+        putThisStudentToDb(StudentRang.ASKED);
+
+        MeetingDto meeting = MeetingDto.builder()
+                .id(id)
+                .email(EMAIL)
+                .start(LocalDateTime.parse("2025-02-24T14:45"))
+                .end(LocalDateTime.parse("2025-02-24T15:45"))
+                .build();
+        Meeting colidingMeeting = new Meeting(LocalDateTime.parse("2025-02-24T14:15"),LocalDateTime.parse("2025-02-24T15:15"));
+        when(calendarRepository.getMonthFromNowEvents()).thenReturn(Set.of(colidingMeeting));
+
+        dialogAppService.startArrangeScenario(meeting);
+        verify(logger).notifyOwner(
+                contains("Umówił się: jan.kowalski@gmail.com at 24.02 14:45-15:45"),
+                any(),
+                any(boolean.class)
+        );
+        verify(calendarRepository).removeMeetingById(id);
+        ArgumentCaptor<Meeting> meetingCaptor = ArgumentCaptor.forClass(Meeting.class);
+        verify(calendarRepository).save(meetingCaptor.capture());
+
+        Meeting capturedMeeting = meetingCaptor.getValue();
+        assertEquals("2025-02-24T14:45", capturedMeeting.getStart().toString());
+        assertEquals("2025-02-24T15:45", capturedMeeting.getEnd().toString());
+        assertEquals(EMAIL, capturedMeeting.getDetails().getEmail());
+        assertTrue(capturedMeeting.getDetails().getSummary().contains(SHORT_NAME));
     }
 
 }

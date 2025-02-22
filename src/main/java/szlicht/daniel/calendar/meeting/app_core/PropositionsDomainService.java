@@ -65,6 +65,7 @@ public class PropositionsDomainService {
                 return Optional.empty();
             }
         }
+        //System.out.println("Proposition: " + proposition);
         return Optional.of(proposition);
     }
 
