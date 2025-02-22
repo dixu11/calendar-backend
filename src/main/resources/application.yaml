@@ -41,7 +41,7 @@ meeting:
       - 3.0
     minutes: 90
     work-hours:
-      start: "11:15"
+      start: "11:00"
       end: "15:45"
       work-hours-overrides:
         saturday:

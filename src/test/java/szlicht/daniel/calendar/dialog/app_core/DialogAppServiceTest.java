@@ -225,4 +225,28 @@ class DialogAppServiceTest {
         assertTrue(capturedMeeting.getDetails().getSummary().contains(SHORT_NAME));
     }
 
+    @Test
+    public void testForWeronika() {
+        putThisStudentToDb(StudentRang.HAD_MENTORING);
+        Meeting otherMeeting = new Meeting(
+                LocalDateTime.parse("2025-03-01T13:15"),
+                LocalDateTime.parse("2025-03-01T14:45"));
+        when(calendarRepository.getMonthFromNowEvents())
+                .thenReturn(Set.of(otherMeeting));
+
+        MeetingDto weronikaMeeting = MeetingDto.builder()
+                .email(EMAIL)
+                .start(LocalDateTime.parse("2025-03-01T11:00"))
+                .end(LocalDateTime.parse("2025-03-01T13:00"))
+                .build();
+
+        dialogAppService.startArrangeScenario(weronikaMeeting);
+
+        verify(logger).notifyOwner(
+                contains(String.format("Umówił się: %s at 01.03 11:00-13:00",EMAIL)),
+                any(),
+                any(boolean.class)
+        );
+    }
+
 }
