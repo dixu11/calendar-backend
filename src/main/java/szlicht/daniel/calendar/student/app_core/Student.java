@@ -1,6 +1,8 @@
 package szlicht.daniel.calendar.student.app_core;
 
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
 
 public class Student {
     private int id;
@@ -8,13 +10,18 @@ public class Student {
     private String nick;
     private String email;
     private StudentRang rang;
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String story;
 
-    public Student(int id, String name, String email, StudentRang rang) {
+    public Student(int id, String name, String email, StudentRang rang,String story) {
         this.id = id;
         name = formatStudentName(name);
         this.name = name;
         this.email = email;
         this.rang = rang;
+        this.story = story;
+
     }
 
     public String getName() {
@@ -52,4 +59,10 @@ public class Student {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String getStory() {
+        return story;
+    }
+
+
 }

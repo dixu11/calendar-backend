@@ -79,7 +79,7 @@ public class CalendarAppService {
                 () -> new IllegalArgumentException("Student not found: " + meetingDto.getStudentName() + " " + meetingDto.getEmail()));*/
         Student student = studentRepository.getByEmail(meetingDto.getEmail()).orElse(null);
         if (student == null) {
-            student = new Student(0,meetingDto.getStudentName(), meetingDto.getEmail(), StudentRang.ASKED);
+            student = new Student(0,meetingDto.getStudentName(), meetingDto.getEmail(), StudentRang.ASKED,"");
             eventPublisher.publishEvent(new NewStudentEvent(student));
         }
         if (student.getRank() == StudentRang.ASKED) {

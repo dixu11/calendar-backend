@@ -10,9 +10,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import szlicht.daniel.calendar.common.mail.EmailService;
 import szlicht.daniel.calendar.common.spring.Logger;
 import szlicht.daniel.calendar.meeting.app_core.*;
-import szlicht.daniel.calendar.student.app_core.Student;
-import szlicht.daniel.calendar.student.app_core.StudentRang;
-import szlicht.daniel.calendar.student.app_core.StudentRepository;
+import szlicht.daniel.calendar.student.app_core.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -46,6 +44,7 @@ class DialogAppServiceTest {
     @Mock
     private StudentRepository studentRepository;
     private DialogAppService dialogAppService;
+    private StudentAppService studentAppService;
 
     @BeforeEach
     void setup() {
@@ -67,12 +66,13 @@ class DialogAppServiceTest {
                 emailService,
                 logger
         );
+        studentAppService = new StudentAppService(studentRepository,logger);
     }
 
     private void initParams() {
         MeetingParams meetingParams = new MeetingParams(new MeetingParams.Mail("", "me@gmail.com", ""),
                 new MeetingParams.Values(90, "Europe/Warsaw", List.of(1., 1.5, 2., 2.5, 3.), "Mentoring IT z ", "DS",
-                        new MeetingParams.Values.WorkHours(LocalTime.of(11, 15), LocalTime.of(15, 45),
+                        new MeetingParams.Values.WorkHours(LocalTime.of(11, 0), LocalTime.of(15, 45),
                                 new HashMap<>())),
                 new MeetingParams.Keywords("Moje uwagi:", "terminy", "mentoring", "spotkanie", "indywidualne lekcje")
         );
@@ -107,6 +107,12 @@ class DialogAppServiceTest {
 
     @Test
     public void sendsOffer() {
+        doAnswer(invocation -> {
+            Object event = invocation.getArgument(0);
+            studentAppService.newStudentAdded((NewStudentEvent) event);
+            return null;
+        }).when(publisher).publishEvent(any(NewStudentEvent.class));
+
         String story = "test";
         String name = "<NAME>";
         dialogAppService.startMentoringOfferScenario(new StudentStartMessageDto(name, EMAIL, story));
@@ -118,6 +124,13 @@ class DialogAppServiceTest {
                         " ma tak dużego doświadczenia w nauczaniu programowania, " +
                         "od ponad 5 lat uczę w licznych szkołach i indywidualnie, "))
         );
+        ArgumentCaptor<Student> studentCaptor = ArgumentCaptor.forClass(Student.class);
+        verify(studentRepository).save(studentCaptor.capture());
+        Student passedStudent = studentCaptor.getValue();
+        assertEquals(name, passedStudent.getName());
+        assertEquals(EMAIL, passedStudent.getEmail());
+        assertEquals(story, passedStudent.getStory());
+        assertEquals(StudentRang.ASKED, passedStudent.getRank());
     }
 
     @Test
@@ -174,7 +187,7 @@ class DialogAppServiceTest {
 
     private void putThisStudentToDb(StudentRang studentRang) {
         when(studentRepository.getByEmail(EMAIL))
-                .thenReturn(Optional.of(new Student(0,NAME, EMAIL, studentRang)));
+                .thenReturn(Optional.of(new Student(0, NAME, EMAIL, studentRang, "")));
     }
 
     @Test
@@ -205,7 +218,7 @@ class DialogAppServiceTest {
                 .start(LocalDateTime.parse("2025-02-24T14:45"))
                 .end(LocalDateTime.parse("2025-02-24T15:45"))
                 .build();
-        Meeting colidingMeeting = new Meeting(LocalDateTime.parse("2025-02-24T14:15"),LocalDateTime.parse("2025-02-24T15:15"));
+        Meeting colidingMeeting = new Meeting(LocalDateTime.parse("2025-02-24T14:15"), LocalDateTime.parse("2025-02-24T15:15"));
         when(calendarRepository.getMonthFromNowEvents()).thenReturn(Set.of(colidingMeeting));
 
         dialogAppService.startArrangeScenario(meeting);
@@ -243,7 +256,7 @@ class DialogAppServiceTest {
         dialogAppService.startArrangeScenario(weronikaMeeting);
 
         verify(logger).notifyOwner(
-                contains(String.format("Umówił się: %s at 01.03 11:00-13:00",EMAIL)),
+                contains(String.format("Umówił się: %s at 01.03 11:00-13:00", EMAIL)),
                 any(),
                 any(boolean.class)
         );

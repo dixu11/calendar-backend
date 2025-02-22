@@ -118,7 +118,7 @@ public class DialogAppService {
         if (!startMessageRepository.existsByEmail(message.getEmail())) {
             startMessageRepository.save(message);
             publisher.publishEvent(new NewStudentEvent(
-                    new Student(0,message.getName(), message.getEmail(), StudentRang.ASKED)));
+                    new Student(0,message.getName(), message.getEmail(), StudentRang.ASKED,message.getStory())));
         }
         logger.notifyOwner("Mentoring offer sent to "+ message.getName(), "Mail: " +
                 message.getEmail() + " story: " +message.getStory(), false);

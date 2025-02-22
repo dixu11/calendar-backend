@@ -14,4 +14,6 @@ interface StudentJpaRepository extends JpaRepository<StudentEntity,Integer> {
     Optional<StudentEntity> getByEmail(String email);
 
     Optional<StudentEntity> getByName(String name);
+
+    boolean existsByEmail(String email);
 }

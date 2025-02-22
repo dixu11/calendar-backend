@@ -5,6 +5,7 @@ import org.springframework.data.annotation.PersistenceCreator;
 import szlicht.daniel.calendar.student.app_core.Student;
 import szlicht.daniel.calendar.student.app_core.StudentRang;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +19,10 @@ class StudentEntity {
     private String name;
     private String nick;
     private StudentRang rang;
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String story;
+    private LocalDateTime created;
 
     @PersistenceCreator
     StudentEntity() {
@@ -29,12 +34,16 @@ class StudentEntity {
         this.nick = student.getNick();
         this.email = student.getEmail();
         this.rang = student.getRank();
+        this.story = student.getStory();
+        created = LocalDateTime.now();
     }
 
-    public StudentEntity(String name, String email, StudentRang rang) {
-        this.name = name;
-        this.email = email;
-        this.rang = rang;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -51,6 +60,6 @@ class StudentEntity {
     }
 
     public Student toStudent() {
-        return new Student(id,name,email,rang);
+        return new Student(id,name,email,rang,story);
     }
 }

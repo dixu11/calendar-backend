@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.student.app_core;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import szlicht.daniel.calendar.common.spring.Logger;
 import szlicht.daniel.calendar.meeting.app_core.NewMeetingEvent;
 
 import java.util.Set;
@@ -10,14 +11,20 @@ import java.util.Set;
 public class StudentAppService {
 
     private final StudentRepository studentRepository;
+    private final Logger logger;
 
-    public StudentAppService(StudentRepository studentRepository) {
+    public StudentAppService(StudentRepository studentRepository, Logger logger) {
         this.studentRepository = studentRepository;
+        this.logger = logger;
     }
 
     @EventListener
     public void newStudentAdded(NewStudentEvent event) {
-        studentRepository.addIfNotExists(Set.of(event.getStudent()));
+        boolean success = studentRepository.save(event.getStudent());
+        if (success) {
+            logger.notifyOwner("New student on app: " + event.getStudent().getName() + " "
+                    + event.getStudent().getEmail(),"",false);
+        }
     }
 
     @EventListener
@@ -27,9 +34,6 @@ public class StudentAppService {
         }
         Student student = event.getStudent();
         student.setRang(StudentRang.HAD_MENTORING);
-        //todo temporarly needed
-        Student oldFromDb = studentRepository.getByEmail(student.getEmail()).orElseThrow();
-        student.setId(oldFromDb.getId());
-        studentRepository.save(student);
+        studentRepository.saveOrUpdate(student);
     }
 }

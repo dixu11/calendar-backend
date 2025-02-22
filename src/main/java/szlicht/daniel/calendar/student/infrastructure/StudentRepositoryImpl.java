@@ -5,8 +5,6 @@ import szlicht.daniel.calendar.student.app_core.Student;
 import szlicht.daniel.calendar.student.app_core.StudentRepository;
 
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentRepositoryImpl implements StudentRepository {
@@ -14,16 +12,6 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     public StudentRepositoryImpl(StudentJpaRepository studentJpaRepository) {
         this.studentJpaRepository = studentJpaRepository;
-    }
-
-    @Override
-    public void addIfNotExists(Set<Student> students) {
-        Set<String> existingMails = studentJpaRepository.findAllEmails();
-        Set<StudentEntity> result = students.stream()
-                .filter(student -> !existingMails.contains(student.getEmail()))
-                .map(StudentEntity::new)
-                .collect(Collectors.toSet());
-        studentJpaRepository.saveAll(result);
     }
 
     @Override
@@ -39,7 +27,18 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public void save(Student student) {
+    public void saveOrUpdate(Student student) {
+        StudentEntity studentEntity = new StudentEntity(student);
+        Optional<StudentEntity> existingEntity = studentJpaRepository.getByEmail(student.getEmail());
+        existingEntity.ifPresent(entity -> studentEntity.setId(entity.getId()));
+        studentJpaRepository.save(studentEntity);
+    }
+
+    public boolean save(Student student) {
+        if (studentJpaRepository.existsByEmail(student.getEmail())) {
+            return false;
+        }
         studentJpaRepository.save(new StudentEntity(student));
+        return true;
     }
 }
