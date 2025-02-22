@@ -174,7 +174,7 @@ class DialogAppServiceTest {
 
     private void putThisStudentToDb(StudentRang studentRang) {
         when(studentRepository.getByEmail(EMAIL))
-                .thenReturn(Optional.of(new Student(NAME, EMAIL, studentRang)));
+                .thenReturn(Optional.of(new Student(0,NAME, EMAIL, studentRang)));
     }
 
     @Test
