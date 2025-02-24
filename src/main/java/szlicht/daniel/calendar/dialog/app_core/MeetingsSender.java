@@ -81,7 +81,7 @@ class MeetingsSender {
         return result;
     }
 
-    private String formatMailtoHours() {
+    public String formatMailtoHours() {
         StringBuilder mailto = new StringBuilder();
         for (Double meetingHour : params.values().hours()) {
             mailto.append(mailto(
@@ -160,4 +160,5 @@ class MeetingsSender {
         emailService.sendSimpleEmail(meetingDto.getEmail(), "Nie mogę umówić Twojego spotkania na: " + meetingDto.getStart(),
                 errorMessage);
     }
+
 }

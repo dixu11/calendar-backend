@@ -19,10 +19,11 @@ public record MeetingParams(
     public MeetingParams {
     }
 
-    public record Mail(String bot, String owner, String phone) {
+    public record Mail(String bot, String owner, String phone, String bank) {
     }
 
     public record Values(
+            String pricesOffer,
             int minutes,
             String zone,
             List<Double> hours,

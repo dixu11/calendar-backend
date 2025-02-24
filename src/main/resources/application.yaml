@@ -29,7 +29,9 @@ meeting:
   mail:
     owner: ${MY_EMAIL}
     phone: ${PHONE_NUMBER}
+    bank: ${BANK_ACCOUNT}
   values:
+    prices-offer: ${PRICES_OFFER}
     summary-prefix: "Mentoring IT z "
     owner-name: "DS"
     zone: "Europe/Warsaw"

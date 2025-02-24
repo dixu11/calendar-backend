@@ -92,6 +92,17 @@ public class DialogAppService {
         }
     }
 
+    public void startFirstLessonEndPropositionsScenario(String email) {
+        try {
+            Propositions propositions = calendarAppService.getPropositions(params.values().minutes());
+            String formatedPropositions = meetingsSender.getFormatedPropositions(propositions);
+            String mailtoHours = meetingsSender.formatMailtoHours();
+            sendDialog(new AfterFirstMentoringHtmlDialog(email, formatedPropositions, mailtoHours));
+        } catch (CalendarOfflineException e) {
+            System.err.println("calendar offline");
+        }
+    }
+
     public void startArrangeScenario(MeetingDto meetingDto) {
         try {
             Meeting meeting = calendarAppService.arrangeMeeting(meetingDto);
