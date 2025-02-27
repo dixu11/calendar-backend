@@ -1,10 +1,20 @@
 package szlicht.daniel.calendar.dialog.app_core;
 
+import szlicht.daniel.calendar.common.java.LocalDateUtils;
+import szlicht.daniel.calendar.workshop.app_core.Workshop;
+
+import java.util.List;
+
+import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-public class GroupMentoringHtmlDialog extends HtmlDialog {
-    public GroupMentoringHtmlDialog(String email) {
+public class WorkshopHtmlDialog extends HtmlDialog {
+
+    private List<Workshop> workshops;
+
+    public WorkshopHtmlDialog(String email, List<Workshop> workshops) {
         super(email);
+        this.workshops = workshops;
     }
 
     @Override
@@ -40,6 +50,18 @@ public class GroupMentoringHtmlDialog extends HtmlDialog {
                 "Komunikujemy się na serwerze Discord"
         );
         String how = section("Jak to wygląda organizacyjnie?", howList);
-        return why+how;
+
+        String openWorkshopsList = "";
+        for (Workshop workshop : workshops) {
+            openWorkshopsList += toMailtoLi(workshop);
+        }
+        String openWorkshops = section("Otwarte grupy: (kliknij żeby się dopisać)",openWorkshopsList);
+        return why+how+openWorkshops;
+    }
+
+    private String toMailtoLi(Workshop workshop) {
+        String label = tag("li", workshop.getTitle() + " start: " + LocalDateUtils.simpleDate(workshop.getStart()));
+        return mailto(params.keywords().workshopMentoringApply() + workshop.getId(),
+                "Chcę dołączyć do nowej grupy na warsztaty z programowania",label , getEmail());
     }
 }

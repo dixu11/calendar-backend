@@ -73,7 +73,7 @@ public class Meeting implements Comparable<Meeting> {
 
 
     public String when() {
-        return LocalDateUtils.simpleDateTime(start) + "-" + LocalDateUtils.simpleTime(end);
+        return  LocalDateUtils.when(start,end) ;
     }
 
     private void moveBy(int minutes) {

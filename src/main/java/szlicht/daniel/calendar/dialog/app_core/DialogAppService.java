@@ -14,6 +14,7 @@ import szlicht.daniel.calendar.student.app_core.NewStudentEvent;
 import szlicht.daniel.calendar.student.app_core.Student;
 import szlicht.daniel.calendar.student.app_core.StudentRang;
 import szlicht.daniel.calendar.student.app_core.StudentRepository;
+import szlicht.daniel.calendar.workshop.app_core.WorkshopAppService;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
@@ -24,19 +25,21 @@ public class DialogAppService {
     private CalendarAppService calendarAppService;
     private StudentRepository studentRepository;
     private EmailService emailService;
+    private WorkshopAppService workshopAppService;
     private Logger logger;
 
 
     public DialogAppService(ApplicationEventPublisher publisher,
                             MeetingsSender meetingsSender,
                             CalendarAppService calendarAppService, StudentRepository studentRepository,
-                            EmailService emailService,
+                            EmailService emailService, WorkshopAppService workshopAppService,
                             Logger logger) {
         this.publisher = publisher;
         this.meetingsSender = meetingsSender;
         this.calendarAppService = calendarAppService;
         this.studentRepository = studentRepository;
         this.emailService = emailService;
+        this.workshopAppService = workshopAppService;
         this.logger = logger;
     }
 
@@ -79,7 +82,7 @@ public class DialogAppService {
     }
 
     private void startGroupMentoringScenario(EmailData emailData) {
-        sendDialog(new GroupMentoringHtmlDialog(emailData.getEmail()));
+        sendDialog(new WorkshopHtmlDialog(emailData.getEmail(),workshopAppService.getWorkshops()));
         logger.notifyOwner("Group mentoring offer sent to "+ emailData.getName() + " mail:" + emailData.getEmail(),
                 "response to decision: "+ emailData.getContent() , false);
     }

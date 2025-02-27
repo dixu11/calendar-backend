@@ -52,4 +52,8 @@ public class LocalDateUtils {
     public static LocalDateTime lastMonthStart() {
         return LocalDateTime.now().minusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
     }
+
+    public static String when(LocalDateTime start, LocalDateTime end) {
+       return LocalDateUtils.simpleDateTime(start) + "-" + LocalDateUtils.simpleTime(end);
+    }
 }

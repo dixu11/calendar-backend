@@ -70,7 +70,8 @@ public record MeetingParams(
             String offer,
             String arrange,
             String soloMentoring,
-            String groupMentoring
+            String groupMentoring,
+            String workshopMentoringApply
     ) {
     }
 }
