@@ -11,6 +11,9 @@ import szlicht.daniel.calendar.common.mail.EmailService;
 import szlicht.daniel.calendar.common.spring.Logger;
 import szlicht.daniel.calendar.meeting.app_core.*;
 import szlicht.daniel.calendar.student.app_core.*;
+import szlicht.daniel.calendar.workshop.app_core.WorkshopAppService;
+import szlicht.daniel.calendar.workshop.infrastructure.WorkshopJpaRepository;
+import szlicht.daniel.calendar.workshop.infrastructure.WorkshopRepositoryImpl;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -41,6 +44,8 @@ class DialogAppServiceTest {
     private CalendarRepository calendarRepository;
     @Mock
     private StudentRepository studentRepository;
+    @Mock
+    private WorkshopJpaRepository workshopJpaRepository;
     private DialogAppService dialogAppService;
     private StudentAppService studentAppService;
 
@@ -56,12 +61,14 @@ class DialogAppServiceTest {
         PropositionsDomainService propositionsDomainService = new PropositionsDomainService(calendarRepository);
         ArrangeMeetingDomainService arrangeMeetingDomainService = new ArrangeMeetingDomainService(propositionsDomainService, calendarRepository, logger, publisher);
         CalendarAppService calendarAppService = new CalendarAppService(propositionsDomainService, arrangeMeetingDomainService, studentRepository, logger, publisher, calendarRepository);
+        WorkshopAppService workshopAppService = new WorkshopAppService(new WorkshopRepositoryImpl(workshopJpaRepository));
         dialogAppService = new DialogAppService(
                 publisher,
                 meetingsSender,
                 calendarAppService,
                 studentRepository,
                 emailService,
+                workshopAppService,
                 logger
         );
         studentAppService = new StudentAppService(studentRepository,logger);
