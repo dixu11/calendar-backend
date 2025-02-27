@@ -23,6 +23,7 @@ class EmailParser {
         DialogType dialogType = DialogType.getByKeyword(rawEmail.subject());
         switch (dialogType) {
             case SOLO_MENTORING_OFFER -> includeSoloMentoringData();
+            case GROUP_MENTORING_OFFER -> includeGroupMentoringData();
             case PROPOSITIONS -> includePropositionsData();
             case ARRANGE -> includeArrangeData();
             case OFFER -> includeOfferData();
@@ -31,6 +32,12 @@ class EmailParser {
         }
         dataBuilder.dialogType(dialogType);
         return dataBuilder.build();
+    }
+
+    private void includeGroupMentoringData() {
+        dataBuilder.content(rawEmail.content());
+        dataBuilder.name(rawEmail.name());
+        dataBuilder.email(rawEmail.email());
     }
 
     private void includeSoloMentoringData() {

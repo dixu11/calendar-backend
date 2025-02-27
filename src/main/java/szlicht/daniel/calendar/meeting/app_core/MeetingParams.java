@@ -24,6 +24,7 @@ public record MeetingParams(
 
     public record Values(
             String pricesOffer,
+            String groupPricesOffer,
             int minutes,
             String zone,
             List<Double> hours,
@@ -68,7 +69,8 @@ public record MeetingParams(
             String propositions,
             String offer,
             String arrange,
-            String soloMentoring
+            String soloMentoring,
+            String groupMentoring
     ) {
     }
 }

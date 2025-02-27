@@ -32,6 +32,7 @@ meeting:
     bank: ${BANK_ACCOUNT}
   values:
     prices-offer: ${PRICES_OFFER}
+    group-prices-offer: ${GROUP_PRICES_OFFER}
     summary-prefix: "Mentoring IT z "
     owner-name: "DS"
     zone: "Europe/Warsaw"
@@ -54,5 +55,6 @@ meeting:
     propositions: "terminy"
     arrange: "spotkanie"
     solo-mentoring: "indywidualne lekcje"
+    group-mentoring: "grupowe lekcje"
     offer: "mentoring"
     description: "Moje uwagi:"

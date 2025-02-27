@@ -69,11 +69,19 @@ public class DialogAppService {
             case SOLO_MENTORING_OFFER:
                 startSoloMentoringScenario(emailData);
                 break;
+            case GROUP_MENTORING_OFFER:
+                startGroupMentoringScenario(emailData);
             default:
                 System.out.printf("(%s)%s don't mach to any patter so it's probably spam -> ignore\n%n",
                         rawEmail.email(), rawEmail.subject());
                 logger.notifyOwner("suspicious email: " + rawEmail.email() + " " + rawEmail.subject(), rawEmail.content(), false);
         }
+    }
+
+    private void startGroupMentoringScenario(EmailData emailData) {
+        sendDialog(new GroupMentoringHtmlDialog(emailData.getEmail()));
+        logger.notifyOwner("Group mentoring offer sent to "+ emailData.getName() + " mail:" + emailData.getEmail(),
+                "response to decision: "+ emailData.getContent() , false);
     }
 
     private void startSoloMentoringScenario(EmailData emailData) {
