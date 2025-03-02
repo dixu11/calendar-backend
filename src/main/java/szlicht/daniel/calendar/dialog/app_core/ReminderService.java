@@ -3,10 +3,7 @@ package szlicht.daniel.calendar.dialog.app_core;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import szlicht.daniel.calendar.common.spring.AppStartedEvent;
-import szlicht.daniel.calendar.meeting.app_core.CalendarRepository;
-import szlicht.daniel.calendar.meeting.app_core.Meeting;
-import szlicht.daniel.calendar.meeting.app_core.MeetingType;
+import szlicht.daniel.calendar.meeting.app_core.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -30,7 +27,7 @@ class ReminderService  {
     }
 
     @EventListener
-    public void onStart(AppStartedEvent appStartedEvent) {
+    public void sendLessonEndNextPropositions(TodayMeetingsEvent event) {
         Set<Meeting> todayMeetings = calendarRepository.getTodayMeetings();
         for (Meeting todayMeeting : todayMeetings) {
             LocalDateTime notificationTime = todayMeeting.getEnd().minusMinutes(NOTIFY_MINUTES_BEFORE_MEETING_END);
