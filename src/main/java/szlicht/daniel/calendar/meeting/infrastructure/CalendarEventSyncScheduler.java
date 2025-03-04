@@ -34,6 +34,7 @@ public class CalendarEventSyncScheduler {
         this.logger = logger;
     }
 
+    @EventListener
     void startDailyUpdates(AppStartedEvent e) {
         Runnable runnable = () -> {
             Set<Meeting> monthFromNowMeetings = calendarRepository.getMonthFromNowMeetings();

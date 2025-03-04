@@ -20,8 +20,8 @@ public class ParamsProvider implements ApplicationListener<ApplicationReadyEvent
     public void onApplicationEvent(ApplicationReadyEvent event) {
         initParams();
         applicationEventPublisher.publishEvent(new AppStartedEvent());
-
     }
+
     private static void initParams() {
         params = ApplicationContextProvider.getBean(MeetingParams.class);
     }
