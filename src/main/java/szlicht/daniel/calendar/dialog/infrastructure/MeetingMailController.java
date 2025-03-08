@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import org.eclipse.angus.mail.imap.IMAPMessage;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.common.mail.MailResponder;
+import szlicht.daniel.calendar.common.spring.Logger;
 import szlicht.daniel.calendar.dialog.app_core.DialogAppService;
 import szlicht.daniel.calendar.dialog.app_core.RawEmail;
 import szlicht.daniel.calendar.meeting.app_core.MeetingDto;
@@ -21,9 +22,11 @@ import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 class MeetingMailController implements MailResponder {
 
     private final DialogAppService dialogAppService;
+    private final Logger logger;
 
-    MeetingMailController( DialogAppService dialogAppService) {
+    MeetingMailController(DialogAppService dialogAppService, Logger logger) {
         this.dialogAppService = dialogAppService;
+        this.logger = logger;
     }
 
     @Override
@@ -40,6 +43,8 @@ class MeetingMailController implements MailResponder {
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }catch (IllegalArgumentException e){
+            logger.notifyOwner("Tried to arrange but parsing failed", e.getMessage(),false );
         }
     }
 

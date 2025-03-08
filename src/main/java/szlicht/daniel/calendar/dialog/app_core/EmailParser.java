@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.dialog.app_core;
 
 import szlicht.daniel.calendar.meeting.app_core.MeetingDto;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -27,8 +28,7 @@ class EmailParser {
             case PROPOSITIONS -> includePropositionsData();
             case ARRANGE -> includeArrangeData();
             case OFFER -> includeOfferData();
-            case OTHER -> {
-            }
+            case OTHER -> {}
         }
         dataBuilder.dialogType(dialogType);
         return dataBuilder.build();
@@ -51,24 +51,29 @@ class EmailParser {
         if (content == null || content.isBlank()) {
             throw new IllegalArgumentException("Empty or unsupported email body format.");
         }
+        content = content.replace("\n", "");
+        String[] elements = content.split(";");
 
-        List<String> lines = Arrays.stream(content.split("\n"))
-                .map(String::trim)
-                .filter(line -> !line.isEmpty())
-                .toList();
-        LocalDateTime start = LocalDateTime.parse(lines.get(0).split("#")[1]);
-        Integer minutes = Integer.parseInt(lines.get(1).split("#")[1]);
-        LocalDateTime end = start.plusMinutes(minutes);
-        String description = extractProvidedDescriptions(lines);
+        if (elements.length < 2) {
+            throw new IllegalArgumentException("Empty or unsupported email body format.");
+        }
+        try {
+            LocalDateTime start = LocalDateTime.parse(elements[0].split("#")[1]);
+            Integer minutes = Integer.parseInt(elements[1].split("#")[1]);
+            LocalDateTime end = start.plusMinutes(minutes);
+            String description = elements.length == 4 ? elements[3].trim() : "";
+            MeetingDto meetingDto = MeetingDto.builder()
+                    .start(start)
+                    .end(end)
+                    .email(rawEmail.email())
+                    .studentName(rawEmail.name())
+                    .providedDescription(description)
+                    .build();
+            dataBuilder.meetingDto(meetingDto);
 
-        MeetingDto meetingDto = MeetingDto.builder()
-                .start(start)
-                .end(end)
-                .email(rawEmail.email())
-                .studentName(rawEmail.name())
-                .providedDescription(description)
-                .build();
-        dataBuilder.meetingDto(meetingDto);
+        } catch (DateTimeException| NumberFormatException e) {
+           throw new IllegalArgumentException("Parsing failed: " + e.getMessage(), e);
+        }
     }
 
     private void includePropositionsData() {

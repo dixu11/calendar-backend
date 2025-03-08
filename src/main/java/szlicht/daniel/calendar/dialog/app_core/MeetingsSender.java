@@ -122,10 +122,10 @@ class MeetingsSender {
     private String formatMailtoProposition(Meeting meeting) {
         return mailto(
                 String.format("Chcę zaproponować spotkanie | " + params.keywords().arrange()),
-                String.format("start#%s\nlength#%d\n\n" +
+                String.format("start#%s;\nlength#%d;\n\n" +
                                 "Uwaga:\nNie modyfikuj powyższych kluczy aby aplikacja mogła je poprawnie zinterpretować.\n" +
-                                "Jeśli masz do mnie jakieś uwagi przed spotkaniem dopisz je poniżej:\n%s"
-                        , meeting.getStart(), meeting.getLengthMinutes(), params.keywords().description()),
+                                "Jeśli masz do mnie jakieś uwagi przed spotkaniem dopisz je poniżej;\n"
+                        , meeting.getStart(), meeting.getLengthMinutes() ),
                 String.format("umów się"),
                 params.mail().bot()
         );
