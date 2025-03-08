@@ -65,7 +65,7 @@ public class CalendarAppService {
         }
         if (meetingDto.getEmail() == null || meetingDto.getEmail().isBlank()) {
             meetingDto.setEmail(studentRepository.getByName(meetingDto.getSummary()).map(Student::getEmail)
-                    .orElseThrow(()-> new IllegalArgumentException("Manual meeting without email not supported")));
+                    .orElseThrow(()-> new NotImplementedException("Manual meeting without email not supported for name " + meetingDto.getStudentName())));
         }
         meetingDto.setId(null);
         meetingDto.setProvidedDescription("Manual meeting corrected by app");

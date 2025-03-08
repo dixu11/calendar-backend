@@ -20,6 +20,9 @@ public class StudentAppService {
 
     @EventListener
     public void newStudentAdded(NewStudentEvent event) {
+        if (event.getStudent().hasOnlyNameFilled()) {
+            logger.notifyOwner("New student with name to fix in database: " + event.getStudent().getName(),"",false);
+        }
         boolean success = studentRepository.save(event.getStudent());
         if (success) {
             logger.notifyOwner("New student on app: " + event.getStudent().getName() + " "

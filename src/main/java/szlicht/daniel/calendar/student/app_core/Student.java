@@ -10,8 +10,6 @@ public class Student {
     private String nick;
     private String email;
     private StudentRang rang;
-    @Lob
-    @Column(columnDefinition = "TEXT")
     private String story;
 
     public Student(int id, String name, String email, StudentRang rang,String story) {
@@ -21,7 +19,6 @@ public class Student {
         this.email = email;
         this.rang = rang;
         this.story = story;
-
     }
 
     public String getName() {
@@ -37,7 +34,9 @@ public class Student {
     }
 
     public static String formatStudentName(String name) {
-        String[] split = name.split(" ");
+        name = name.replaceAll("[^\\p{L}\\s]", "");
+        name = name.trim();
+        String[] split = name.split("\\s+");
         if (split.length == 2 && split[1].length() > 3) {
             name = split[0] + " " + split[1].substring(0, 3);
         }
@@ -64,5 +63,7 @@ public class Student {
         return story;
     }
 
-
+    public boolean hasOnlyNameFilled() {
+        return !name.contains(" ");
+    }
 }

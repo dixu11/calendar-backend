@@ -120,7 +120,7 @@ public class DialogAppService {
             if (meeting.getType() == MeetingType.MENTORING) {
                 meetingsSender.notifyArrangementComplete(meeting);
             } else {
-                sendDialog(new FirstMentoringHtmlDialog(meetingDto.getEmail(),meeting));
+                sendDialog(new FirstMentoringHtmlDialog(meetingDto.getEmail(), meeting));
             }
             System.err.println(meeting.getDetails().getEmail() + " meeting proposition at: " + meeting.when() + " approved");
         } catch (CalendarOfflineException | MeetingCollisionException e) {
@@ -129,6 +129,8 @@ public class DialogAppService {
             meetingsSender.notifyArrangementFailed(meetingDto, e.getMessage());
         } catch (NotImplementedException e) {
             System.err.println(e.getMessage());
+        } catch (IllegalArgumentException e){
+            logger.notifyOwner("Arrangement failed: " +e.getMessage(),JavaUtils.getStackTrace(e),false);
         } catch (Exception e) {
             logger.notifyOwner("Unexpected error",
                     e.getMessage() + " " + JavaUtils.getStackTrace(e),
