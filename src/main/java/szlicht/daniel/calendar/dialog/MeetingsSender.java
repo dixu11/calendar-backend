@@ -15,11 +15,11 @@ import static szlicht.daniel.calendar.common.java.LocalDateUtils.*;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
-class MeetingsSender {
+public class MeetingsSender {
 
     private EmailService emailService;
 
-    MeetingsSender(EmailService emailService) {
+    public MeetingsSender(EmailService emailService) {
         this.emailService = emailService;
     }
 

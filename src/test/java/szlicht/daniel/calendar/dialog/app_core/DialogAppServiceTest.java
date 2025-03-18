@@ -102,7 +102,11 @@ class DialogAppServiceTest {
     public void receiveOfferSendsStoryToOwner() {
         String story = "test";
         String name = "<NAME>";
-        dialogAppService.startMentoringOfferScenario(new StudentStartMessageDto(name, EMAIL, story));
+        dialogAppService.startMentoringOfferScenario(StudentStartMessageDto.builder()
+                .name(name)
+                .email(EMAIL)
+                .story(story)
+                .build());
         verify(logger).notifyOwner(
                 contains(name),
                 argThat(arg -> arg.contains(story) && arg.contains(EMAIL)),
@@ -119,7 +123,11 @@ class DialogAppServiceTest {
 
         String story = "test";
         String name = "<NAME>";
-        dialogAppService.startMentoringOfferScenario(new StudentStartMessageDto(name, EMAIL, story));
+        dialogAppService.startMentoringOfferScenario(StudentStartMessageDto.builder()
+                .name(name)
+                .email(EMAIL)
+                .story(story)
+                .build());
         verify(emailService).sendHtmlEmail(
                 eq(EMAIL),
                 any()
