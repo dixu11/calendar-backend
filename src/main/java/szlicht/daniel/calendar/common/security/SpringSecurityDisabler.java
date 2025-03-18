@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import szlicht.daniel.calendar.common.spring.Logger;
+import szlicht.daniel.calendar.meeting.Logger;
 
 @Configuration //comment to disable
 public class SpringSecurityDisabler {

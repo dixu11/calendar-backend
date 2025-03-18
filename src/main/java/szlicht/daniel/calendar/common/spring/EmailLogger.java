@@ -2,6 +2,7 @@ package szlicht.daniel.calendar.common.spring;
 
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.common.mail.EmailService;
+import szlicht.daniel.calendar.meeting.Logger;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
