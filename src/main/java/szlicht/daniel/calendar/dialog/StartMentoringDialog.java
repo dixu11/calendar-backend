@@ -3,15 +3,15 @@ package szlicht.daniel.calendar.dialog;
 import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-public class StartMentoringHtmlDialog extends HtmlDialog {
+public class StartMentoringDialog extends Dialog {
 
 
-    public StartMentoringHtmlDialog(String email) {
+    public StartMentoringDialog(String email) {
         super(email);
     }
 
     @Override
-    String getSubject() {
+    public String getSubject() {
         return "Startujemy mentoring z programowania!";
     }
 

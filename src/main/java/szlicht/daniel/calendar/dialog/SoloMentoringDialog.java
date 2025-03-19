@@ -1,16 +1,16 @@
 package szlicht.daniel.calendar.dialog;
 
-public class SoloMentoringHtmlDialog extends HtmlDialog {
+public class SoloMentoringDialog extends Dialog {
 
     private String formatedPropositions;
 
-    public SoloMentoringHtmlDialog(String email,String formatedPropositions) {
+    public SoloMentoringDialog(String email, String formatedPropositions) {
         super(email);
         this.formatedPropositions = formatedPropositions;
     }
 
     @Override
-    String getSubject() {
+    public String getSubject() {
         return "Indywidualne lekcje programowania";
     }
 

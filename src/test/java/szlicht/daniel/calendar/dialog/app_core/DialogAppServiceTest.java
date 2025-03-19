@@ -8,12 +8,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationEventPublisher;
 import szlicht.daniel.calendar.common.mail.EmailService;
+import szlicht.daniel.calendar.dialog.*;
 import szlicht.daniel.calendar.meeting.Logger;
-import szlicht.daniel.calendar.dialog.DialogAppService;
-import szlicht.daniel.calendar.dialog.MeetingsSender;
-import szlicht.daniel.calendar.dialog.RawEmail;
-import szlicht.daniel.calendar.dialog.StudentStartMessageDto;
 import szlicht.daniel.calendar.meeting.*;
+import szlicht.daniel.calendar.presenter.EmailDialogPresenter;
 import szlicht.daniel.calendar.student.*;
 import szlicht.daniel.calendar.workshop.WorkshopAppService;
 import szlicht.daniel.calendar.repository.WorkshopJpaRepository;
@@ -66,6 +64,7 @@ class DialogAppServiceTest {
         ArrangeMeetingDomainService arrangeMeetingDomainService = new ArrangeMeetingDomainService(propositionsDomainService, calendarRepository, logger, publisher);
         CalendarAppService calendarAppService = new CalendarAppService(propositionsDomainService, arrangeMeetingDomainService, studentRepository, logger, publisher, calendarRepository);
         WorkshopAppService workshopAppService = new WorkshopAppService(new WorkshopRepositoryImpl(workshopJpaRepository));
+        DialogPresenter dialogPresenter = new EmailDialogPresenter(emailService);
         dialogAppService = new DialogAppService(
                 publisher,
                 meetingsSender,
@@ -73,7 +72,8 @@ class DialogAppServiceTest {
                 studentRepository,
                 emailService,
                 workshopAppService,
-                logger
+                logger,
+                dialogPresenter
         );
         studentAppService = new StudentAppService(studentRepository,logger);
     }

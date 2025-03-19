@@ -8,17 +8,17 @@ import java.util.List;
 import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-public class WorkshopHtmlDialog extends HtmlDialog {
+public class WorkshopDialog extends Dialog {
 
     private List<Workshop> workshops;
 
-    public WorkshopHtmlDialog(String email, List<Workshop> workshops) {
+    public WorkshopDialog(String email, List<Workshop> workshops) {
         super(email);
         this.workshops = workshops;
     }
 
     @Override
-    String getSubject() {
+    public String getSubject() {
         return "Otwarte zapisy na grupowy mentoring!";
     }
 

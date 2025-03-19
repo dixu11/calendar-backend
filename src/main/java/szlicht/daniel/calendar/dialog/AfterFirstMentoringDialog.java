@@ -2,19 +2,19 @@ package szlicht.daniel.calendar.dialog;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-public class AfterFirstMentoringHtmlDialog extends HtmlDialog {
+public class AfterFirstMentoringDialog extends Dialog {
 
     private final String formatedPropositions;
     private final String propositionsMailto;
 
-    public AfterFirstMentoringHtmlDialog(String email, String formatedPropositions,String propositionsMailto) {
+    public AfterFirstMentoringDialog(String email, String formatedPropositions, String propositionsMailto) {
         super(email);
         this.formatedPropositions = formatedPropositions;
         this.propositionsMailto = propositionsMailto;
     }
 
     @Override
-    String getSubject() {
+    public String getSubject() {
         return "We did it!";
     }
 

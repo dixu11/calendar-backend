@@ -27,13 +27,14 @@ public class DialogAppService {
     private EmailService emailService;
     private WorkshopAppService workshopAppService;
     private Logger logger;
+    private DialogPresenter dialogPresenter;
 
 
     public DialogAppService(ApplicationEventPublisher publisher,
                             MeetingsSender meetingsSender,
                             CalendarAppService calendarAppService, StudentRepository studentRepository,
                             EmailService emailService, WorkshopAppService workshopAppService,
-                            Logger logger) {
+                            Logger logger, DialogPresenter dialogPresenter) {
         this.publisher = publisher;
         this.meetingsSender = meetingsSender;
         this.calendarAppService = calendarAppService;
@@ -41,6 +42,7 @@ public class DialogAppService {
         this.emailService = emailService;
         this.workshopAppService = workshopAppService;
         this.logger = logger;
+        this.dialogPresenter = dialogPresenter;
     }
 
     @EventListener
@@ -82,14 +84,15 @@ public class DialogAppService {
     }
 
     private void startGroupMentoringScenario(EmailData emailData) {
-        sendDialog(new WorkshopHtmlDialog(emailData.getEmail(),workshopAppService.getWorkshops()));
+        dialogPresenter.showDialog(new WorkshopDialog(emailData.getEmail(),workshopAppService.getWorkshops()), emailData);
         logger.notifyOwner("Group mentoring offer sent to "+ emailData.getName() + " mail:" + emailData.getEmail(),
                 "response to decision: "+ emailData.getContent() , false);
     }
 
     private void startSoloMentoringScenario(EmailData emailData) {
-        sendDialog(new SoloMentoringHtmlDialog(emailData.getEmail(),
-                meetingsSender.getFormatedPropositions(calendarAppService.getPropositions(emailData.getMinutes()))));
+        dialogPresenter.showDialog(new SoloMentoringDialog(emailData.getEmail(),
+                meetingsSender.getFormatedPropositions(calendarAppService.getPropositions(emailData.getMinutes()))),
+                emailData);
         logger.notifyOwner("Solo mentoring offer sent to "+ emailData.getName() + " mail:" + emailData.getEmail(),
                 "response to decision: "+ emailData.getContent() , false); //todo simplify and standardize
     }
@@ -108,7 +111,9 @@ public class DialogAppService {
             Propositions propositions = calendarAppService.getPropositions(params.values().minutes());
             String formatedPropositions = meetingsSender.getFormatedPropositions(propositions);
             String mailtoHours = meetingsSender.formatMailtoHours();
-            sendDialog(new AfterFirstMentoringHtmlDialog(email, formatedPropositions, mailtoHours));
+            EmailData emailData = EmailData.builder().email(email).build();
+            dialogPresenter.showDialog(new AfterFirstMentoringDialog(email, formatedPropositions, mailtoHours),
+                    emailData);
         } catch (CalendarOfflineException e) {
             System.err.println("calendar offline");
         }
@@ -120,7 +125,8 @@ public class DialogAppService {
             if (meeting.getType() == MeetingType.MENTORING) {
                 meetingsSender.notifyArrangementComplete(meeting);
             } else {
-                sendDialog(new FirstMentoringHtmlDialog(meetingDto.getEmail(), meeting));
+                EmailData emailData = EmailData.builder().email(meetingDto.getEmail()).build();
+                dialogPresenter.showDialog(new FirstMentoringDialog(meetingDto.getEmail(), meeting),emailData);
             }
             System.err.println(meeting.getDetails().getEmail() + " meeting proposition at: " + meeting.when() + " approved");
         } catch (CalendarOfflineException | MeetingCollisionException e) {
@@ -140,16 +146,13 @@ public class DialogAppService {
     }
 
     public void startMentoringOfferScenario(StudentStartMessageDto message) {
-        sendDialog(new StartMentoringHtmlDialog(message.getEmail()));
+        EmailData emailData = EmailData.builder().email(message.getEmail()).build();
+        dialogPresenter.showDialog(new StartMentoringDialog(message.getEmail()),emailData);
         if (!studentRepository.existsByEmail(message.getEmail())) {
             publisher.publishEvent(new NewStudentEvent(
                     new Student(0,message.getName(), message.getEmail(), StudentRang.ASKED,message.getStory())));
         }
         logger.notifyOwner("Mentoring offer sent to "+ message.getName(), "Mail: " +
                 message.getEmail() + " story: " +message.getStory(), false);
-    }
-
-    private void sendDialog(HtmlDialog dialog) {
-        emailService.sendHtmlEmail(dialog.getEmail(), dialog.getSubject(), dialog.getHtml());
     }
 }

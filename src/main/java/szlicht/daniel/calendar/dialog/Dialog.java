@@ -1,16 +1,16 @@
 package szlicht.daniel.calendar.dialog;
 
-public abstract class HtmlDialog {
+public abstract class Dialog {
 
     private String email;
 
-    public HtmlDialog(String email) {
+    public Dialog(String email) {
         this.email = email;
     }
 
-    abstract String getSubject();
+    public abstract String getSubject();
 
-    String getHtml() {
+    public String getHtml() {
         String result = "<!DOCTYPE html>\n";
         String head = getHead();
         String body = getBody();

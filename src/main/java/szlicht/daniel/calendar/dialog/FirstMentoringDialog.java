@@ -4,16 +4,16 @@ import szlicht.daniel.calendar.meeting.Meeting;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-public class FirstMentoringHtmlDialog extends HtmlDialog {
+public class FirstMentoringDialog extends Dialog {
     private Meeting meeting;
 
-    public FirstMentoringHtmlDialog(String email, Meeting meeting) {
+    public FirstMentoringDialog(String email, Meeting meeting) {
         super(email);
         this.meeting = meeting;
     }
 
     @Override
-    String getSubject() {
+    public String getSubject() {
         return "Pierwsze, bezpłatne spotkanie umówione!";
     }
 
