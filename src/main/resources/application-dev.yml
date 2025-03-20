@@ -2,6 +2,12 @@ spring:
   mail:
     username: ${EMAIL_DEV_USERNAME}
     password: ${EMAIL_DEV_PASSWORD}
+  datasource:
+    url: jdbc:h2:file:${user.home}/calendar-spring/test-db
+  h2:
+    console:
+      enable: true
+      path: "/console"
 meeting:
   mail:
     bot: ${EMAIL_DEV_USERNAME}
