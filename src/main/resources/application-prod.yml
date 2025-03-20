@@ -1,0 +1,11 @@
+spring:
+  mail:
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+  datasource:
+    url: ${URL}
+    username: postgres
+    password: ${DB_PASSWORD}
+meeting:
+  mail:
+    bot: ${EMAIL_USERNAME}

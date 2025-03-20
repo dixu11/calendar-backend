@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: ${ACTIVE_PROFILE}
   calendar:
     credentials: ${CREDENTIALS}
     account-mail: ${CALENDAR_ACCOUNT_MAIL}
