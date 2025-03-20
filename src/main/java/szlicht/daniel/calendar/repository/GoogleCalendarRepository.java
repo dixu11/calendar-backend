@@ -35,23 +35,6 @@ public class GoogleCalendarRepository implements CalendarRepository {
         this.calendar = calendar;
     }
 
-    @PostConstruct
-    @Profile("dev")
-    public List<String> getCalendarNames() {
-        System.err.println("loading ids");
-        try {
-            CalendarList calendarList = calendar.calendarList().list().execute();
-            List<String> result = calendarList.getItems().stream()
-                    .map(entry -> "<" +entry.getSummary()+":"+entry.getId()+ ">")
-                    .toList();
-            System.out.println(result);
-            return result;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new CalendarOfflineException(e.getMessage());
-        }
-    }
-
     public void save(Meeting meeting) {
         Event event = toEvent(meeting);
         Event created = save(event);
