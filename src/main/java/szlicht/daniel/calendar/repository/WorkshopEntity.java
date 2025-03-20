@@ -2,7 +2,9 @@ package szlicht.daniel.calendar.repository;
 
 import jakarta.persistence.*;
 import szlicht.daniel.calendar.workshop.Workshop;
+import szlicht.daniel.calendar.workshop.WorkshopParticipation;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,20 +14,24 @@ public class WorkshopEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "workshops_students",
-            joinColumns = @JoinColumn(name = "workshop_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id")
-    )
-    private List<StudentEntity> students;
-    private LocalDateTime start;
+    private LocalDate start;
     private String title;
+    @OneToMany
+    private List<WorkshopParticipationEntity> participations;
+
+    public WorkshopEntity(Workshop workshop) {
+        id = workshop.getId();
+        start = workshop.getStartDate();
+        title = workshop.getTitle();
+        participations = workshop.getParticipations()
+                .stream().map(WorkshopParticipationEntity::new)
+                .toList();
+    }
 
     public Workshop toWorkshop() {
         return new Workshop(id, start,title,
-                students.stream()
-                        .map(StudentEntity::toStudent)
-                        .toList());
+            participations.stream()
+                    .map(WorkshopParticipationEntity::toBean)
+                    .toList());
     }
 }

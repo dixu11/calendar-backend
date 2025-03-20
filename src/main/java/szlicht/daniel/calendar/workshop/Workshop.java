@@ -1,37 +1,56 @@
 package szlicht.daniel.calendar.workshop;
 
-import szlicht.daniel.calendar.student.Student;
+import szlicht.daniel.calendar.repository.WorkshopParticipationEntity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Workshop {
     private int id;
-    private LocalDateTime start;
+    private LocalDate startDate;
     private String title;
-    private List<Student> students;
+    private List<WorkshopParticipation> participations;
 
-    public Workshop(int id, LocalDateTime start,String title, List<Student> students) {
+    public Workshop(int id, LocalDate startDate, String titles) {
+        this(id, startDate, titles, new ArrayList<>());
+    }
+
+    public Workshop(int id, LocalDate startDate, String title,List<WorkshopParticipation> participations) {
         this.id = id;
-        this.start = start;
+        this.startDate = startDate;
         this.title = title;
-        this.students = students;
+        this.participations = participations;
     }
 
 
-    public LocalDateTime getStart() {
-        return start;
+    public void newParticipation(int studentId) {
+        participations.add(new WorkshopParticipation(studentId));
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public int size() {
-        return students.size();
+    public int appliedCount() {
+        return participations.size();
+    }
+
+    public int paidCountNextThisMonth() {
+       return (int) participations.stream()
+                .filter(WorkshopParticipation::hasPaidNextMonth)
+                .count();
     }
 
     public int getId() {
         return id;
+    }
+
+    public List<WorkshopParticipation> getParticipations() {
+        return participations;
     }
 }

@@ -5,6 +5,7 @@ import szlicht.daniel.calendar.workshop.Workshop;
 import szlicht.daniel.calendar.workshop.WorkshopRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class WorkshopRepositoryImpl implements WorkshopRepository {
@@ -20,5 +21,16 @@ public class WorkshopRepositoryImpl implements WorkshopRepository {
                 .stream()
                 .map(WorkshopEntity::toWorkshop)
                 .toList();
+    }
+
+    @Override
+    public Optional<Workshop> findWorkshopById(int workshopId) {
+        return workshopJpaRepository.findById(workshopId)
+                .map(WorkshopEntity::toWorkshop);
+    }
+
+    @Override
+    public void save(Workshop workshop) {
+        workshopJpaRepository.save(new WorkshopEntity(workshop));
     }
 }

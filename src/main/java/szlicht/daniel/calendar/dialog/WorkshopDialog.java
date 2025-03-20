@@ -60,7 +60,7 @@ public class WorkshopDialog extends Dialog {
     }
 
     private String toMailtoLi(Workshop workshop) {
-        String label = tag("li", workshop.getTitle() + " start: " + LocalDateUtils.simpleDate(workshop.getStart()));
+        String label = tag("li", workshop.getTitle() + " start: " + LocalDateUtils.simpleDate(workshop.getStartDate()));
         return mailto(params.keywords().workshopMentoringApply() + workshop.getId(),
                 "Chcę dołączyć do nowej grupy na warsztaty z programowania",label , getEmail());
     }

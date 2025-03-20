@@ -13,10 +13,13 @@ import szlicht.daniel.calendar.meeting.Logger;
 import szlicht.daniel.calendar.meeting.*;
 import szlicht.daniel.calendar.presenter.EmailDialogPresenter;
 import szlicht.daniel.calendar.student.*;
+import szlicht.daniel.calendar.workshop.Workshop;
 import szlicht.daniel.calendar.workshop.WorkshopAppService;
 import szlicht.daniel.calendar.repository.WorkshopJpaRepository;
 import szlicht.daniel.calendar.repository.WorkshopRepositoryImpl;
+import szlicht.daniel.calendar.workshop.WorkshopRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -30,7 +33,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-class DialogAppServiceTest {
+class AllTestsWhatAMess {
     private static final String EMAIL = "jan.kowalski@gmail.com";
     private static final String NAME = "Jan Kowalski";
     private static final String SHORT_NAME = "Jan Kow";
@@ -47,9 +50,10 @@ class DialogAppServiceTest {
     @Mock
     private StudentRepository studentRepository;
     @Mock
-    private WorkshopJpaRepository workshopJpaRepository;
+    private WorkshopRepository workshopRepository;
     private DialogAppService dialogAppService;
     private StudentAppService studentAppService;
+    private WorkshopAppService workshopAppService;
 
     @BeforeEach
     void setup() {
@@ -63,7 +67,7 @@ class DialogAppServiceTest {
         PropositionsDomainService propositionsDomainService = new PropositionsDomainService(calendarRepository);
         ArrangeMeetingDomainService arrangeMeetingDomainService = new ArrangeMeetingDomainService(propositionsDomainService, calendarRepository, logger, publisher);
         CalendarAppService calendarAppService = new CalendarAppService(propositionsDomainService, arrangeMeetingDomainService, studentRepository, logger, publisher, calendarRepository);
-        WorkshopAppService workshopAppService = new WorkshopAppService(new WorkshopRepositoryImpl(workshopJpaRepository));
+        workshopAppService = new WorkshopAppService(workshopRepository);
         DialogPresenter dialogPresenter = new EmailDialogPresenter(emailService);
         dialogAppService = new DialogAppService(
                 publisher,
@@ -76,6 +80,7 @@ class DialogAppServiceTest {
                 dialogPresenter
         );
         studentAppService = new StudentAppService(studentRepository,logger);
+
     }
 
     private void initParams() {
@@ -279,6 +284,30 @@ class DialogAppServiceTest {
                 any(),
                 any(boolean.class)
         );
+    }
+
+    @Test
+    public void applyForWorkshop(){
+        Workshop workshop = createWorkshop();
+        assertEquals(0,workshop.appliedCount());
+        workshopAppService.apply(1, 1);
+        assertEquals(1,workshop.appliedCount());
+    }
+
+    @Test
+    public void payForWorkshop() {
+        Workshop workshop = createWorkshop();
+        assertEquals(0,workshop.paidCountNextThisMonth());
+        workshopAppService.apply(1, 1);
+        assertEquals(0,workshop.paidCountNextThisMonth());
+    }
+
+    private Workshop createWorkshop() {
+        LocalDate startNextMonth = LocalDate.now()
+                .withDayOfMonth(1).plusMonths(1);
+        Workshop workshop = new Workshop(1, startNextMonth,"test workshop");
+        when(workshopRepository.findWorkshopById(1)).thenReturn(Optional.of(workshop));
+        return workshop;
     }
 
 }

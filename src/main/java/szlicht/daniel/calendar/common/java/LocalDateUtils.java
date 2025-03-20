@@ -29,6 +29,10 @@ public class LocalDateUtils {
         return dateTime.format(DateTimeFormatter.ofPattern("dd.MM"));
     }
 
+    public static String simpleDate(LocalDate dateTime) {
+        return dateTime.format(DateTimeFormatter.ofPattern("dd.MM"));
+    }
+
     public static String simpleDateTime(LocalDateTime localDateTime) {
         return simpleDate(localDateTime) + " " + simpleTime(localDateTime);
     }
