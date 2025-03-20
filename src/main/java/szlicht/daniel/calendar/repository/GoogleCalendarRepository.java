@@ -1,9 +1,9 @@
 package szlicht.daniel.calendar.repository;
 
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventAttendee;
-import com.google.api.services.calendar.model.Events;
+import com.google.api.services.calendar.model.*;
+import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import szlicht.daniel.calendar.meeting.CalendarOfflineException;
 import szlicht.daniel.calendar.meeting.CalendarRepository;
@@ -33,6 +33,23 @@ public class GoogleCalendarRepository implements CalendarRepository {
 
     public GoogleCalendarRepository(Calendar calendar) {
         this.calendar = calendar;
+    }
+
+    @PostConstruct
+    @Profile("dev")
+    public List<String> getCalendarNames() {
+        System.err.println("loading ids");
+        try {
+            CalendarList calendarList = calendar.calendarList().list().execute();
+            List<String> result = calendarList.getItems().stream()
+                    .map(entry -> "<" +entry.getSummary()+":"+entry.getId()+ ">")
+                    .toList();
+            System.out.println(result);
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new CalendarOfflineException(e.getMessage());
+        }
     }
 
     public void save(Meeting meeting) {
