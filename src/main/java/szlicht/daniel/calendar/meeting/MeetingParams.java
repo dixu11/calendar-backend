@@ -23,6 +23,7 @@ public record MeetingParams(
     }
 
     public record Values(
+            String meetingCalendarId,
             String pricesOffer,
             String groupPricesOffer,
             int minutes,

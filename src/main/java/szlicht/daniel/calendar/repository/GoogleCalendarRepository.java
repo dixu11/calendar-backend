@@ -22,12 +22,12 @@ import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.*;
 import static szlicht.daniel.calendar.common.calendar.GoogleCalendarUtils.toLocalDateTime;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.nextMonthEnd;
 import static szlicht.daniel.calendar.common.java.LocalDateUtils.tomorrowStart;
+import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
 @Service
 public class GoogleCalendarRepository implements CalendarRepository {
 
     private static final String CALENDAR_OTHER_ID = "primary";
-    private static final String CALENDAR_MEETINGS_ID = "8jl5qj89qrqreh2ir4k24ole94@group.calendar.google.com";
 
     private Calendar calendar;
 
@@ -43,7 +43,7 @@ public class GoogleCalendarRepository implements CalendarRepository {
 
     public Event save(Event event) {
         try {
-            return calendar.events().insert(CALENDAR_MEETINGS_ID, event).execute();
+            return calendar.events().insert(params.values().meetingCalendarId(), event).execute();
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -53,20 +53,20 @@ public class GoogleCalendarRepository implements CalendarRepository {
     public Set<Meeting> getMonthFromNowMeetings() {
         LocalDateTime from = tomorrowStart();
         LocalDateTime to = nextMonthEnd();
-        return getMeetings(from, to,List.of(CALENDAR_MEETINGS_ID));
+        return getMeetings(from, to,List.of(params.values().meetingCalendarId()));
     }
 
     @Override
     public Set<Meeting> getMonthFromNowEvents() {
         LocalDateTime from = tomorrowStart();
         LocalDateTime to = nextMonthEnd();
-        return getMeetings(from, to,List.of(CALENDAR_MEETINGS_ID,CALENDAR_OTHER_ID));
+        return getMeetings(from, to,List.of(params.values().meetingCalendarId(),CALENDAR_OTHER_ID));
     }
 
     public Set<Meeting> getTodayMeetings() {
         LocalDateTime from = LocalDateTime.now().with(LocalTime.MIN);
         LocalDateTime to = LocalDateTime.now().with(LocalTime.MAX);
-        return new TreeSet<>(getMeetings(from, to, List.of(CALENDAR_MEETINGS_ID)));
+        return new TreeSet<>(getMeetings(from, to, List.of(params.values().meetingCalendarId())));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class GoogleCalendarRepository implements CalendarRepository {
         Event event = findEventById(meeting.getId());
         event.setSummary(meeting.getDetails().getSummary());
         try {
-            calendar.events().update(CALENDAR_MEETINGS_ID, event.getId(), event).execute();
+            calendar.events().update(params.values().meetingCalendarId(), event.getId(), event).execute();
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -84,7 +84,7 @@ public class GoogleCalendarRepository implements CalendarRepository {
     @Override
     public void removeMeetingById(String id) {
         try {
-            calendar.events().delete(CALENDAR_MEETINGS_ID, id).execute();
+            calendar.events().delete(params.values().meetingCalendarId(), id).execute();
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -178,7 +178,7 @@ public class GoogleCalendarRepository implements CalendarRepository {
 
     public Event findEventById(String id) {
         try {
-            return calendar.events().get(CALENDAR_MEETINGS_ID, id).execute();
+            return calendar.events().get(params.values().meetingCalendarId(), id).execute();
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
