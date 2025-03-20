@@ -85,7 +85,8 @@ class AllTestsWhatAMess {
 
     private void initParams() {
         MeetingParams meetingParams = new MeetingParams(new MeetingParams.Mail("", "me@gmail.com", "",""),
-                new MeetingParams.Values("Moje ceny wynoszą","Moje ceny wynoszą",90, "Europe/Warsaw", List.of(1., 1.5, 2., 2.5, 3.), "Mentoring IT z ", "DS",
+                new MeetingParams.Values("calendar id","Moje ceny wynoszą","Moje ceny wynoszą",90,
+                        "Europe/Warsaw", List.of(1., 1.5, 2., 2.5, 3.), "Mentoring IT z ", "DS",
                         new MeetingParams.Values.WorkHours(LocalTime.of(11, 0), LocalTime.of(15, 45),
                                 new HashMap<>())),
                 new MeetingParams.Keywords("Moje uwagi:", "terminy", "mentoring", "spotkanie", "indywidualne lekcje","grupowe lekcje", "apply")
