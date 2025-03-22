@@ -20,17 +20,33 @@ class EmailParser {
     }
 
     EmailData parseEmail() {
-        DialogType dialogType = DialogType.getByKeyword(rawEmail.subject());
-        switch (dialogType) {
+        ScenarioType scenarioType =getDialogType();
+        switch (scenarioType) {
             case SOLO_MENTORING_OFFER -> includeSoloMentoringData();
             case GROUP_MENTORING_OFFER -> includeGroupMentoringData();
             case PROPOSITIONS -> includePropositionsData();
             case ARRANGE -> includeArrangeData();
-            case OFFER -> includeOfferData();
+            case MENTORING -> includeOfferData();
             case OTHER -> {}
         }
-        dataBuilder.dialogType(dialogType);
+        dataBuilder.scenarioType(scenarioType);
         return dataBuilder.build();
+    }
+
+    public ScenarioType getDialogType() {
+        return ScenarioType.getByKeyword(rawEmail.subject());
+    }
+
+    public String getEmail() {
+        return rawEmail.email();
+    }
+
+    public String getMessage() {
+        return rawEmail.content();
+    }
+
+    public String getName() {
+        return rawEmail.name();
     }
 
     private void includeGroupMentoringData() {

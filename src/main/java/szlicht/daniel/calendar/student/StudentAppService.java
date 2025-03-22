@@ -17,15 +17,16 @@ public class StudentAppService {
     }
 
     @EventListener
-    public void newStudentAdded(NewStudentEvent event) {
+    public boolean newStudentAdded(NewStudentEvent event) {
         if (event.getStudent().hasOnlyNameFilled()) {
-            logger.notifyOwner("New student with name to fix in database: " + event.getStudent().getName(),"",false);
+            logger.notifyOwner("New student with name to fix in database: " + event.getStudent().getName(), "", false);
         }
         boolean success = studentRepository.save(event.getStudent());
         if (success) {
             logger.notifyOwner("New student on app: " + event.getStudent().getName() + " "
-                    + event.getStudent().getEmail(),"",false);
+                    + event.getStudent().getEmail(), "", false);
         }
+        return success;
     }
 
     @EventListener
@@ -36,5 +37,13 @@ public class StudentAppService {
         Student student = event.getStudent();
         student.setRang(StudentRang.HAD_MENTORING);
         studentRepository.saveOrUpdate(student);
+    }
+
+    public boolean addIfNotExists(String email, String name, String message) {
+        if (studentRepository.existsByEmail(email)) {
+            return false;
+        }
+        studentRepository.save(new Student(0, name, email, StudentRang.ASKED, message));
+        return true;
     }
 }

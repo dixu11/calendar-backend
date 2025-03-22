@@ -2,7 +2,7 @@ package szlicht.daniel.calendar.presenter;
 
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.common.mail.EmailService;
-import szlicht.daniel.calendar.dialog.Dialog;
+import szlicht.daniel.calendar.dialog.DialogView;
 import szlicht.daniel.calendar.dialog.DialogPresenter;
 import szlicht.daniel.calendar.dialog.EmailData;
 
@@ -15,8 +15,8 @@ public class EmailDialogPresenter implements DialogPresenter {
     }
 
     @Override
-    public void showDialog(Dialog dialog, EmailData emailData) {
-        HtmlDialog htmlDialog = new HtmlDialog(dialog);
+    public void showDialog(DialogView dialogView, EmailData emailData) {
+        HtmlDialog htmlDialog = new HtmlDialog(dialogView);
         emailService.sendHtmlEmail(emailData.getEmail(), htmlDialog.getSubject(), htmlDialog.getHtml());
     }
 }

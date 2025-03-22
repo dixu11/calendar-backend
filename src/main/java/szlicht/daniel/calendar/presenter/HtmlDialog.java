@@ -1,19 +1,19 @@
 package szlicht.daniel.calendar.presenter;
 
-import szlicht.daniel.calendar.dialog.Dialog;
+import szlicht.daniel.calendar.dialog.DialogView;
 
 public class HtmlDialog {
-    private Dialog dialog;
+    private DialogView dialogView;
 
-    public HtmlDialog(Dialog dialog) {
-        this.dialog = dialog;
+    public HtmlDialog(DialogView dialogView) {
+        this.dialogView = dialogView;
     }
 
     public String getSubject() {
-        return dialog.getSubject();
+        return dialogView.getSubject();
     }
 
     public String getHtml() {
-        return dialog.getHtml();
+        return dialogView.getHtml();
     }
 }

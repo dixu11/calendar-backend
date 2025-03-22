@@ -4,10 +4,10 @@ import szlicht.daniel.calendar.meeting.Meeting;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-public class FirstMentoringDialog extends Dialog {
+public class FirstMentoringDialogView extends DialogView {
     private Meeting meeting;
 
-    public FirstMentoringDialog(String email, Meeting meeting) {
+    public FirstMentoringDialogView(String email, Meeting meeting) {
         super(email);
         this.meeting = meeting;
     }

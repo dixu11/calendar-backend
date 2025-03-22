@@ -8,11 +8,11 @@ import java.util.List;
 import static szlicht.daniel.calendar.common.mail.MailUtils.mailto;
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-public class WorkshopDialog extends Dialog {
+public class WorkshopDialogView extends DialogView {
 
     private List<Workshop> workshops;
 
-    public WorkshopDialog(String email, List<Workshop> workshops) {
+    public WorkshopDialogView(String email, List<Workshop> workshops) {
         super(email);
         this.workshops = workshops;
     }

@@ -8,7 +8,7 @@ import szlicht.daniel.calendar.meeting.MeetingDto;
 @Builder
 public class EmailData {
 
-    private DialogType dialogType;
+    private ScenarioType scenarioType;
     private Integer minutes;
     private String email;
     private String name;

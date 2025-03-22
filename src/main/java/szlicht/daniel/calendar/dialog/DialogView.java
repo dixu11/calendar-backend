@@ -1,10 +1,10 @@
 package szlicht.daniel.calendar.dialog;
 
-public abstract class Dialog {
+public abstract class DialogView {
 
     private String email;
 
-    public Dialog(String email) {
+    public DialogView(String email) {
         this.email = email;
     }
 

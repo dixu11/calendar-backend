@@ -1,10 +1,10 @@
 package szlicht.daniel.calendar.dialog;
 
-public class SoloMentoringDialog extends Dialog {
+public class SoloMentoringDialogView extends DialogView {
 
     private String formatedPropositions;
 
-    public SoloMentoringDialog(String email, String formatedPropositions) {
+    public SoloMentoringDialogView(String email, String formatedPropositions) {
         super(email);
         this.formatedPropositions = formatedPropositions;
     }
