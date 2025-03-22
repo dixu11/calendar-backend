@@ -16,7 +16,6 @@ public class MentoringDialogScenario extends DialogScenario {
 
     @Override
     public void runScenario(EmailParser emailParser) {
-        EmailData emailData = emailParser.parseEmail();
-        dialogPresenter.showDialog(new MentoringDialogView(emailData.getEmail()),emailData);
+        dialogPresenter.showDialog(new MentoringDialogView(emailParser.getEmail()),emailParser);
     }
 }

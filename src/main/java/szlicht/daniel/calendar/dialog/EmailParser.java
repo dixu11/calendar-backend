@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import static szlicht.daniel.calendar.common.spring.ParamsProvider.params;
 
-class EmailParser {
+public class EmailParser {
 
     private EmailData.EmailDataBuilder dataBuilder = EmailData.builder();
     private RawEmail rawEmail;

@@ -52,7 +52,7 @@ public class DialogAppService {
     @Async
     public void sendTestEmailToOwner(AppStartedEvent e) {
         startNextPropositionsScenario(60, params.mail().owner());
-        startMentoringOfferScenario(new StudentStartMessageDto("Owner Name", params.mail().owner(), "test"));
+       // startMentoringOfferScenario(new StudentStartMessageDto("Owner Name", params.mail().owner(), "test"));
     }
 
     @EventListener
@@ -70,6 +70,7 @@ public class DialogAppService {
                 .findAny()
                 .orElseThrow(); //todo for keyword not found
         foundScenario.runScenario(emailParser);
+
       /*  logger.notifyOwner("Mentoring offer sent to "+ message.getName(), "Mail: " +
                 message.getEmail() + " story: " +message.getStory(), false);*/
 
@@ -93,7 +94,7 @@ public class DialogAppService {
             default:
                 System.out.printf("(%s)%s don't mach to any patter so it's probably spam -> ignore\n%n",
                         rawEmail.email(), rawEmail.subject());
-                logger.notifyOwner("suspicious email: " + rawEmail.email() + " " + rawEmail.subject(), rawEmail.content(), false);
+                //logger.notifyOwner("suspicious email: " + rawEmail.email() + " " + rawEmail.subject(), rawEmail.content(), false);
         }
     }
 
