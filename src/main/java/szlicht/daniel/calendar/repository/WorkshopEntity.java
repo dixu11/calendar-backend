@@ -19,6 +19,9 @@ public class WorkshopEntity {
     @OneToMany
     private List<WorkshopParticipationEntity> participations;
 
+    public WorkshopEntity() {
+    }
+
     public WorkshopEntity(Workshop workshop) {
         id = workshop.getId();
         start = workshop.getStartDate();
