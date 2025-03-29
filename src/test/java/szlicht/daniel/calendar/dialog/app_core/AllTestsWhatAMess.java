@@ -22,10 +22,7 @@ import szlicht.daniel.calendar.workshop.WorkshopRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -69,6 +66,16 @@ class AllTestsWhatAMess {
         CalendarAppService calendarAppService = new CalendarAppService(propositionsDomainService, arrangeMeetingDomainService, studentRepository, logger, publisher, calendarRepository);
         workshopAppService = new WorkshopAppService(workshopRepository);
         DialogPresenter dialogPresenter = new EmailDialogPresenter(emailService);
+
+        List<DialogScenario> scenarios = new ArrayList<>();
+        scenarios.add(new MentoringDialogScenario(dialogPresenter));
+        scenarios.add(new ArrangeScenario(dialogPresenter, calendarAppService, meetingsSender, logger));
+        scenarios.add(new PropositionsScenario(dialogPresenter, calendarAppService, meetingsSender));
+        scenarios.add(new SoloMentoringScenario(dialogPresenter, calendarAppService, meetingsSender, logger));
+        scenarios.add(new GroupMentoringScenario(dialogPresenter, workshopAppService, logger));
+
+
+
         dialogAppService = new DialogAppService(
                 publisher,
                 meetingsSender,
@@ -77,7 +84,9 @@ class AllTestsWhatAMess {
                 emailService,
                 workshopAppService,
                 logger,
-                dialogPresenter
+                dialogPresenter,
+                scenarios,
+                studentAppService
         );
         studentAppService = new StudentAppService(studentRepository,logger);
 
