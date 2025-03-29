@@ -1,5 +1,6 @@
 package szlicht.daniel.calendar.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
 import szlicht.daniel.calendar.workshop.Workshop;
 import szlicht.daniel.calendar.workshop.WorkshopRepository;
@@ -16,6 +17,7 @@ public class WorkshopRepositoryImpl implements WorkshopRepository {
     }
 
     @Override
+    @Transactional
     public List<Workshop> getWorkshops() {
         return workshopJpaRepository.findAll()
                 .stream()
@@ -24,6 +26,7 @@ public class WorkshopRepositoryImpl implements WorkshopRepository {
     }
 
     @Override
+    @Transactional
     public Optional<Workshop> findWorkshopById(int workshopId) {
         return workshopJpaRepository.findById(workshopId)
                 .map(WorkshopEntity::toWorkshop);
