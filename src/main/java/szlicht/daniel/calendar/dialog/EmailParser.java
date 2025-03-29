@@ -20,14 +20,15 @@ public class EmailParser {
     }
 
     EmailData parseEmail() {
-        ScenarioType scenarioType =getDialogType();
+        ScenarioType scenarioType = getDialogType();
         switch (scenarioType) {
             case SOLO_MENTORING_OFFER -> includeSoloMentoringData();
             case GROUP_MENTORING_OFFER -> includeGroupMentoringData();
             case PROPOSITIONS -> includePropositionsData();
             case ARRANGE -> includeArrangeData();
             case MENTORING -> includeOfferData();
-            case OTHER -> {}
+            case OTHER -> {
+            }
         }
         dataBuilder.scenarioType(scenarioType);
         return dataBuilder.build();
@@ -62,6 +63,10 @@ public class EmailParser {
     }
 
     private void includeArrangeData() {
+        dataBuilder.meetingDto(getArrangeData());
+    }
+
+    public MeetingDto getArrangeData() {
         String content = rawEmail.content();
         if (content == null || content.isBlank()) {
             throw new IllegalArgumentException("Empty or unsupported email body format.");
@@ -84,10 +89,9 @@ public class EmailParser {
                     .studentName(rawEmail.name())
                     .providedDescription(description)
                     .build();
-            dataBuilder.meetingDto(meetingDto);
-
-        } catch (DateTimeException| NumberFormatException e) {
-           throw new IllegalArgumentException("Parsing failed: " + e.getMessage(), e);
+            return meetingDto;
+        } catch (DateTimeException | NumberFormatException e) {
+            throw new IllegalArgumentException("Parsing failed: " + e.getMessage(), e);
         }
     }
 
@@ -140,5 +144,13 @@ public class EmailParser {
         } catch (NumberFormatException | NullPointerException e) {
             return null;
         }
+    }
+
+    public Integer getMinutes() { //todo what if returns null?
+        return extractMinutes(rawEmail.subject());
+    }
+
+    public String getContent() {
+        return rawEmail.content();
     }
 }

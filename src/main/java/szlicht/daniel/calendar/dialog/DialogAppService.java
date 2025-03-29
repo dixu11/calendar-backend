@@ -75,27 +75,27 @@ public class DialogAppService {
                 message.getEmail() + " story: " +message.getStory(), false);*/
 
 
-        EmailData emailData = emailParser.parseEmail();
+       /* EmailData emailData = emailParser.parseEmail();
         switch (emailData.getScenarioType()) {
-            case PROPOSITIONS:
+         *//*   case PROPOSITIONS:
                 startNextPropositionsScenario(emailData.getMinutes(), emailData.getEmail());
-                break;
-            case ARRANGE:
+                break;*//*
+           *//* case ARRANGE:
                 startArrangeScenario(emailData.getMeetingDto());
-                break;
-           /* case MENTORING:
+                break;*//*
+           *//* case MENTORING:
                 startMentoringOfferScenario(emailData.getStudentStartMessageDto());
-                break;*/
-            case SOLO_MENTORING_OFFER:
+                break;*//*
+        *//*    case SOLO_MENTORING_OFFER:
                 startSoloMentoringScenario(emailData);
-                break;
+                break;*//*
             case GROUP_MENTORING_OFFER:
                 startGroupMentoringScenario(emailData);
             default:
                 System.out.printf("(%s)%s don't mach to any patter so it's probably spam -> ignore\n%n",
                         rawEmail.email(), rawEmail.subject());
                 //logger.notifyOwner("suspicious email: " + rawEmail.email() + " " + rawEmail.subject(), rawEmail.content(), false);
-        }
+        }*/
     }
 
     private boolean containsKeyword(String subject, String keyword) {
